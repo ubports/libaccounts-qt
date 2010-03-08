@@ -1,0 +1,14 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${prefix}/lib/
+includedir=${prefix}/include/accounts-qt
+servicefilesdir=${prefix}/share/accounts/services
+providerfilesdir=${prefix}/share/accounts/providers
+
+Name: libaccounts-qt
+Description: Accounts Library
+Version: 0.0.1
+Libs: -L${libdir} -laccounts-qt
+Libs.private: -L/usr/lib  -lQtSql -lQtCore -lpthread  
+Cflags:  -I${includedir}
+
