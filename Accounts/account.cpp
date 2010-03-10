@@ -606,3 +606,22 @@ bool Account::verifyWithTokens(const QString &key, QList<const char*> tokens)
 
     return ag_account_verify_with_tokens(d->m_account, key.toUtf8().constData(), tmp);
 }
+
+qint32 Account::credentialsId()
+{
+    QString key = ACCOUNTS_KEY_CREDENTIALS_ID;
+    QVariant val(QVariant::Int);
+
+    if (value(key, val) != NONE)
+        return val.toInt();
+
+    qint32 id = 0;
+    Service *service = selectedService();
+    if (service) {
+        selectService(NULL);
+        if (value(key, val) != NONE)
+            id = val.toInt();
+        selectService(service);
+    }
+    return id;
+}
