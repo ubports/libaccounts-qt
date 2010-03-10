@@ -29,7 +29,8 @@ using namespace Accounts;
 
 #define PROVIDER QString("dummyprovider")
 #define SERVICE QString("dummyservice")
-#define MYSERVICE QString("MyService")
+#define MYSERVICE QLatin1String("MyService")
+#define OTHERSERVICE QLatin1String("OtherService")
 
 
 void clearDb()
@@ -784,6 +785,43 @@ void AccountsTest::selectGlobalAccountSettingsTest()
     account->selectService();
     Service *selectedService = account->selectedService();
     QVERIFY(selectedService == NULL);
+}
+
+void AccountsTest::credentialsIdTest()
+{
+    Manager *mgr = new Manager;
+    QVERIFY(mgr != NULL);
+
+    Account *account = mgr->createAccount("MyProvider");
+    QVERIFY(account != NULL);
+
+    Service* service = mgr->service(MYSERVICE);
+    QVERIFY(service != NULL);
+
+    qint32 globalId = 69, myServiceId = 0xDEAD;
+
+    account->setCredentialsId(globalId);
+
+    account->selectService(service);
+    account->setCredentialsId(myServiceId);
+
+    account->syncAndBlock();
+    QVERIFY(account->id() != 0);
+
+    QCOMPARE(account->credentialsId(), myServiceId);
+
+    /* select a service with no credentials: we should get the global
+     * credentials ID, but the selected service shouldn't change */
+    service = mgr->service(OTHERSERVICE);
+    QVERIFY(service != NULL);
+
+    account->selectService(service);
+    QCOMPARE(account->credentialsId(), globalId);
+    QCOMPARE(account->selectedService(), service);
+
+    /* now make sure that we can get the ID from the global accounts settings */
+    account->selectService(NULL);
+    QCOMPARE(account->credentialsId(), globalId);
 }
 
 QTEST_MAIN(AccountsTest)
