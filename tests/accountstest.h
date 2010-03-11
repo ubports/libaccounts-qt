@@ -85,6 +85,7 @@ private slots:
 
     void selectGlobalAccountSettingsTest();
 
+    void credentialsIdTest();
 
     private:
     bool m_stored;

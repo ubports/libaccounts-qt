@@ -63,6 +63,9 @@
       <case description="libaccounts-qt-tests:accountstest:selectGlobalAccountSettingsTest" name="accountstest-selectGlobalAccountSettingsTest" level="Feature" type="Functional">
         <step>/usr/bin/accountstest selectGlobalAccountSettingsTest</step>
       </case>
+      <case description="libaccounts-qt-tests:accountstest:credentialsIdTest" name="accountstest-credentialsIdTest" level="Feature" type="Functional">
+        <step>/usr/bin/accountstest credentialsIdTest</step>
+      </case>
       <environments>
         <scratchbox>true</scratchbox>
         <hardware>true</hardware>
