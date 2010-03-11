@@ -32,6 +32,8 @@
 #include "Accounts/accountscommon.h"
 #include "Accounts/service.h"
 
+#define ACCOUNTS_KEY_CREDENTIALS_ID QLatin1String("CredentialsId")
+
 extern "C"
 {
     typedef struct _AgAccount AgAccount;
@@ -181,10 +183,12 @@ public:
 
     /*!
      * Get the account's credentials id in signon DB.
+     *
+     * The credentials ID is first read from the currently selected service;
+     * if it's not found, then it is ready from the global account settings.
+     * In any case, the currently selected service is not altered.
      */
-    qint32 credentialsId() {
-        return valueAsInt(QLatin1String("CredentialsId"));
-    };
+    qint32 credentialsId();
 
     /*!
      * set the accounts credentials id
@@ -192,8 +196,8 @@ public:
      *
      * This method operates on the currently selected service.
      */
-    void setCredentialsId(qint32 id) {
-        setValue(QLatin1String("CredentialsId"), id);
+    void setCredentialsId(const qint32 id) {
+        setValue(ACCOUNTS_KEY_CREDENTIALS_ID, id);
     }
 
     /*!
