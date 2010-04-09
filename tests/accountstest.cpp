@@ -573,6 +573,7 @@ void AccountsTest::serviceDataTest()
     QVERIFY(xml->readNext() == QXmlStreamReader::StartElement);
     QVERIFY(xml->name() == QString("type_data"));
 
+    delete xml;
     delete mgr;
 }
 
@@ -729,12 +730,12 @@ void AccountsTest::keySignVerifyTest()
 
     Account *account = mgr->createAccount(NULL);
     QVERIFY(account != NULL);
-    
+
     account->setValue(key, QString("the key value"));
     account->sign(key, listOfTokens.at(0));
 
     account->sync();
-    
+
     ok = account->verify(key, &token);
     QVERIFY(ok == true);
 
