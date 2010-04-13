@@ -44,8 +44,6 @@ extern "C"
  *
  */
 
-#define ACCOUNTS_EXPORT
-
 namespace Accounts
 {
 typedef quint32 AccountId;
