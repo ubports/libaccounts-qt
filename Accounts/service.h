@@ -38,8 +38,6 @@ extern "C"
     typedef struct _AgService AgService;
 }
 
-#define ACCOUNTS_EXPORT
-
 namespace Accounts
 {
 class Service;

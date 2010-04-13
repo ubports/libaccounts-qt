@@ -47,6 +47,15 @@
 #endif
 #define UTF8(s) QString::fromUtf8(s)
 
+// Symbol visibility
+#if __GNUC__ >= 4
+    #define ACCOUNTS_EXPORT __attribute__ ((visibility("default")))
+#endif
+
 #endif // BUILDING_ACCOUNTS_QT
+
+#ifndef ACCOUNTS_EXPORT
+    #define ACCOUNTS_EXPORT
+#endif
 
 #endif /* ACCOUNTSCOMMON_H_ */

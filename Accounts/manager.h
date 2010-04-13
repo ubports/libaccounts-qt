@@ -48,7 +48,7 @@ namespace Accounts
  * @details The Manager offers ways to create accounts, list accounts, services
  * and providers. It also emits signals when accounts are created and removed.
  */
-class Manager : public QObject
+class ACCOUNTS_EXPORT Manager : public QObject
 {
     Q_OBJECT
 

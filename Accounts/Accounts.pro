@@ -24,6 +24,12 @@ QT -= gui
 TARGET = accounts-qt
 PKGCONFIG += glib-2.0 \
              gobject-2.0
+
+QMAKE_CXXFLAGS = \
+    -fno-exceptions \
+    -fno-rtti \
+    -fvisibility=hidden
+
 headers.files = $$HEADERS
 
 include( ../common-installs-config.pri )
