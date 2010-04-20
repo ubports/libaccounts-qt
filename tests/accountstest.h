@@ -35,10 +35,11 @@ class AccountsTest : public QObject
 public:
 
 public slots:
-        void stored();
-        void error(Accounts::ErrorCode errorCode);
-        void enabled(const QString &serviceName, bool enabled);
-        void display(const QString &serviceName);
+    void stored();
+    void error(Accounts::ErrorCode errorCode);
+    void enabled(const QString &serviceName, bool enabled);
+    void enabledEvent(Accounts::AccountId id);
+    void display(const QString &serviceName);
     void created(Accounts::AccountId id);
     void removed();
     void w_server_notify(const char *);
@@ -87,10 +88,17 @@ private slots:
 
     void credentialsIdTest();
 
+    void listEnabledServices();
+
+    void listEnabledByServiceType();
+
+    void enabledEvent();
+
     private:
     bool m_stored;
     bool m_enabled;
     AccountId m_created;
+    AccountId m_enabledEvent;
     bool m_removed;
     int m_rowsInserted;
     int m_rowsRemoved;
