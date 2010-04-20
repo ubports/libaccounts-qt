@@ -159,12 +159,22 @@ public:
     bool supportsService(const QString &serviceType) const;
 
     /*!
-     * Return a list of services supported by this account.
+     * Return a list of services supported by this account. If the manager was
+     * constructed with given service type only the services which supports the
+     * service type will be returned.
      *
      * This is currently computed by returning all services having the same
      * provider as the account.
      */
     ServiceList services(const QString &serviceType = NULL) const;
+
+    /*!
+     * Return a list of enabled services supported by this account. If the manager was
+     * constructed with given service type only the services which supports the
+     * service type will be returned.
+
+     */
+    ServiceList enabledServices() const;
 
     /*!
      * Checks whether the account is enabled.
@@ -239,6 +249,7 @@ public:
 
     /*!
      * Enters a group. This method never fails.
+     * @param prefix
      *
      * This method operates on the currently selected service.
      */
@@ -266,6 +277,7 @@ public:
 
     /*!
      * Check whether the given key is in the current group.
+     * @param key The key name of the settings.
      *
      * This method operates on the currently selected service.
      */
@@ -293,6 +305,7 @@ public:
     /*!
      * Remove the given key. If the key is the empty string, all keys in the
      * current group are removed.
+     * @param key The key name of the settings.
      *
      * This method operates on the currently selected service.
      */

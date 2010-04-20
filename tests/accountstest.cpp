@@ -722,7 +722,7 @@ void AccountsTest::keySignVerifyTest()
     const QString key = "key";
     const char *token;
     QList<const char*> listOfTokens;
-    listOfTokens << "token1" << "token2" << "token3";
+    listOfTokens << "token" << "token2" << "token3";
     bool ok;
 
     Manager *mgr = new Manager();
@@ -823,6 +823,114 @@ void AccountsTest::credentialsIdTest()
     /* now make sure that we can get the ID from the global accounts settings */
     account->selectService(NULL);
     QCOMPARE(account->credentialsId(), globalId);
+}
+
+void AccountsTest::listEnabledServices()
+{
+    clearDb();
+
+    Manager *mgr = new Manager();
+    QVERIFY(mgr != NULL);
+
+    Service* service = mgr->service(MYSERVICE);
+    QVERIFY(service!=NULL);
+
+    Account* account = mgr->createAccount("MyProvider");
+    QVERIFY(account != NULL);
+    account->selectService(service);
+    account->setEnabled(true);
+    account->sync();
+
+    ServiceList list = account->enabledServices();
+    QVERIFY(!list.isEmpty());
+    QCOMPARE(list.size(), 1);
+
+    account->selectService(service);
+    account->setEnabled(false);
+    account->sync();
+
+    list = account->enabledServices();
+    QVERIFY(list.isEmpty());
+
+    delete account;
+    delete mgr;
+}
+
+
+void AccountsTest::listEnabledByServiceType()
+{
+    clearDb();
+
+    Manager *mgr = new Manager("e-mail");
+    QVERIFY(mgr != NULL);
+
+    Account* account = mgr->createAccount("MyProvider");
+    QVERIFY(account != NULL);
+    account->setEnabled(true);
+
+    Service* service = mgr->service(MYSERVICE);
+    QVERIFY(service!=NULL);
+    account->selectService(service);
+    account->setEnabled(true);
+    account->sync();
+
+    AccountIdList list = mgr->accountListEnabled("e-mail");
+
+    QVERIFY(!list.isEmpty());
+    QCOMPARE(list.size(), 1);
+
+    account->setEnabled(false);
+    account->sync();
+
+    list = mgr->accountListEnabled("e-mail");
+    QVERIFY(list.isEmpty());
+
+    delete account;
+    delete mgr;
+}
+
+void AccountsTest::enabledEvent(Accounts::AccountId id)
+{
+    m_enabledEvent = id;
+}
+
+void AccountsTest::enabledEvent()
+{
+    Manager *mgr = new Manager("e-mail");
+    QVERIFY(mgr != NULL);
+
+    m_enabledEvent = 0;
+    QObject::connect(mgr, SIGNAL(enabledEvent(Accounts::AccountId)),
+                     this, SLOT(enabledEvent(Accounts::AccountId)));
+
+    Account *account = mgr->createAccount(NULL);
+    QVERIFY(account != NULL);
+    account->setEnabled(true);
+    account->sync();
+
+    QVERIFY(m_enabledEvent != 0);
+    QVERIFY(m_enabledEvent == account->id());
+
+    //if we create manager without service type the signal shoudl not be emitted
+    Manager *mgr2 = new Manager();
+    QVERIFY(mgr2 != NULL);
+
+    m_enabledEvent = 0;
+    QObject::connect(mgr2, SIGNAL(enabledEvent(Accounts::AccountId)),
+                     this, SLOT(enabledEvent(Accounts::AccountId)));
+
+    Account *account2 = mgr2->createAccount(NULL);
+    QVERIFY(account2 != NULL);
+    account2->setEnabled(true);
+    account2->sync();
+
+    QVERIFY(m_enabledEvent == 0);
+    QVERIFY(m_enabledEvent != account2->id());
+
+    delete account;
+    delete account2;
+    delete mgr;
+    delete mgr2;
 }
 
 QTEST_MAIN(AccountsTest)
