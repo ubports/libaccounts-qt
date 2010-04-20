@@ -63,6 +63,7 @@ public:
 
     static void on_account_created(Manager *self, AgAccountId id);
     static void on_account_deleted(Manager *self, AgAccountId id);
+    static void on_enabled_event(Manager *self, AgAccountId id);
 };
 
 } //namespace Accounts
@@ -83,10 +84,18 @@ void Manager::Private::on_account_deleted(Manager *self, AgAccountId id)
     emit self->accountRemoved(id);
 }
 
+void Manager::Private::on_enabled_event(Manager *self, AgAccountId id)
+{
+    TRACE() << "id =" << id;
+
+    emit self->enabledEvent(id);
+}
+
 Manager::Manager(QObject *parent)
     : QObject(parent), d(new Private)
 {
     g_type_init();
+
     d->m_manager = ag_manager_new();
 
     g_signal_connect_swapped
@@ -95,6 +104,29 @@ Manager::Manager(QObject *parent)
     g_signal_connect_swapped
         (d->m_manager, "account-deleted",
          G_CALLBACK(&Private::on_account_deleted), this);
+    g_signal_connect_swapped
+        (d->m_manager, "enabled-event",
+         G_CALLBACK(&Private::on_enabled_event), this);
+
+}
+
+Manager::Manager(const QString &serviceType, QObject *parent)
+    : QObject(parent), d(new Private)
+{
+    g_type_init();
+
+    d->m_manager = ag_manager_new_for_service_type(serviceType.toUtf8().constData());
+
+    g_signal_connect_swapped
+        (d->m_manager, "account-created",
+         G_CALLBACK(&Private::on_account_created), this);
+    g_signal_connect_swapped
+        (d->m_manager, "account-deleted",
+         G_CALLBACK(&Private::on_account_deleted), this);
+    g_signal_connect_swapped
+        (d->m_manager, "enabled-event",
+         G_CALLBACK(&Private::on_enabled_event), this);
+
 }
 
 Manager::~Manager()
@@ -105,6 +137,8 @@ Manager::~Manager()
         (d->m_manager, (void *)&Private::on_account_created, this);
     g_signal_handlers_disconnect_by_func
         (d->m_manager, (void *)&Private::on_account_deleted, this);
+    g_signal_handlers_disconnect_by_func
+        (d->m_manager, (void *)&Private::on_enabled_event, this);
     g_object_unref(d->m_manager);
 
     delete d;
@@ -133,6 +167,29 @@ AccountIdList Manager::accountList(const QString &serviceType) const
         list = ag_manager_list(d->m_manager);
     } else {
         list = ag_manager_list_by_service_type(d->m_manager,
+            serviceType.toUtf8().constData());
+    }
+
+    /* convert glist -> AccountIdList */
+    AccountIdList idList;
+    GList *iter;
+
+    for (iter = list; iter; iter = g_list_next(iter))
+    {
+        idList.append((AccountId)(iter->data));
+    }
+
+    ag_manager_list_free(list);
+
+    return idList;
+}
+AccountIdList Manager::accountListEnabled(const QString &serviceType) const
+{
+    GList *list = NULL;
+    if (serviceType.isEmpty()) {
+        list = ag_manager_list_enabled(d->m_manager);
+    } else {
+        list = ag_manager_list_enabled_by_service_type(d->m_manager,
             serviceType.toUtf8().constData());
     }
 
@@ -270,4 +327,9 @@ ProviderList Manager::providerList() const
     ag_provider_list_free(list);
 
     return provList;
+}
+
+QString Manager::serviceType() const
+{
+    return UTF8(ag_manager_get_service_type (d->m_manager));
 }

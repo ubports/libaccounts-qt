@@ -186,6 +186,27 @@ ServiceList Account::services(const QString &serviceType) const
     return servList;
 }
 
+ServiceList Account::enabledServices() const
+{
+    GList *list;
+    list = ag_account_list_enabled_services(d->m_account);
+
+    /* convert glist -> ServiceList */
+    ServiceList servList;
+    GList *iter;
+    Manager *mgr = manager();
+    Q_ASSERT(mgr != 0);
+    for (iter = list; iter; iter = g_list_next(iter))
+    {
+        Service *serv = mgr->serviceInstance((AgService*)(iter->data));
+        servList.append(serv);
+    }
+
+    ag_service_list_free(list);
+
+    return servList;
+}
+
 bool Account::enabled() const
 {
     return ag_account_get_enabled(d->m_account);

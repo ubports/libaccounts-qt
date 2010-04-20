@@ -59,10 +59,22 @@ public:
      */
     Manager(QObject *parent = 0);
 
+    /*!
+     * Constructs a manager initialized with service type. This constructor
+     * should be used when there is an interest for just one service type.
+     * Such a manager has influence on some class methods. When listing the
+     * accounts and services only the ones supporting the given service type 
+     * will be returned. Also the creating account with this manager will 
+     * affect the acccount class method for listing services in same manner.
+     * The signal enabledEvent() will be emitted only when manager is created
+     * with this constructor.
+     */
+    Manager(const QString &serviceType, QObject *parent = 0);
+
     ~Manager();
 
     /*!
-     * Loads an accont from the database.
+     * Loads an account from the database.
      * @param id Id of the account to be retrieved.
      *
      * @return Requested account or NULL if not found.
@@ -73,11 +85,24 @@ public:
      * Lists the accounts which support the requested service.
      *
      * @param serviceType Type of service that returned accounts must support.
-     * If not given, all accounts are returned.
+     * If not given and the manager is not constructed with service type, 
+     * all accounts are returned.
      *
      * @return List of account IDs.
      */
     AccountIdList accountList(const QString &serviceType = 0) const;
+
+    /*!
+     * Lists the enabled accounts which support the requested service that also
+     * must be enabled.
+     *
+     * @param serviceType Type of service that returned accounts must support.
+     * If not given and the manager is not constructed with service type, 
+     * all enabled accounts are returned.
+     *
+     * @return List of account IDs.
+     */
+    AccountIdList accountListEnabled(const QString &serviceType = 0) const;
 
     /*!
      * Creates a new account.
@@ -96,8 +121,11 @@ public:
     Service *service(const QString &serviceName) const;
 
     /*!
-     * Get service list.
-     * @param serviceType Type of services to be listed. If not given, all
+     * Get service list. If the manager is constructed with given service type
+     * only the services which supports the service type will be returned.
+     *
+     * @param serviceType Type of services to be listed. If not given and
+     * the manager is not constructed with service type, all
      * services are listed.
      *
      * @return List of Service objects.
@@ -119,11 +147,41 @@ public:
      */
     ProviderList providerList() const;
 
+    /*!
+     * Get the service type if given in manager constructor.
+     *
+     * @return service type or NULL if not given.
+     */
+    QString serviceType() const;
+
 
 signals:
-
+    /*!
+     * The signal is emitted when new account is created.
+     *
+     * @param id identifier of the Account
+     */
     void accountCreated(Accounts::AccountId id);
+
+    /*!
+     * The signal is emitted when existing account is removed.
+     *
+     * @param id identifier of the Account
+     */
     void accountRemoved(Accounts::AccountId id);
+
+    /*!
+     * If the manager has been created with serviceType, this 
+     * signal will be emitted when an account (identified by AccountId) has been 
+     * modified in such a way that the application might be interested to start/stop 
+     * using it: the "enabled" flag on the account or in some service supported by the 
+     * account and matching the AgManager::serviceType have changed.
+     * In practice, this signal might be emitted more often than when strictly needed; 
+     * applications must call Account::enabledServices() to get the current state.
+     *
+     * @param id identifier of the Account
+     */
+    void enabledEvent(Accounts::AccountId id);
 
 private:
 
