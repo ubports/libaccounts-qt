@@ -118,6 +118,10 @@ private:
  * one has to either use the Manager::createAccount method (to create a new
  * empty account) or Manager::account (to load an existing account).
  *
+ * @attention Do not call setParent() on an account object; the Account class
+ * assumes that the parent is always the Manager, and changing it will have
+ * unpredictable results.
+ *
  * Most of the methods in the Account class act on the selected service: for
  * example, calling setEnabled(false) on the NULL service (this is the service
  * to be used for changing settings globally on the account) will disable the
