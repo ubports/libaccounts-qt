@@ -34,6 +34,8 @@ namespace Accounts {
 
 class Manager::Private
 {
+    Q_DECLARE_PUBLIC(Manager)
+
     typedef QHash<AgProvider *, Provider *> ProviderHash;
     typedef QHash<AgService *, Service *> ServiceHash;
 public:
@@ -41,6 +43,7 @@ public:
     {
         providers = ProviderHash();
         services = ServiceHash();
+        q_ptr = 0;
         m_manager = 0;
     }
 
@@ -57,6 +60,9 @@ public:
         services.clear();
     }
 
+    void init(Manager *q, AgManager *manager);
+
+    mutable Manager *q_ptr;
     AgManager *m_manager; //real manager
     ProviderHash providers;
     ServiceHash services;
@@ -69,6 +75,25 @@ public:
 } //namespace Accounts
 
 using namespace Accounts;
+
+void Manager::Private::init(Manager *q, AgManager *manager)
+{
+    Q_ASSERT(q_ptr == 0);
+    Q_ASSERT(m_manager == 0);
+
+    q_ptr = q;
+    m_manager = manager;
+
+    g_signal_connect_swapped
+        (manager, "account-created",
+         G_CALLBACK(&Private::on_account_created), q);
+    g_signal_connect_swapped
+        (manager, "account-deleted",
+         G_CALLBACK(&Private::on_account_deleted), q);
+    g_signal_connect_swapped
+        (manager, "enabled-event",
+         G_CALLBACK(&Private::on_enabled_event), q);
+}
 
 void Manager::Private::on_account_created(Manager *self, AgAccountId id)
 {
@@ -96,18 +121,9 @@ Manager::Manager(QObject *parent)
 {
     g_type_init();
 
-    d->m_manager = ag_manager_new();
+    AgManager *manager = ag_manager_new();
 
-    g_signal_connect_swapped
-        (d->m_manager, "account-created",
-         G_CALLBACK(&Private::on_account_created), this);
-    g_signal_connect_swapped
-        (d->m_manager, "account-deleted",
-         G_CALLBACK(&Private::on_account_deleted), this);
-    g_signal_connect_swapped
-        (d->m_manager, "enabled-event",
-         G_CALLBACK(&Private::on_enabled_event), this);
-
+    d->init(this, manager);
 }
 
 Manager::Manager(const QString &serviceType, QObject *parent)
@@ -115,18 +131,10 @@ Manager::Manager(const QString &serviceType, QObject *parent)
 {
     g_type_init();
 
-    d->m_manager = ag_manager_new_for_service_type(serviceType.toUtf8().constData());
+    AgManager *manager =
+        ag_manager_new_for_service_type(serviceType.toUtf8().constData());
 
-    g_signal_connect_swapped
-        (d->m_manager, "account-created",
-         G_CALLBACK(&Private::on_account_created), this);
-    g_signal_connect_swapped
-        (d->m_manager, "account-deleted",
-         G_CALLBACK(&Private::on_account_deleted), this);
-    g_signal_connect_swapped
-        (d->m_manager, "enabled-event",
-         G_CALLBACK(&Private::on_enabled_event), this);
-
+    d->init(this, manager);
 }
 
 Manager::~Manager()
