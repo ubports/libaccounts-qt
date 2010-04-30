@@ -276,7 +276,6 @@ QStringList Account::allKeys() const
 
 void Account::beginGroup(const QString &prefix)
 {
-    TRACE();
     d->prefix += prefix + slash;
 }
 
@@ -482,7 +481,6 @@ SettingSource Account::value(const QString &key, QVariant &value) const
     AgSettingSource source =
         ag_account_get_value(d->m_account,
                              full_key.toLatin1().constData(), &val);
-    TRACE() << "Source:" << source;
     if (source == AG_SETTING_SOURCE_NONE)
         return NONE;
 
