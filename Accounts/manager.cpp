@@ -84,15 +84,19 @@ void Manager::Private::init(Manager *q, AgManager *manager)
     q_ptr = q;
     m_manager = manager;
 
-    g_signal_connect_swapped
-        (manager, "account-created",
-         G_CALLBACK(&Private::on_account_created), q);
-    g_signal_connect_swapped
-        (manager, "account-deleted",
-         G_CALLBACK(&Private::on_account_deleted), q);
-    g_signal_connect_swapped
-        (manager, "enabled-event",
-         G_CALLBACK(&Private::on_enabled_event), q);
+    if (manager) {
+        g_signal_connect_swapped
+            (manager, "account-created",
+             G_CALLBACK(&Private::on_account_created), q);
+        g_signal_connect_swapped
+            (manager, "account-deleted",
+             G_CALLBACK(&Private::on_account_deleted), q);
+        g_signal_connect_swapped
+            (manager, "enabled-event",
+             G_CALLBACK(&Private::on_enabled_event), q);
+    } else {
+        qWarning() << Q_FUNC_INFO << "Initializing with NULL AgManager!";
+    }
 }
 
 void Manager::Private::on_account_created(Manager *self, AgAccountId id)
