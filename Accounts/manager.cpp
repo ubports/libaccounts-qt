@@ -145,14 +145,14 @@ Manager::~Manager()
     d = 0;
 }
 
-Account* Manager::account(const AccountId &id) const
+Account *Manager::account(const AccountId &id) const
 {
     TRACE() << "get account id: " << id;
 
     AgAccount *account = ag_manager_get_account(d->m_manager, id);
 
-    if(account != NULL) {
-        Account* tmp = new Account(account, const_cast<Manager*>(this));
+    if (account != NULL) {
+        Account *tmp = new Account(account, const_cast<Manager*>(this));
         g_object_unref(account);
         return tmp;
     }
@@ -207,7 +207,7 @@ AccountIdList Manager::accountListEnabled(const QString &serviceType) const
     return idList;
 }
 
-Account* Manager::createAccount(const QString &providerName)
+Account *Manager::createAccount(const QString &providerName)
 {
     TRACE() << providerName;
 
@@ -238,10 +238,10 @@ Service *Manager::serviceInstance(AgService *service) const
     return ret;
 }
 
-Service* Manager::service(const QString &serviceName) const
+Service *Manager::service(const QString &serviceName) const
 {
     TRACE() << serviceName;
-    AgService* service =
+    AgService *service =
         ag_manager_get_service(d->m_manager,
                                serviceName.toUtf8().constData());
     if (!service)
@@ -271,7 +271,7 @@ ServiceList Manager::serviceList(const QString &serviceType) const
 
     for (iter = list; iter; iter = g_list_next(iter))
     {
-        Service* serv = serviceInstance((AgService*)(iter->data));
+        Service *serv = serviceInstance((AgService*)(iter->data));
         servList.append(serv);
     }
 
@@ -293,7 +293,7 @@ Provider *Manager::providerInstance(AgProvider *provider) const
     return ret;
 }
 
-Provider* Manager::provider(const QString &providerName) const
+Provider *Manager::provider(const QString &providerName) const
 {
     TRACE() << providerName;
     AgProvider *provider;
