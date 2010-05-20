@@ -154,6 +154,22 @@ public:
      */
     QString serviceType() const;
 
+    /*!
+     * Sets the timeout for database operations.
+     * @param timeout The new timeout, in milliseconds.
+     *
+     * This tells the library how long it is allowed to block while waiting
+     * for a locked DB to become accessible. Higher values mean a higher
+     * chance of successful reads, but also mean that the execution might be
+     * blocked for a longer time. The default is 5 seconds.
+     */
+    void setTimeout(quint32 timeout);
+
+    /*!
+     * Gets the database tiemout.
+     * @return the timeout (in milliseconds) for database operations.
+     */
+    quint32 timeout();
 
 signals:
     /*!

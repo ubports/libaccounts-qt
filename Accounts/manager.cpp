@@ -345,3 +345,14 @@ QString Manager::serviceType() const
 {
     return UTF8(ag_manager_get_service_type (d->m_manager));
 }
+
+void Manager::setTimeout(quint32 timeout)
+{
+    ag_manager_set_db_timeout(d->m_manager, timeout);
+}
+
+quint32 Manager::timeout()
+{
+    return ag_manager_get_db_timeout(d->m_manager);
+}
+
