@@ -372,7 +372,7 @@ public:
      * This method operates on the currently selected service.
      */
     QString valueAsString(const QString &key,
-                          QString default_value = 0,
+                          QString default_value = QString::null,
                           SettingSource *source = 0) const;
 
     /*!
