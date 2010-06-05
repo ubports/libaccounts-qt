@@ -90,7 +90,7 @@ public:
      *
      * @return List of account IDs.
      */
-    AccountIdList accountList(const QString &serviceType = 0) const;
+    AccountIdList accountList(const QString &serviceType = QString::null) const;
 
     /*!
      * Lists the enabled accounts which support the requested service that also
@@ -102,7 +102,7 @@ public:
      *
      * @return List of account IDs.
      */
-    AccountIdList accountListEnabled(const QString &serviceType = 0) const;
+    AccountIdList accountListEnabled(const QString &serviceType = QString::null) const;
 
     /*!
      * Creates a new account.
@@ -130,7 +130,7 @@ public:
      *
      * @return List of Service objects.
      */
-    ServiceList serviceList(const QString &serviceType = 0) const;
+    ServiceList serviceList(const QString &serviceType = QString::null) const;
 
     /*!
      * Get an object representing a provider.
