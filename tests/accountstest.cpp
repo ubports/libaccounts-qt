@@ -31,6 +31,7 @@ using namespace Accounts;
 #define SERVICE QString("dummyservice")
 #define MYSERVICE QLatin1String("MyService")
 #define OTHERSERVICE QLatin1String("OtherService")
+#define EMAIL_SERVICE_TYPE QLatin1String("e-mail")
 
 
 void clearDb()
@@ -44,6 +45,7 @@ void AccountsTest::initTestCase()
     //init
     setenv ("ACCOUNTS", "/tmp/", TRUE);
     setenv ("AG_SERVICES", SERVICES_DIR, TRUE);
+    setenv ("AG_SERVICE_TYPES", SERVICE_TYPES_DIR, TRUE);
     setenv ("AG_PROVIDERS", PROVIDERS_DIR, TRUE);
     //clear database
     clearDb();
@@ -931,6 +933,27 @@ void AccountsTest::enabledEvent()
     delete account2;
     delete mgr;
     delete mgr2;
+}
+
+void AccountsTest::serviceTypeTestCase()
+{
+    Manager *mgr = new Manager();
+    QVERIFY(mgr != NULL);
+
+    ServiceType *serviceType;
+
+    serviceType = mgr->serviceType("unexisting-type");
+    QVERIFY(serviceType == NULL);
+
+    serviceType = mgr->serviceType(EMAIL_SERVICE_TYPE);
+    QVERIFY(serviceType != NULL);
+
+    QCOMPARE(serviceType->name(), EMAIL_SERVICE_TYPE);
+    QCOMPARE(serviceType->displayName(), QLatin1String("Electronic mail"));
+    QCOMPARE(serviceType->trCatalog(), QLatin1String("translation_file"));
+    QCOMPARE(serviceType->iconName(), QLatin1String("email_icon"));
+
+    delete mgr;
 }
 
 QTEST_MAIN(AccountsTest)
