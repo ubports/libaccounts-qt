@@ -9,11 +9,13 @@ HEADERS += accountscommon.h \
     Manager manager.h \
     Account account.h \
     Provider provider.h \
-    Service service.h
+    Service service.h \
+    ServiceType service-type.h
 SOURCES += manager.cpp \
     account.cpp \
     provider.cpp \
-    service.cpp
+    service.cpp \
+    service-type.cpp
 
 CONFIG += link_pkgconfig
 
