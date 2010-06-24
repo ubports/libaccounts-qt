@@ -38,13 +38,15 @@ class Manager::Private
 
     typedef QHash<AgProvider *, Provider *> ProviderHash;
     typedef QHash<AgService *, Service *> ServiceHash;
+    typedef QHash<const QString, ServiceType *> ServiceTypeHash;
 public:
-    Private()
+    Private():
+        q_ptr(0),
+        m_manager(0),
+        providers(),
+        services(),
+        serviceTypes()
     {
-        providers = ProviderHash();
-        services = ServiceHash();
-        q_ptr = 0;
-        m_manager = 0;
     }
 
     ~Private() {
@@ -58,6 +60,12 @@ public:
             delete service;
         }
         services.clear();
+
+        foreach (ServiceType *serviceType, serviceTypes)
+        {
+            delete serviceType;
+        }
+        serviceTypes.clear();
     }
 
     void init(Manager *q, AgManager *manager);
@@ -66,6 +74,7 @@ public:
     AgManager *m_manager; //real manager
     ProviderHash providers;
     ServiceHash services;
+    ServiceTypeHash serviceTypes;
 
     static void on_account_created(Manager *self, AgAccountId id);
     static void on_account_deleted(Manager *self, AgAccountId id);
@@ -339,6 +348,23 @@ ProviderList Manager::providerList() const
     ag_provider_list_free(list);
 
     return provList;
+}
+
+ServiceType *Manager::serviceType(const QString &name) const
+{
+    ServiceType *serviceType = d->serviceTypes.value(name, NULL);
+    if (serviceType == 0) {
+        AgServiceType *type;
+        type = ag_manager_load_service_type(d->m_manager,
+                                            name.toUtf8().constData());
+        if (type == NULL)
+            return NULL;
+
+        serviceType = new ServiceType(type);
+        d->serviceTypes.insert(name, serviceType);
+        ag_service_type_unref(type);
+    }
+    return serviceType;
 }
 
 QString Manager::serviceType() const

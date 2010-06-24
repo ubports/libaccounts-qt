@@ -33,6 +33,7 @@
 #include "Accounts/account.h"
 #include "Accounts/provider.h"
 #include "Accounts/service.h"
+#include "Accounts/service-type.h"
 
 /*! @namespace Accounts
  *
@@ -146,6 +147,14 @@ public:
      * @return List of registered providers.
      */
     ProviderList providerList() const;
+
+    /*!
+     * Get an object representing a service type.
+     * @param name Name of service type to load.
+     *
+     * @return Requested service type or NULL if not found.
+     */
+    ServiceType *serviceType(const QString &name) const;
 
     /*!
      * Get the service type if given in manager constructor.
