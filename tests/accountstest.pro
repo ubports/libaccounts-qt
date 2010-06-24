@@ -18,11 +18,16 @@ DATA_PATH = $${INSTALL_PREFIX}/share/libaccounts-qt-tests/
 
 DEFINES += \
     SERVICES_DIR=\\\"$$DATA_PATH\\\" \
+    SERVICE_TYPES_DIR=\\\"$$DATA_PATH\\\" \
     PROVIDERS_DIR=\\\"$$DATA_PATH\\\"
 
 service.path = $$DATA_PATH
 service.files += *.service
 INSTALLS     += service
+
+service-type.path = $$DATA_PATH
+service-type.files += *.service-type
+INSTALLS += service-type
 
 provider.path = $$DATA_PATH
 provider.files += *.provider

@@ -94,6 +94,8 @@ private slots:
 
     void enabledEvent();
 
+    void serviceTypeTestCase();
+
     private:
     bool m_stored;
     bool m_enabled;
