@@ -1,5 +1,5 @@
 Name: libaccounts-qt
-Version: 0.28
+Version: 0.29
 Release: 1%{?dist}
 Summary: Accounts framework
 Group: System Environment/Libraries
@@ -8,7 +8,7 @@ URL: http://gitorious.org/accounts-sso/accounts-qt
 Source0: accounts-qt-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: qt-devel, doxygen, graphviz
-BuildRequires: libaccounts-glib-devel >= 0.39
+BuildRequires: libaccounts-glib-devel >= 0.42
 BuildRequires: glib2-devel
 BuildRequires: fdupes
 
