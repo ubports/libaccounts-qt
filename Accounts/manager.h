@@ -64,8 +64,8 @@ public:
      * Constructs a manager initialized with service type. This constructor
      * should be used when there is an interest for just one service type.
      * Such a manager has influence on some class methods. When listing the
-     * accounts and services only the ones supporting the given service type 
-     * will be returned. Also the creating account with this manager will 
+     * accounts and services only the ones supporting the given service type
+     * will be returned. Also the creating account with this manager will
      * affect the acccount class method for listing services in same manner.
      * The signal enabledEvent() will be emitted only when manager is created
      * with this constructor.
@@ -86,7 +86,7 @@ public:
      * Lists the accounts which support the requested service.
      *
      * @param serviceType Type of service that returned accounts must support.
-     * If not given and the manager is not constructed with service type, 
+     * If not given and the manager is not constructed with service type,
      * all accounts are returned.
      *
      * @return List of account IDs.
@@ -98,7 +98,7 @@ public:
      * must be enabled.
      *
      * @param serviceType Type of service that returned accounts must support.
-     * If not given and the manager is not constructed with service type, 
+     * If not given and the manager is not constructed with service type,
      * all enabled accounts are returned.
      *
      * @return List of account IDs.
@@ -196,12 +196,24 @@ signals:
     void accountRemoved(Accounts::AccountId id);
 
     /*!
-     * If the manager has been created with serviceType, this 
-     * signal will be emitted when an account (identified by AccountId) has been 
-     * modified in such a way that the application might be interested to start/stop 
-     * using it: the "enabled" flag on the account or in some service supported by the 
+     * The signal is emitted when any account property for a particular service is updated.
+     *
+     * To receive this notification user should create accounts manager using
+     * Manager(const QString &serviceType, QObject *parent) constructor.
+     * Update notification is only emited when manager is created for particular type
+     * of service.
+     *
+     * @param id identifier of the Account
+     */
+    void accountUpdated(Accounts::AccountId id);
+
+    /*!
+     * If the manager has been created with serviceType, this
+     * signal will be emitted when an account (identified by AccountId) has been
+     * modified in such a way that the application might be interested to start/stop
+     * using it: the "enabled" flag on the account or in some service supported by the
      * account and matching the AgManager::serviceType have changed.
-     * In practice, this signal might be emitted more often than when strictly needed; 
+     * In practice, this signal might be emitted more often than when strictly needed;
      * applications must call Account::enabledServices() to get the current state.
      *
      * @param id identifier of the Account
