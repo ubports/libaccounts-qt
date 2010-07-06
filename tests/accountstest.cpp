@@ -53,158 +53,158 @@ void AccountsTest::initTestCase()
 
 void AccountsTest::cleanupTestCase()
 {
-
 }
 
 
 /* manager */
 void AccountsTest::managerTestCase()
 {
-Manager * mgr=new Manager();
-QVERIFY(mgr!=NULL);
-delete mgr;
+    Manager * mgr=new Manager();
+    QVERIFY(mgr!=NULL);
+    delete mgr;
 }
 
 void AccountsTest::createAccountTestCase()
 {
-clearDb();
+    clearDb();
 
-Manager * mgr=new Manager();
-QVERIFY(mgr!=NULL);
+    Manager * mgr=new Manager();
+    QVERIFY(mgr!=NULL);
 
-Account *account = mgr->createAccount(NULL);
-QVERIFY(account!=NULL);
-QVERIFY(account->manager() == mgr);
-delete account;
+    Account *account = mgr->createAccount(NULL);
+    QVERIFY(account!=NULL);
+    QVERIFY(account->manager() == mgr);
+    delete account;
 
-account = mgr->createAccount(PROVIDER);
-QVERIFY(account!=NULL);
-delete account;
+    account = mgr->createAccount(PROVIDER);
+    QVERIFY(account!=NULL);
+    delete account;
 
-delete mgr;
+    delete mgr;
 }
 
 void AccountsTest::accountTestCase()
 {
-clearDb();
+    clearDb();
 
-Manager * mgr=new Manager();
-QVERIFY(mgr!=NULL);
+    Manager * mgr=new Manager();
+    QVERIFY(mgr!=NULL);
 
-//this should not exist
-Account* account2 = mgr->account(1);
-QVERIFY(account2==NULL);
+    //this should not exist
+    Account* account2 = mgr->account(1);
+    QVERIFY(account2==NULL);
 
-// make sure there is account
-Account* account = mgr->createAccount(NULL);
-account->sync();
+    // make sure there is account
+    Account* account = mgr->createAccount(NULL);
+    account->sync();
 
-//now we get account
-account2 = mgr->account(1);
-QVERIFY(account2!=NULL);
+    //now we get account
+    account2 = mgr->account(1);
+    QVERIFY(account2!=NULL);
 
-delete account2;
-delete account;
-delete mgr;
+    delete account2;
+    delete account;
+    delete mgr;
 }
 
 void AccountsTest::accountListTestCase()
 {
-clearDb();
+    clearDb();
 
-Manager * mgr=new Manager();
-QVERIFY(mgr!=NULL);
+    Manager * mgr=new Manager();
+    QVERIFY(mgr!=NULL);
 
-// make sure there is account
-Account* account = mgr->createAccount(NULL);
-account->sync();
+    // make sure there is account
+    Account* account = mgr->createAccount(NULL);
+    account->sync();
 
-AccountIdList list = mgr->accountList(NULL);
+    AccountIdList list = mgr->accountList(NULL);
 
-QVERIFY(!list.isEmpty());
-QCOMPARE(list.size(), 1);
+    QVERIFY(!list.isEmpty());
+    QCOMPARE(list.size(), 1);
 
-for (int i = 0; i < list.size(); i++) {
-     qDebug("%d : %d",i,list.at(i));
- }
+    for (int i = 0; i < list.size(); i++) {
+         qDebug("%d : %d",i,list.at(i));
+     }
 
-delete account;
-delete mgr;
+    delete account;
+    delete mgr;
 }
 
 void AccountsTest::providerTestCase()
 {
-Manager * mgr=new Manager();
-QVERIFY(mgr!=NULL);
+    Manager * mgr=new Manager();
+    QVERIFY(mgr!=NULL);
 
-Account *account = mgr->createAccount(PROVIDER);
-QVERIFY(account!=NULL);
+    Account *account = mgr->createAccount(PROVIDER);
+    QVERIFY(account!=NULL);
 
-QString provider_name = account->providerName();
-QCOMPARE(provider_name, PROVIDER);
+    QString provider_name = account->providerName();
+    QCOMPARE(provider_name, PROVIDER);
 
-delete account;
+    delete account;
 
-/* Check listing and loading of XML files */
-Provider *provider = mgr->provider("MyProvider");
-QVERIFY(provider != NULL);
+    /* Check listing and loading of XML files */
+    Provider *provider = mgr->provider("MyProvider");
+    QVERIFY(provider != NULL);
 
-QCOMPARE(provider->displayName(), QString("My Provider"));
+    QCOMPARE(provider->displayName(), QString("My Provider"));
 
-ProviderList providers = mgr->providerList();
-QVERIFY(!providers.isEmpty());
-QVERIFY(providers.size() == 1);
-QCOMPARE(providers[0]->displayName(), QString("My Provider"));
+    ProviderList providers = mgr->providerList();
+    QVERIFY(!providers.isEmpty());
+    QVERIFY(providers.size() == 1);
+    QCOMPARE(providers[0]->displayName(), QString("My Provider"));
 
-delete mgr;
+    delete mgr;
 }
 
 void AccountsTest::serviceTestCase()
 {
-Manager * mgr=new Manager();
-QVERIFY(mgr!=NULL);
+    Manager * mgr=new Manager();
+    QVERIFY(mgr!=NULL);
 
-Service* service = mgr->service(MYSERVICE);
-QVERIFY(service!=NULL);
-QCOMPARE(service->name(), MYSERVICE);
+    Service* service = mgr->service(MYSERVICE);
+    QVERIFY(service!=NULL);
+    QCOMPARE(service->name(), MYSERVICE);
 
-service = mgr->service(SERVICE);
-QVERIFY(service==NULL);
+    service = mgr->service(SERVICE);
+    QVERIFY(service==NULL);
 
-delete mgr;
+    delete mgr;
 }
 
 void AccountsTest::serviceListTestCase()
 {
-Manager * mgr=new Manager();
-QVERIFY(mgr!=NULL);
+    Manager * mgr=new Manager();
+    QVERIFY(mgr!=NULL);
 
-ServiceList list = mgr->serviceList();
-QVERIFY(!list.isEmpty());
-QVERIFY(list.size()==2);
-for (int i = 0; i < list.size(); i++) {
-     qDebug("%d : %s",i,((Service*)list.at(i))->name().toLocal8Bit().constData());
- }
+    ServiceList list = mgr->serviceList();
+    QVERIFY(!list.isEmpty());
+    QVERIFY(list.size()==2);
 
-delete mgr;
+    for (int i = 0; i < list.size(); i++) {
+         qDebug("%d : %s",i,((Service*)list.at(i))->name().toLocal8Bit().constData());
+     }
+
+    delete mgr;
 }
 
 /* service */
 
 void AccountsTest::serviceConstTestCase()
 {
-Manager * mgr=new Manager();
-QVERIFY(mgr!=NULL);
+    Manager * mgr=new Manager();
+    QVERIFY(mgr!=NULL);
 
-Service* service = mgr->service(MYSERVICE);
-QVERIFY(service!=NULL);
-QCOMPARE(service->name(), MYSERVICE);
-QCOMPARE(service->displayName(), QString("My Service"));
-QCOMPARE(service->serviceType(), QString("e-mail"));
-QCOMPARE(service->provider(), QString(""));
-QVERIFY(service->service()!=NULL);
+    Service* service = mgr->service(MYSERVICE);
+    QVERIFY(service!=NULL);
+    QCOMPARE(service->name(), MYSERVICE);
+    QCOMPARE(service->displayName(), QString("My Service"));
+    QCOMPARE(service->serviceType(), QString("e-mail"));
+    QCOMPARE(service->provider(), QString(""));
+    QVERIFY(service->service()!=NULL);
 
-delete mgr;
+    delete mgr;
 }
 
 
@@ -213,38 +213,38 @@ delete mgr;
 
 void AccountsTest::accountConstTestCase()
 {
-Manager * mgr=new Manager();
-QVERIFY(mgr!=NULL);
+    Manager * mgr=new Manager();
+    QVERIFY(mgr!=NULL);
 
-Account *account = mgr->createAccount(PROVIDER);
-QVERIFY(account!=NULL);
+    Account *account = mgr->createAccount(PROVIDER);
+    QVERIFY(account!=NULL);
 
-delete account;
-delete mgr;
+    delete account;
+    delete mgr;
 }
 
 void AccountsTest::accountServiceTestCase()
 {
-Manager * mgr=new Manager();
-QVERIFY(mgr!=NULL);
+    Manager * mgr=new Manager();
+    QVERIFY(mgr!=NULL);
 
-Account *account = mgr->createAccount(PROVIDER);
-QVERIFY(account!=NULL);
+    Account *account = mgr->createAccount(PROVIDER);
+    QVERIFY(account!=NULL);
 
-//TODO not implemented yet
-QVERIFY(!account->supportsService(QString("unsupported")));
-//QVERIFY(account->supportsService(QString("e-mail")));
+    //TODO not implemented yet
+    QVERIFY(!account->supportsService(QString("unsupported")));
+    //QVERIFY(account->supportsService(QString("e-mail")));
 
-//TODO not implemented yet
-ServiceList list = account->services();
-//QVERIFY(!list.isEmpty());
-//QVERIFY(list.size()==2);
-for (int i = 0; i < list.size(); i++) {
-     qDebug("%d : %s",i,((Service*)list.at(i))->name().toLocal8Bit().constData());
- }
+    //TODO not implemented yet
+    ServiceList list = account->services();
+    //QVERIFY(!list.isEmpty());
+    //QVERIFY(list.size()==2);
+    for (int i = 0; i < list.size(); i++) {
+         qDebug("%d : %s",i,((Service*)list.at(i))->name().toLocal8Bit().constData());
+     }
 
-delete account;
-delete mgr;
+    delete account;
+    delete mgr;
 }
 
 
@@ -256,26 +256,26 @@ void AccountsTest::enabled(const QString & /*serviceName*/, bool enabled)
 
 void AccountsTest::accountEnabledTestCase()
 {
-Manager * mgr=new Manager();
-QVERIFY(mgr!=NULL);
+    Manager * mgr=new Manager();
+    QVERIFY(mgr!=NULL);
 
-Account *account = mgr->createAccount(PROVIDER);
-QVERIFY(account!=NULL);
-m_enabled=false;
-QObject::connect(account, SIGNAL(enabledChanged(const QString&,bool)),
-                  this,  SLOT(enabled(const QString&,bool)));
+    Account *account = mgr->createAccount(PROVIDER);
+    QVERIFY(account!=NULL);
+    m_enabled=false;
+    QObject::connect(account, SIGNAL(enabledChanged(const QString&,bool)),
+                      this,  SLOT(enabled(const QString&,bool)));
 
-account->setEnabled(true);
-account->sync();
-QVERIFY(account->enabled());
-QVERIFY(m_enabled);
-account->setEnabled(false);
-account->sync();
-QVERIFY(!account->enabled());
-QVERIFY(!m_enabled);
+    account->setEnabled(true);
+    account->sync();
+    QVERIFY(account->enabled());
+    QVERIFY(m_enabled);
+    account->setEnabled(false);
+    account->sync();
+    QVERIFY(!account->enabled());
+    QVERIFY(!m_enabled);
 
-delete account;
-delete mgr;
+    delete account;
+    delete mgr;
 }
 
 void AccountsTest::display(const QString &displayName)
@@ -285,70 +285,69 @@ void AccountsTest::display(const QString &displayName)
 
 void AccountsTest::accountDisplayNameTestCase()
 {
-Manager * mgr=new Manager();
-QVERIFY(mgr!=NULL);
+    Manager * mgr=new Manager();
+    QVERIFY(mgr!=NULL);
 
-Account *account = mgr->createAccount(PROVIDER);
-QVERIFY(account!=NULL);
-m_enabled=false;
-QObject::connect(account, SIGNAL(displayNameChanged(const QString&)),
-                  this,  SLOT(display(const QString&)));
+    Account *account = mgr->createAccount(PROVIDER);
+    QVERIFY(account!=NULL);
+    m_enabled=false;
+    QObject::connect(account, SIGNAL(displayNameChanged(const QString&)),
+                      this,  SLOT(display(const QString&)));
 
-account->setDisplayName(PROVIDER);
-account->sync();
-QCOMPARE(account->displayName(),PROVIDER);
-QVERIFY(m_enabled);
+    account->setDisplayName(PROVIDER);
+    account->sync();
+    QCOMPARE(account->displayName(),PROVIDER);
+    QVERIFY(m_enabled);
 
-delete account;
-delete mgr;
+    delete account;
+    delete mgr;
 }
 
 
 
 void AccountsTest::accountValueTestCase()
 {
-Manager * mgr=new Manager();
-QVERIFY(mgr!=NULL);
+    Manager * mgr=new Manager();
+    QVERIFY(mgr!=NULL);
 
-Account *account = mgr->createAccount(PROVIDER);
-QVERIFY(account!=NULL);
+    Account *account = mgr->createAccount(PROVIDER);
+    QVERIFY(account!=NULL);
 
-QObject::connect(account, SIGNAL(synced()),
-                  this,  SLOT(stored()));
-m_stored = false;
-account->setValue(QString("test"),QString("value"));
-int int_value = 666;
-account->setValue("testint", int_value);
-account->sync();
+    QObject::connect(account, SIGNAL(synced()),
+                      this,  SLOT(stored()));
+    m_stored = false;
+    account->setValue(QString("test"),QString("value"));
+    int int_value = 666;
+    account->setValue("testint", int_value);
+    account->sync();
 
-QVERIFY(m_stored);
+    QVERIFY(m_stored);
 
-/* check that the values we wrote are retrieved successfully */
-QVariant val = QVariant::String;
-account->value(QString("test"), val);
-QCOMPARE(val.toString(), QString("value"));
+    /* check that the values we wrote are retrieved successfully */
+    QVariant val = QVariant::String;
+    account->value(QString("test"), val);
+    QCOMPARE(val.toString(), QString("value"));
 
-SettingSource source;
-source = account->value(QString("test"), val);
-QCOMPARE(val.toString(), QString("value"));
+    SettingSource source;
+    source = account->value(QString("test"), val);
+    QCOMPARE(val.toString(), QString("value"));
 
-QVariant intval = QVariant::Int;
-account->value("testint", intval);
-qDebug("Val: %d", intval.toInt());
-QVERIFY(intval.toInt() == int_value);
+    QVariant intval = QVariant::Int;
+    account->value("testint", intval);
+    qDebug("Val: %d", intval.toInt());
+    QVERIFY(intval.toInt() == int_value);
 
-QVERIFY(source == ACCOUNT);
+    QVERIFY(source == ACCOUNT);
 
-/* test the convenience methods */
-QString strval = account->valueAsString("test");
-QCOMPARE (strval, QString("value"));
+    /* test the convenience methods */
+    QString strval = account->valueAsString("test");
+    QCOMPARE (strval, QString("value"));
 
-strval = account->valueAsString("test_unexisting", "hello");
-QCOMPARE (strval, QString("hello"));
+    strval = account->valueAsString("test_unexisting", "hello");
+    QCOMPARE (strval, QString("hello"));
 
-
-delete account;
-delete mgr;
+    delete account;
+    delete mgr;
 }
 
 
@@ -370,29 +369,28 @@ void AccountsTest::error(Accounts::ErrorCode errorCode)
 
 void AccountsTest::accountSyncTestCase()
 {
+    Manager * mgr=new Manager();
+    QVERIFY(mgr!=NULL);
 
-Manager * mgr=new Manager();
-QVERIFY(mgr!=NULL);
+    Account *account = mgr->createAccount(PROVIDER);
+    QVERIFY(account!=NULL);
 
-Account *account = mgr->createAccount(PROVIDER);
-QVERIFY(account!=NULL);
+    QString provider = account->providerName();
+    QCOMPARE(provider, PROVIDER);
 
-QString provider = account->providerName();
-QCOMPARE(provider, PROVIDER);
+    m_stored = false;
+    QObject::connect(account, SIGNAL(synced()),
+                      this,  SLOT(stored()));
+    /*
+    QObject::connect(account, SIGNAL(error(Accounts::ErrorCode)),
+                      this,  SLOT(error(Accounts::ErrorCode)));
+    */
 
-m_stored = false;
-QObject::connect(account, SIGNAL(synced()),
-                  this,  SLOT(stored()));
-/*
-QObject::connect(account, SIGNAL(error(Accounts::ErrorCode)),
-                  this,  SLOT(error(Accounts::ErrorCode)));
-*/
+    account->sync();
+    QVERIFY(m_stored);
 
-account->sync();
-QVERIFY(m_stored);
-
-delete account;
-delete mgr;
+    delete account;
+    delete mgr;
 }
 
 void AccountsTest::created(Accounts::AccountId id)
