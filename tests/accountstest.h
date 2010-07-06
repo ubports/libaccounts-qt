@@ -45,6 +45,8 @@ public slots:
     void w_server_notify(const char *);
     void w_port_notify(const char *);
     void w_parameters_notify(const char *);
+    void updateAccount(Accounts::AccountId id);
+
 private slots:
     void initTestCase();
     void cleanupTestCase();
@@ -96,7 +98,9 @@ private slots:
 
     void serviceTypeTestCase();
 
-    private:
+    void updateAccountTestCase();
+
+private:
     bool m_stored;
     bool m_enabled;
     AccountId m_created;
@@ -107,6 +111,7 @@ private slots:
     int m_server_notify;
     int m_port_notify;
     int m_parameters_notify;
+    AccountId m_updateEvent;
 };
 
 #endif
