@@ -954,5 +954,57 @@ void AccountsTest::serviceTypeTestCase()
     delete mgr;
 }
 
+void AccountsTest::updateAccountTestCase()
+{
+    clearDb();
+
+    Manager *mgr = new Manager("e-mail");
+    QVERIFY(mgr != NULL);
+
+    m_updateEvent = 0;
+    QObject::connect(mgr, SIGNAL(accountUpdated(Accounts::AccountId)),
+                     this, SLOT(updateAccount(Accounts::AccountId)));
+
+    Account *account = mgr->createAccount("MyProvider");
+    QVERIFY(account != NULL);
+
+    Service* service = mgr->service(MYSERVICE);
+    QVERIFY(service!=NULL);
+    account->selectService(service);
+
+    account->setValue("key", QVariant("value"));
+    account->syncAndBlock();
+
+    QVERIFY(m_updateEvent != 0);
+    QVERIFY(m_updateEvent == account->id());
+
+    //if we create manager without service type the signal shoudl not be emitted
+    Manager *mgr2 = new Manager();
+    QVERIFY(mgr2 != NULL);
+
+    m_updateEvent = 0;
+    QObject::connect(mgr2, SIGNAL(accountUpdated(Accounts::AccountId)),
+                     this, SLOT(updateAccount(Accounts::AccountId)));
+
+    Account *account2 = mgr2->createAccount(NULL);
+    QVERIFY(account2 != NULL);
+
+    account2->setValue("key", QVariant("value"));
+    account2->syncAndBlock();
+
+    QVERIFY(m_updateEvent == 0);
+    QVERIFY(m_updateEvent != account2->id());
+
+    delete account;
+    delete account2;
+    delete mgr;
+    delete mgr2;
+}
+
+void AccountsTest::updateAccount(Accounts::AccountId id)
+{
+    m_updateEvent = id;
+}
+
 QTEST_MAIN(AccountsTest)
 // #include "testqstring.moc"
