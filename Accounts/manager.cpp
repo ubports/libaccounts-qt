@@ -78,6 +78,7 @@ public:
 
     static void on_account_created(Manager *self, AgAccountId id);
     static void on_account_deleted(Manager *self, AgAccountId id);
+    static void on_account_updated(Manager *self, AgAccountId id);
     static void on_enabled_event(Manager *self, AgAccountId id);
 };
 
@@ -101,6 +102,9 @@ void Manager::Private::init(Manager *q, AgManager *manager)
             (manager, "account-deleted",
              G_CALLBACK(&Private::on_account_deleted), q);
         g_signal_connect_swapped
+            (manager, "account-updated",
+             G_CALLBACK(&Private::on_account_updated), q);
+        g_signal_connect_swapped
             (manager, "enabled-event",
              G_CALLBACK(&Private::on_enabled_event), q);
     } else {
@@ -120,6 +124,13 @@ void Manager::Private::on_account_deleted(Manager *self, AgAccountId id)
     TRACE() << "id =" << id;
 
     emit self->accountRemoved(id);
+}
+
+void Manager::Private::on_account_updated(Manager *self, AgAccountId id)
+{
+    TRACE() << "id =" << id;
+
+    emit self->accountUpdated(id);
 }
 
 void Manager::Private::on_enabled_event(Manager *self, AgAccountId id)
@@ -155,11 +166,13 @@ Manager::~Manager()
     TRACE();
 
     g_signal_handlers_disconnect_by_func
-        (d->m_manager, (void *)&Private::on_account_created, this);
+        (d->m_manager, (void *)&Private::on_enabled_event, this);
+    g_signal_handlers_disconnect_by_func
+        (d->m_manager, (void *)&Private::on_account_updated, this);
     g_signal_handlers_disconnect_by_func
         (d->m_manager, (void *)&Private::on_account_deleted, this);
     g_signal_handlers_disconnect_by_func
-        (d->m_manager, (void *)&Private::on_enabled_event, this);
+        (d->m_manager, (void *)&Private::on_account_created, this);
     g_object_unref(d->m_manager);
 
     delete d;
