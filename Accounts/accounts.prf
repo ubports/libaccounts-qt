@@ -4,3 +4,5 @@ ACCOUNTS_LIB_DIR = /usr/lib
 INCLUDEPATH += $${ACCOUNTS_INC_DIR}
 LIBS += $${ACCOUNTS_LIB_DIR} -laccounts-qt
 
+QT += xml
+
