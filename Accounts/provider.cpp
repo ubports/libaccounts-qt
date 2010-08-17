@@ -54,6 +54,11 @@ QString Provider::displayName() const
     return UTF8(ag_provider_get_display_name(m_provider));
 }
 
+QString Provider::trCatalog() const
+{
+    return ASCII(ag_provider_get_i18n_domain(m_provider));
+}
+
 const QDomDocument Provider::domDocument() const
 {
     if (doc.isNull())
