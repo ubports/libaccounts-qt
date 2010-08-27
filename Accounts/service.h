@@ -68,6 +68,11 @@ public:
     QString displayName() const;
 
     /*!
+     * Returns the translation catalog of the service
+     */
+    QString trCatalog() const;
+
+    /*!
      * @todo define
      */
     QString serviceType() const;

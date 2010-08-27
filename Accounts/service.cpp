@@ -62,6 +62,11 @@ QString Service::serviceType() const
     return ASCII(ag_service_get_service_type(m_service));
 }
 
+QString Service::trCatalog() const
+{
+    return ASCII(ag_service_get_i18n_domain(m_service));
+}
+
 QString Service::provider() const
 {
     return UTF8(ag_service_get_provider(m_service));
