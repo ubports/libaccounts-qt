@@ -183,12 +183,18 @@ Account *Manager::account(const AccountId &id) const
 {
     TRACE() << "get account id: " << id;
 
-    AgAccount *account = ag_manager_get_account(d->m_manager, id);
+    GError *error = NULL;
+    AgAccount *account = ag_manager_load_account(d->m_manager, id, &error);
 
     if (account != NULL) {
+        Q_ASSERT(error == NULL);
         Account *tmp = new Account(account, const_cast<Manager*>(this));
         g_object_unref(account);
         return tmp;
+    } else {
+        Q_ASSERT(error != NULL);
+        /* TODO report the error */
+        g_error_free(error);
     }
     return NULL;
 }
