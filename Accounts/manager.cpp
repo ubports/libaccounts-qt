@@ -75,6 +75,7 @@ public:
     ProviderHash providers;
     ServiceHash services;
     ServiceTypeHash serviceTypes;
+    Error lastError;
 
     static void on_account_created(Manager *self, AgAccountId id);
     static void on_account_deleted(Manager *self, AgAccountId id);
@@ -193,7 +194,7 @@ Account *Manager::account(const AccountId &id) const
         return tmp;
     } else {
         Q_ASSERT(error != NULL);
-        /* TODO report the error */
+        d->lastError = Error(error);
         g_error_free(error);
     }
     return NULL;
@@ -399,5 +400,10 @@ void Manager::setTimeout(quint32 timeout)
 quint32 Manager::timeout()
 {
     return ag_manager_get_db_timeout(d->m_manager);
+}
+
+Error Manager::lastError() const
+{
+    return d->lastError;
 }
 
