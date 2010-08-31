@@ -967,6 +967,7 @@ void AccountsTest::updateAccountTestCase()
 
     Account *account = mgr->createAccount("MyProvider");
     QVERIFY(account != NULL);
+    account->syncAndBlock();
 
     Service* service = mgr->service(MYSERVICE);
     QVERIFY(service!=NULL);
