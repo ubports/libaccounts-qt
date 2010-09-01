@@ -30,6 +30,7 @@
 #include <QStringList>
 
 #include "Accounts/accountscommon.h"
+#include "Accounts/error.h"
 #include "Accounts/service.h"
 
 #define ACCOUNTS_KEY_CREDENTIALS_ID QLatin1String("CredentialsId")
@@ -64,6 +65,7 @@ enum SettingSource
 enum ErrorCode
 {
     /* The value of this enum must be the same as AgError */
+    // TODO remove when the deprecated Error() signal using it is removed
     Database = 0,
     Disposed,
     Deleted,
@@ -471,7 +473,16 @@ signals:
     void displayNameChanged(const QString &displayName);
     void enabledChanged(const QString &serviceName, bool enabled);
 
+    /*!
+     * @deprecated This signal is deprecated and will eventually be removed.
+     * @sa error(Account::Error)
+     */
     void error(Accounts::ErrorCode errorCode);
+
+    /*!
+     * Emitted when an error occurs.
+     */
+    void error(Accounts::Error error);
     void synced();
 
     void removed();

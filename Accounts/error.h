@@ -99,6 +99,7 @@ public:
 
 private:
     // Don't include in docs: \cond
+    friend class Account;
     friend class Manager;
     Error(const GError *error);
 
