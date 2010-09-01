@@ -402,6 +402,16 @@ quint32 Manager::timeout()
     return ag_manager_get_db_timeout(d->m_manager);
 }
 
+void Manager::setAbortOnTimeout(bool abort)
+{
+    ag_manager_set_abort_on_db_timeout(d->m_manager, abort);
+}
+
+bool Manager::abortOnTimeout() const
+{
+    return ag_manager_get_abort_on_db_timeout(d->m_manager);
+}
+
 Error Manager::lastError() const
 {
     return d->lastError;
