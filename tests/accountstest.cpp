@@ -360,11 +360,10 @@ void AccountsTest::stored()
     m_stored = true;
 }
 
-void AccountsTest::error(Accounts::ErrorCode errorCode)
+void AccountsTest::error(Accounts::Error error)
 {
     qDebug("%s %d %s:\t", __FILE__, __LINE__, __func__);
-    TRACE() << "error:" << errorCode;
-    Q_UNUSED (errorCode);
+    TRACE() << "error:" << error.type();
     m_stored = false;
 }
 
@@ -383,10 +382,6 @@ void AccountsTest::accountSyncTestCase()
     m_stored = false;
     QObject::connect(account, SIGNAL(synced()),
                       this,  SLOT(stored()));
-    /*
-    QObject::connect(account, SIGNAL(error(Accounts::ErrorCode)),
-                      this,  SLOT(error(Accounts::ErrorCode)));
-    */
 
     account->sync();
     QVERIFY(m_stored);
