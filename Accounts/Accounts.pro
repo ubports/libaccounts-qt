@@ -8,11 +8,13 @@ TEMPLATE = lib
 HEADERS += accountscommon.h \
     Manager manager.h \
     Account account.h \
+    Error error.h \
     Provider provider.h \
     Service service.h \
     ServiceType service-type.h
 SOURCES += manager.cpp \
     account.cpp \
+    error.cpp \
     provider.cpp \
     service.cpp \
     service-type.cpp
