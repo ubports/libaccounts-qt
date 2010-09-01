@@ -93,6 +93,8 @@ void AccountsTest::accountTestCase()
     //this should not exist
     Account* account2 = mgr->account(1);
     QVERIFY(account2==NULL);
+    Error error = mgr->lastError();
+    QCOMPARE(error.type(), Error::AccountNotFound);
 
     // make sure there is account
     Account* account = mgr->createAccount(NULL);
