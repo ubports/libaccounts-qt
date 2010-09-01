@@ -183,6 +183,18 @@ public:
     quint32 timeout();
 
     /*!
+     * Sets whether to abort the application when a database timeout occurs.
+     * By default the library does not abort.
+     */
+    void setAbortOnTimeout(bool abort);
+
+    /*!
+     * @return whether the application will be aborted when a database timeout
+     * occurs.
+     */
+    bool abortOnTimeout() const;
+
+    /*!
      * Gets the last error. Not all operations set/reset the error; see the
      * individual methods' documentation to see if they set the last error or
      * not. Call this method right after an account operation
