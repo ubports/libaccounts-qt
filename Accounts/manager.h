@@ -31,6 +31,7 @@
 
 #include "Accounts/accountscommon.h"
 #include "Accounts/account.h"
+#include "Accounts/error.h"
 #include "Accounts/provider.h"
 #include "Accounts/service.h"
 #include "Accounts/service-type.h"
@@ -78,7 +79,8 @@ public:
      * Loads an account from the database.
      * @param id Id of the account to be retrieved.
      *
-     * @return Requested account or NULL if not found.
+     * @return Requested account or NULL if not found. If NULL is returned,
+     * call lastError() to find out why.
      */
     Account *account(const AccountId &id) const;
 
@@ -179,6 +181,17 @@ public:
      * @return the timeout (in milliseconds) for database operations.
      */
     quint32 timeout();
+
+    /*!
+     * Gets the last error. Not all operations set/reset the error; see the
+     * individual methods' documentation to see if they set the last error or
+     * not. Call this method right after an account operation
+     * has failed; if no error occurred, the result of this method are
+     * undefined.
+     *
+     * @return the last error.
+     */
+    Error lastError() const;
 
 signals:
     /*!
