@@ -36,7 +36,7 @@ public:
 
 public slots:
     void stored();
-    void error(Accounts::ErrorCode errorCode);
+    void error(Accounts::Error error);
     void enabled(const QString &serviceName, bool enabled);
     void enabledEvent(Accounts::AccountId id);
     void display(const QString &serviceName);
