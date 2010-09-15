@@ -30,7 +30,7 @@ PKGCONFIG += \
 	gobject-2.0 \
 	libaccounts-glib
 
-QMAKE_CXXFLAGS = \
+QMAKE_CXXFLAGS += \
     -fno-exceptions \
     -fno-rtti \
     -fvisibility=hidden
