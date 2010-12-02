@@ -32,7 +32,6 @@ PKGCONFIG += \
 
 QMAKE_CXXFLAGS += \
     -fno-exceptions \
-    -fno-rtti \
     -fvisibility=hidden
 
 headers.files = $$HEADERS
