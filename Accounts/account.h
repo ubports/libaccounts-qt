@@ -183,15 +183,19 @@ public:
     ServiceList enabledServices() const;
 
     /*!
-     * Checks whether the account is enabled.
+     * Checks whether the account or selected service is enabled.
+     *
+     * This method operates on the currently selected service or
+     * globally, if none selected.
      */
     bool enabled() const;
 
     /*!
-     * Enables/disables the account.
+     * Enables/disables the account or selected service.
      * The change will be written only when sync() is called.
      *
-     * This method operates on the currently selected service.
+     * This method operates on the currently selected service or
+     * globally, if none selected.
      */
     void setEnabled(bool);
 
