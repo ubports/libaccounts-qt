@@ -19,6 +19,10 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA
  */
+/*!
+ * @copyright Copyright (C) 2009-2010 Nokia Corporation.
+ * @license LGPL
+ */
 
 #ifndef ACCOUNTS_ERROR_H
 #define ACCOUNTS_ERROR_H
