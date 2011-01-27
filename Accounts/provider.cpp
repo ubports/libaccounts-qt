@@ -59,6 +59,11 @@ QString Provider::trCatalog() const
     return ASCII(ag_provider_get_i18n_domain(m_provider));
 }
 
+QString Provider::iconName() const
+{
+    return ASCII(ag_provider_get_icon_name(m_provider));
+}
+
 const QDomDocument Provider::domDocument() const
 {
     if (doc.isNull())

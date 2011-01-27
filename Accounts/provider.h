@@ -69,6 +69,11 @@ public:
     QString trCatalog() const;
 
     /*!
+      * Returns the provider icon name
+      */
+    QString iconName() const;
+
+    /*!
      * Return the DOM of the whole XML provider file.
      */
     const QDomDocument domDocument() const;
