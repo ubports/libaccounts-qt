@@ -92,12 +92,12 @@ public:
     virtual ~Error() {}
 
     /*!
-     * @return the error's type.
+     * @return The error's type.
      */
     ErrorType type() const { return m_type; }
 
     /*!
-     * @return the error's message.
+     * @return The error's message.
      */
     QString message() const { return m_message; }
 

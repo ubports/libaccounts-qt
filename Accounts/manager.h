@@ -57,7 +57,7 @@ class ACCOUNTS_EXPORT Manager : public QObject
 public:
 
     /*!
-     * Constructor
+     * Constructor.
      */
     Manager(QObject *parent = 0);
 
@@ -73,6 +73,9 @@ public:
      */
     Manager(const QString &serviceType, QObject *parent = 0);
 
+    /*!
+     * Destructor.
+     */
     ~Manager();
 
     /*!
@@ -116,7 +119,7 @@ public:
     Account *createAccount(const QString &providerName);
 
     /*!
-     * Get an object representing a service.
+     * Gets an object representing a service.
      * @param serviceName Name of service to get.
      *
      * @return Requested service or NULL if not found.
@@ -124,7 +127,7 @@ public:
     Service *service(const QString &serviceName) const;
 
     /*!
-     * Get service list. If the manager is constructed with given service type
+     * Gets the service list. If the manager is constructed with given service type
      * only the services which supports the service type will be returned.
      *
      * @param serviceType Type of services to be listed. If not given and
@@ -136,7 +139,7 @@ public:
     ServiceList serviceList(const QString &serviceType = QString::null) const;
 
     /*!
-     * Get an object representing a provider.
+     * Gets an object representing a provider.
      * @param providerName Name of provider to get.
      *
      * @return Requested provider or NULL if not found.
@@ -144,14 +147,14 @@ public:
     Provider *provider(const QString &providerName) const;
 
     /*!
-     * Get provider list.
+     * Gets a provider list.
      *
      * @return List of registered providers.
      */
     ProviderList providerList() const;
 
     /*!
-     * Get an object representing a service type.
+     * Gets an object representing a service type.
      * @param name Name of service type to load.
      *
      * @return Requested service type or NULL if not found.
@@ -159,15 +162,15 @@ public:
     ServiceType *serviceType(const QString &name) const;
 
     /*!
-     * Get the service type if given in manager constructor.
+     * Gets the service type if given in manager constructor.
      *
-     * @return service type or NULL if not given.
+     * @return Service type or NULL if not given.
      */
     QString serviceType() const;
 
     /*!
      * Sets the timeout for database operations.
-     * @param timeout The new timeout, in milliseconds.
+     * @param timeout The new timeout in milliseconds.
      *
      * This tells the library how long it is allowed to block while waiting
      * for a locked DB to become accessible. Higher values mean a higher
@@ -177,19 +180,19 @@ public:
     void setTimeout(quint32 timeout);
 
     /*!
-     * Gets the database tiemout.
-     * @return the timeout (in milliseconds) for database operations.
+     * Gets the database timeout.
+     * @return The timeout (in milliseconds) for database operations.
      */
     quint32 timeout();
 
     /*!
      * Sets whether to abort the application when a database timeout occurs.
-     * By default the library does not abort.
+     * By default the library does not abort the application.
      */
     void setAbortOnTimeout(bool abort);
 
     /*!
-     * @return whether the application will be aborted when a database timeout
+     * @return Whether the application will be aborted when a database timeout
      * occurs.
      */
     bool abortOnTimeout() const;
@@ -201,7 +204,7 @@ public:
      * has failed; if no error occurred, the result of this method are
      * undefined.
      *
-     * @return the last error.
+     * @return The last error.
      */
     Error lastError() const;
 
@@ -209,26 +212,26 @@ signals:
     /*!
      * The signal is emitted when new account is created.
      *
-     * @param id identifier of the Account
+     * @param id Identifier of the Account
      */
     void accountCreated(Accounts::AccountId id);
 
     /*!
      * The signal is emitted when existing account is removed.
      *
-     * @param id identifier of the Account
+     * @param id Identifier of the Account
      */
     void accountRemoved(Accounts::AccountId id);
 
     /*!
      * The signal is emitted when any account property for a particular service is updated.
      *
-     * To receive this notification user should create accounts manager using
+     * To receive this notification user has to create accounts manager using
      * Manager(const QString &serviceType, QObject *parent) constructor.
-     * Update notification is only emited when manager is created for particular type
+     * Update notification is only emitted when manager is created for particular type
      * of service.
      *
-     * @param id identifier of the Account
+     * @param id Identifier of the Account
      */
     void accountUpdated(Accounts::AccountId id);
 

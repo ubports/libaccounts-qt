@@ -63,18 +63,18 @@ public:
     QString name() const;
     QString displayName() const;
     /*!
-     * Returns the name of the translation catalog, which can be used to
+     * @return The name of the translation catalog, which can be used to
      * translate the displayName().
      */
     QString trCatalog() const;
 
     /*!
-      * Returns the provider icon name
+      * @return The provider icon name
       */
     QString iconName() const;
 
     /*!
-     * Return the DOM of the whole XML provider file.
+     * @return The DOM of the whole XML provider file.
      */
     const QDomDocument domDocument() const;
 

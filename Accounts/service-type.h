@@ -61,7 +61,7 @@ public:
     QString name() const;
 
     /*!
-     * Returns the display name of the service type; this is a string that
+     * @return The display name of the service type; this is a string that
      * could be shown in the UI to describe the service type to the user.
      *
      * The library attempts to translate this string by passing it to the
@@ -71,18 +71,18 @@ public:
     QString displayName() const;
 
     /*!
-     * Returns the name of the translation catalog, which can be used to
-     * translate the displayName().
+     * @return The name of the translation catalog, which can be used to
+     * translate the displayName()
      */
     QString trCatalog() const;
 
     /*!
-     * @returns the icon name.
+     * @return The icon name
      */
     QString iconName() const;
 
     /*!
-     * Return the DOM of the whole XML service file.
+     * @return The DOM of the whole XML service file
      */
     const QDomDocument domDocument() const;
 
