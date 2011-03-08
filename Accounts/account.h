@@ -57,7 +57,7 @@ class Manager;
 
 /*!
  * Tells the origin of an account setting: whether it was set on the account,
- * or it's a default value in the service template, or whether it's unset.
+ * or is it a default value in the service template, or whether it is unset.
  */
 enum SettingSource
 {
@@ -82,7 +82,7 @@ enum ErrorCode
  *
  * @details A watch is created via the Account::watch method and is a simple
  * object which will emit the notify() signal when the value of the key (or
- * group) that it's monitoring is changed.
+ * group) that it is monitoring is changed.
  */
 class ACCOUNTS_EXPORT Watch : public QObject
 {
@@ -119,7 +119,7 @@ private:
  *
  * @brief The Account class provides an interface to account settings.
  *
- * @details The Account class is used to access account and service settings.
+ * @details The Account class is used to access the account and service settings.
  * This class has no constructor, therefore to instantiate one Account object
  * one has to either use the Manager::createAccount method (to create a new
  * empty account) or Manager::account (to load an existing account).
@@ -148,7 +148,7 @@ class ACCOUNTS_EXPORT Account : public QObject
 public:
 
     /*!
-     * Destroy current account object and free all resources
+     * Destroys the current account object and free all resources
      */
     virtual ~Account();
 
@@ -164,12 +164,12 @@ public:
     Manager *manager() const;
 
     /*!
-     * Checks whether the account supports the given service
+     * Checks whether the account supports the given service.
      */
     bool supportsService(const QString &serviceType) const;
 
     /*!
-     * Return a list of services supported by this account. If the manager was
+     * Returns a list of services supported by this account. If the manager was
      * constructed with given service type only the services which supports the
      * service type will be returned.
      *
@@ -179,7 +179,7 @@ public:
     ServiceList services(const QString &serviceType = NULL) const;
 
     /*!
-     * Return a list of enabled services supported by this account. If the manager was
+     * Returns a list of enabled services supported by this account. If the manager was
      * constructed with given service type only the services which supports the
      * service type will be returned.
 
@@ -204,16 +204,16 @@ public:
     void setEnabled(bool);
 
     /*!
-     * Get the account's credentials id in signon DB.
+     * Gets the account's credentials ID in Signon database.
      *
      * The credentials ID is first read from the currently selected service;
-     * if it's not found, then it is ready from the global account settings.
+     * if it is not found, then it is ready from the global account settings.
      * In any case, the currently selected service is not altered.
      */
     qint32 credentialsId();
 
     /*!
-     * set the accounts credentials id
+     * Sets the accounts credentials ID.
      * The change will be written only when sync() is called.
      *
      * This method operates on the currently selected service.
@@ -290,7 +290,7 @@ public:
     void clear();
 
     /*!
-     * Check whether the given key is in the current group.
+     * Checks whether the given key is in the current group.
      * @param key The key name of the settings.
      *
      * This method operates on the currently selected service.
@@ -317,7 +317,7 @@ public:
     bool isWritable() const;
 
     /*!
-     * Remove the given key. If the key is the empty string, all keys in the
+     * Removes the given key. If the key is the empty string, all keys in the
      * current group are removed.
      * @param key The key name of the settings.
      *
@@ -353,7 +353,7 @@ public:
      * will block until the operation has completed.
      * Usage of this method is discouraged, especially for UI applications.
      *
-     * @return true on success, false otherwise.
+     * @return True on success, false otherwise.
      */
     bool syncAndBlock();
 
@@ -399,8 +399,8 @@ public:
                    SettingSource *source = 0) const;
 
     /*!
-     * Gets an account setting as an usigned long long integer.
-     * @param key The key whose value must be retrieved.
+     * Gets an account setting as an unsigned long integer.
+     * @param key The key of which value must be retrieved.
      * @param default_value Value returned if the key is unset.
      * @param source Indicates whether the value comes from the account, the
      * service template or was unset.
@@ -424,12 +424,12 @@ public:
                      bool default_value = false,
                      SettingSource *source = 0) const;
     /*!
-     * Install a key/group watch.
+     * Installs a key or group watch.
      *
      * @param key The key to watch; if %NULL, watches the currently selected
      * group.
      *
-     * @return A Watch object.
+     * @return A watch object.
      *
      * This method operates on the currently selected service.
      */
@@ -451,26 +451,26 @@ public:
     void sign(const QString &key, const char *token);
 
     /*!
-     * Verify if the key is signed and the signature matches the value
+     * Verifies if the key is signed and the signature matches the value
      * and provides the token which was used for signing the key.
      *
      * @param key The name of the key or prefix of the keys to be verified.
      * @param token Token to be retrieved.
      *
-     * @return true if the key is signed and the signature matches the value.
+     * @return True if the key is signed and the signature matches the value.
      *
      * This method operates on the currently selected service.
      */
     bool verify(const QString &key, const char **token);
 
     /*!
-     * Verify if the key is signed with any of the tokens and the signature
+     * Verifies if the key is signed with any of the tokens and the signature
      * is valid.
      *
      * @param key The name of the key or prefix of the keys to be verified.
      * @param tokens Array of the tokens.
      *
-     * @return true if the key is signed with any of the token and the signature
+     * @return True if the key is signed with any of the token and the signature
      * is valid.
      *
      * This method operates on the currently selected service.
@@ -485,6 +485,7 @@ signals:
      * @deprecated This signal is deprecated and will eventually be removed.
      * @sa error(Account::Error)
      */
+    void error(Accounts::ErrorCode errorCode);
     void error(Accounts::ErrorCode errorCode);
 
     /*!

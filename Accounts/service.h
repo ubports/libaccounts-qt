@@ -72,7 +72,7 @@ public:
     QString displayName() const;
 
     /*!
-     * Returns the translation catalog of the service
+     * @return The translation catalog of the service
      */
     QString trCatalog() const;
 
@@ -87,18 +87,18 @@ public:
     QString provider() const;
 
     /*!
-     * @returns the icon name.
+     * @return The icon name.
      */
     QString iconName() const;
 
     /*!
-     * Create a QXmlStreamReader for the service XML file, positioned at the
+     * Creates a QXmlStreamReader for the service XML file, positioned at the
      * "type_data" element.
      */
     QXmlStreamReader *xmlStreamReader() const;
 
     /*!
-     * Return the DOM of the whole XML service file.
+     * @return The DOM of the whole XML service file
      */
     const QDomDocument domDocument() const;
 
