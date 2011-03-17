@@ -486,7 +486,6 @@ signals:
      * @sa error(Account::Error)
      */
     void error(Accounts::ErrorCode errorCode);
-    void error(Accounts::ErrorCode errorCode);
 
     /*!
      * Emitted when an error occurs.
