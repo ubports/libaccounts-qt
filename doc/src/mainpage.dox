@@ -1,0 +1,60 @@
+/*! @mainpage Accounts-Qt library
+
+@section intro Introduction
+
+<p>The Accounts library provides a storage solution for user accounts.
+The API provides access to the account storage: retrieval, editing and creation
+of accounts, as well as enumeration of the currently installed account
+providers and services. A change notification mechanism is implemented in order
+to let different processes operate on the same data simultaneously.</p>
+
+@section terminology Terminology and basic concepts
+
+<p>Common terms such as accounts, provider, services are familiar to most
+people, but not everyone associates the same meaning to them. Therefore, since
+these terms are commonly used in this library APIs, please spend some time to
+get familiar with our naming convention:</p>
+
+<ul>
+  <li><b>Account</b>: This is a user account on a server. With the same term we
+also refer to the local object which represents a remote account. An
+account has one provider, and zero or more services.</li>
+  <li><b>Provider</b>: The organization which provides the account.</li>
+  <li><b>Service</b>: the actual service that the end user accesses by
+means of the account; on the same account there could be more than one
+service.</li>
+  <li><b>Service type</b>: The protocol or application of a service. Every
+service has a service type, and there might be many services having the same
+type (possibly even on the same account).</li>
+</ul>
+
+<p>Accounts are stored in the DB provided by this library; providers, services
+and service types are defined by XML files which should be installed in
+well-defined filesystem paths (the Accounts-Qt library defaults to <code>
+/usr/share/accounts/{providers,services,service-types}/</code>) and which the library
+will allow applications to enumerate and read.</p>
+<p>Note that the library doesn't come with any pre-installed provider, service
+or service type: it's expected that provider and service files will be
+installed by the applications (or account plugins, if a centralized
+account-editing application is installed on the system) written by the service
+providers; service types should be defined by the applications or frameworks
+which are going to use the account information.</p>
+
+@section classlist List of classes in Accounts-Qt
+
+<table>
+  <tr><td>Accounts::Manager</td><td>Main object in Accounts-Qt: instantiate an
+Accounts::Manager to list and instantiate accounts, providers,
+services.</td></tr>
+  <tr><td>Accounts::Account</td><td>Interface to account settings and data.</td></tr>
+  <tr><td>Accounts::Provider</td><td>Representation of an installed account
+provider.</td></tr>
+  <tr><td>Accounts::Service</td><td>Representation of an installed account
+service.</td></tr>
+  <tr><td>Accounts::ServiceType</td><td>Representation of an account
+service type.</td></tr>
+  <tr><td>Accounts::Watch</td><td>Monitors an account key or group of keys.</td></tr>
+  <tr><td>Accounts::Error</td><td>Base object definition for errors emitted by the library.</td></tr>
+</table>
+
+*/
