@@ -87,6 +87,7 @@ public:
     const QDomDocument domDocument() const;
 
 private:
+    // \cond
     ~ServiceType();
 
     friend class Manager;
