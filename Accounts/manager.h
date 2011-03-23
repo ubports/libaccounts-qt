@@ -58,6 +58,8 @@ public:
 
     /*!
      * Constructor.
+     * Users should check for manager->lastError() to check if manager construction
+     *  was fully succesful, other than just checking for if manager != NULL
      */
     Manager(QObject *parent = 0);
 
@@ -70,6 +72,8 @@ public:
      * affect the acccount class method for listing services in same manner.
      * The signal enabledEvent() will be emitted only when manager is created
      * with this constructor.
+     * Users should check for manager->lastError() to check if manager construction
+     * was fully succesful, other than just checking for if manager != NULL
      */
     Manager(const QString &serviceType, QObject *parent = 0);
 

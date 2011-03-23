@@ -148,7 +148,13 @@ Manager::Manager(QObject *parent)
 
     AgManager *manager = ag_manager_new();
 
-    d->init(this, manager);
+    if (manager != 0) {
+        d->init(this, manager);
+    } else {
+        qWarning() << "Manager could not be created. DB is locked";
+        d->lastError = Error::DatabaseLocked;
+    }
+
 }
 
 Manager::Manager(const QString &serviceType, QObject *parent)
@@ -159,7 +165,13 @@ Manager::Manager(const QString &serviceType, QObject *parent)
     AgManager *manager =
         ag_manager_new_for_service_type(serviceType.toUtf8().constData());
 
-    d->init(this, manager);
+    if (manager != 0) {
+        d->init(this, manager);
+    } else {
+        qWarning() << "Manager could not be created, DB is locked";
+        d->lastError = Error::DatabaseLocked;
+    }
+
 }
 
 Manager::~Manager()
