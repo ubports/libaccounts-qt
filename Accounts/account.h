@@ -442,9 +442,11 @@ public:
     void remove();
 
     /*!
-     * Creates signature of key with given token.
+     * Creates signature of key with given aegis token. The calling application
+     * must possess (request) the given aegis token. The account needs to be
+     * stored prior to executing this method.
      * @param key The key or the prefix of set of the keys to be signed.
-     * @param token The token to be used for signing the key.
+     * @param token The aegis token to be used for signing the key.
      *
      * This method operates on the currently selected service.
      */
@@ -452,10 +454,10 @@ public:
 
     /*!
      * Verifies if the key is signed and the signature matches the value
-     * and provides the token which was used for signing the key.
+     * and provides the aegis token which was used for signing the key.
      *
      * @param key The name of the key or prefix of the keys to be verified.
-     * @param token Token to be retrieved.
+     * @param token Aegis token to be retrieved.
      *
      * @return True if the key is signed and the signature matches the value.
      *
@@ -464,14 +466,14 @@ public:
     bool verify(const QString &key, const char **token);
 
     /*!
-     * Verifies if the key is signed with any of the tokens and the signature
-     * is valid.
+     * Verifies if the key is signed with any of the aegis tokens and the
+     * signature is valid.
      *
      * @param key The name of the key or prefix of the keys to be verified.
-     * @param tokens Array of the tokens.
+     * @param tokens Array of aegis tokens.
      *
-     * @return True if the key is signed with any of the token and the signature
-     * is valid.
+     * @return True if the key is signed with any of the aegis tokens and
+     * the signature is valid.
      *
      * This method operates on the currently selected service.
      */
