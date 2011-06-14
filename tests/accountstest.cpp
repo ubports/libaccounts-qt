@@ -716,10 +716,16 @@ void AccountsTest::settingsTest()
 
 void AccountsTest::keySignVerifyTest()
 {
+#ifndef HAVE_AEGISCRYPTO
+    QSKIP("aegis-crypto not detected.", SkipSingle);
+#endif
+
     const QString key = "key";
     const char *token;
     QList<const char*> listOfTokens;
-    listOfTokens << "token" << "token2" << "token3";
+    listOfTokens << "libaccounts-glib0::accounts-glib-access"
+                 << "libaccounts-glib0::dummy"
+                 << "libaccounts-glib0::idiotic";
     bool ok;
 
     Manager *mgr = new Manager();
@@ -729,9 +735,10 @@ void AccountsTest::keySignVerifyTest()
     QVERIFY(account != NULL);
 
     account->setValue(key, QString("the key value"));
-    account->sign(key, listOfTokens.at(0));
+    account->syncAndBlock();
 
-    account->sync();
+    account->sign(key, listOfTokens.at(0));
+    account->syncAndBlock();
 
     ok = account->verify(key, &token);
     QVERIFY(ok == true);
