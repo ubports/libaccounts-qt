@@ -2,7 +2,7 @@
 /*
  * This file is part of libaccounts-qt
  *
- * Copyright (C) 2009-2010 Nokia Corporation.
+ * Copyright (C) 2009-2011 Nokia Corporation.
  *
  * Contact: Alberto Mardegan <alberto.mardegan@nokia.com>
  *
@@ -21,7 +21,7 @@
  * 02110-1301 USA
  */
 /*!
- * @copyright Copyright (C) 2009-2010 Nokia Corporation.
+ * @copyright Copyright (C) 2009-2011 Nokia Corporation.
  * @license LGPL
  */
 
