@@ -1,7 +1,7 @@
 /*
  * This file is part of libaccounts-qt
  *
- * Copyright (C) 2010 Nokia Corporation.
+ * Copyright (C) 2011 Nokia Corporation.
  *
  * Contact: Alberto Mardegan <alberto.mardegan@nokia.com>
  *
