@@ -1,9 +1,6 @@
 #-----------------------------------------------------------------------------
 # Common variables for all projects.
 #-----------------------------------------------------------------------------
-TOP_SRC_DIR     = $$PWD
-TOP_BUILD_DIR   = $${TOP_SRC_DIR}/$(BUILD_DIR)
-QMAKE_LIBDIR   += $${TOP_BUILD_DIR}/libaccounts-qt
 DEFINES += BUILDING_ACCOUNTS_QT
 
 
