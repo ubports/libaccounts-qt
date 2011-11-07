@@ -10,6 +10,7 @@ HEADERS += \
 QT = core xml
 
 LIBS += -laccounts-qt
+QMAKE_RPATHDIR = $${QMAKE_LIBDIR}
 
 #Check for the existence of aegis-crypto
 system(pkg-config --exists aegis-crypto) :HAVE_AEGISCRYPTO=YES
