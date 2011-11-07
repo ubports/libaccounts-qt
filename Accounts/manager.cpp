@@ -229,7 +229,7 @@ AccountIdList Manager::accountList(const QString &serviceType) const
 
     for (iter = list; iter; iter = g_list_next(iter))
     {
-        idList.append((AccountId)(iter->data));
+        idList.append((AccountId)GPOINTER_TO_INT(iter->data));
     }
 
     ag_manager_list_free(list);
@@ -252,7 +252,7 @@ AccountIdList Manager::accountListEnabled(const QString &serviceType) const
 
     for (iter = list; iter; iter = g_list_next(iter))
     {
-        idList.append((AccountId)(iter->data));
+        idList.append((AccountId)GPOINTER_TO_INT(iter->data));
     }
 
     ag_manager_list_free(list);
