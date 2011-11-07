@@ -10,7 +10,6 @@ HEADERS += \
 QT = core xml
 
 LIBS += -laccounts-qt
-INCLUDEPATH += $${TOP_SRC_DIR}/libaccounts-qt
 
 #Check for the existence of aegis-crypto
 system(pkg-config --exists aegis-crypto) :HAVE_AEGISCRYPTO=YES
