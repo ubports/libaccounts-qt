@@ -498,10 +498,10 @@ SettingSource Account::value(const QString &key, QVariant &value) const
         value = g_value_get_uint(&val);
         break;
     case G_TYPE_INT64:
-        value = g_value_get_int64(&val);
+        value = qint64(g_value_get_int64(&val));
         break;
     case G_TYPE_UINT64:
-        value = g_value_get_uint64(&val);
+        value = quint64(g_value_get_uint64(&val));
         break;
     case G_TYPE_BOOLEAN:
         value = g_value_get_boolean(&val);
