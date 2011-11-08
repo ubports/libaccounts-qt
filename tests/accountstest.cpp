@@ -43,10 +43,10 @@ void clearDb()
 void AccountsTest::initTestCase()
 {
     //init
-    setenv ("ACCOUNTS", "/tmp/", TRUE);
-    setenv ("AG_SERVICES", SERVICES_DIR, TRUE);
-    setenv ("AG_SERVICE_TYPES", SERVICE_TYPES_DIR, TRUE);
-    setenv ("AG_PROVIDERS", PROVIDERS_DIR, TRUE);
+    setenv ("ACCOUNTS", "/tmp/", false);
+    setenv ("AG_SERVICES", SERVICES_DIR, false);
+    setenv ("AG_SERVICE_TYPES", SERVICE_TYPES_DIR, false);
+    setenv ("AG_PROVIDERS", PROVIDERS_DIR, false);
     //clear database
     clearDb();
 }
