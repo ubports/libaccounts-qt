@@ -1,7 +1,7 @@
 *.o
 *~
 moc_*
-Makefile
+Makefile*
 .cproject
 .project
 debian
