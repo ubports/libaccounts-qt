@@ -1,7 +1,8 @@
-*.o
-*~
-moc_*
-Makefile*
 .cproject
 .project
+Makefile*
 debian
+moc_*
+*~
+*.o
+*.tar.*
