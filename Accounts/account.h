@@ -99,7 +99,7 @@ public:
     class Private;
     // \endcond
 
-signals:
+Q_SIGNALS:
     /*!
      * Emitted when the value of the keys monitored by this watch change.
      * @param key The string that was used to create this watch. Note that if
@@ -479,7 +479,7 @@ public:
      */
     bool verifyWithTokens(const QString &key, QList<const char*> tokens);
 
-signals:
+Q_SIGNALS:
     void displayNameChanged(const QString &displayName);
     void enabledChanged(const QString &serviceName, bool enabled);
 
