@@ -24,6 +24,7 @@
 #include "account.h"
 #include "manager.h"
 
+#undef signals
 #include <libaccounts-glib/ag-manager.h>
 #include <libaccounts-glib/ag-account.h>
 

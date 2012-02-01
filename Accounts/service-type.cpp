@@ -23,6 +23,7 @@
 
 #include "service-type.h"
 
+#undef signals
 #include <libaccounts-glib/ag-manager.h>
 #include <libaccounts-glib/ag-service-type.h>
 #include "manager.h"

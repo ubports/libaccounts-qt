@@ -212,7 +212,7 @@ public:
      */
     Error lastError() const;
 
-signals:
+Q_SIGNALS:
     /*!
      * The signal is emitted when new account is created.
      *
