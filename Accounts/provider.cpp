@@ -24,6 +24,7 @@
 #include "provider.h"
 #include "accountscommon.h"
 
+#undef signals
 #include <libaccounts-glib/ag-provider.h>
 
 
