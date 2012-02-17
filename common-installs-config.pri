@@ -35,7 +35,7 @@ contains( TEMPLATE, app ) {
 #-----------------------------------------------------------------------------
 contains( TEMPLATE, lib ) {
 
-    target.path  = $${INSTALL_PREFIX}/lib
+    target.path  = $${INSTALL_LIBDIR}
     INSTALLS    += target
     message("====")
     message("==== INSTALLS += target")
