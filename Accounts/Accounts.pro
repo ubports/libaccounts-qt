@@ -55,5 +55,5 @@ feature.path = $$[QT_INSTALL_DATA]/mkspecs/features
 INSTALLS += feature
 
 pkgconfig.files = accounts-qt.pc
-pkgconfig.path = $${INSTALL_PREFIX}/lib/pkgconfig
+pkgconfig.path = $${INSTALL_LIBDIR}/pkgconfig
 INSTALLS += pkgconfig
