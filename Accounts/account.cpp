@@ -270,7 +270,7 @@ QStringList Account::allKeys() const
     ag_account_settings_iter_init(d->m_account, &iter, tmp.constData());
     while (ag_account_settings_iter_next(&iter, &key, &val))
     {
-        allKeys.append(QString(ASCII(key)).mid(d->prefix.size()));
+        allKeys.append(QString(ASCII(key)));
     }
     return allKeys;
 }
