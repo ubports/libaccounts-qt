@@ -43,3 +43,7 @@ INSTALLS     += provider
 testsuite.files = tests.xml
 testsuite.path = $$DATA_PATH
 INSTALLS += testsuite
+
+QMAKE_EXTRA_TARGETS += check
+check.depends = accountstest
+check.commands = "TESTDIR=. ./accountstest.sh"
