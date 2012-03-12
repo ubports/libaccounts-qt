@@ -60,4 +60,43 @@ QVariant gvalueToVariant(const GValue *value)
     return variant;
 }
 
+bool variantToGValue(const QVariant &variant, GValue *value)
+{
+    QByteArray tmpvalue;
+
+    switch (variant.type())
+    {
+    case QVariant::String:
+        g_value_init(value, G_TYPE_STRING);
+        tmpvalue = variant.toString().toUtf8();
+        g_value_set_string(value, tmpvalue.constData());
+        break;
+    case QVariant::Int:
+        g_value_init(value, G_TYPE_INT);
+        g_value_set_int(value, variant.toInt());
+        break;
+    case QVariant::UInt:
+        g_value_init(value, G_TYPE_UINT);
+        g_value_set_uint(value, variant.toUInt());
+        break;
+    case QVariant::LongLong:
+        g_value_init(value, G_TYPE_INT64);
+        g_value_set_int64(value, variant.toLongLong());
+        break;
+    case QVariant::ULongLong:
+        g_value_init(value, G_TYPE_UINT64);
+        g_value_set_uint64(value, variant.toULongLong());
+        break;
+    case QVariant::Bool:
+        g_value_init(value, G_TYPE_BOOLEAN);
+        g_value_set_boolean(value, variant.toBool());
+        break;
+    default:
+        qWarning() << "Unsupported datatype" << variant.typeName();
+        return false;
+    }
+
+    return true;
+}
+
 }; // namespace

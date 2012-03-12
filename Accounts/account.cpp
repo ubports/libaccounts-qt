@@ -368,37 +368,8 @@ void Account::setValue(const QString &key, const QVariant &value)
 {
     TRACE();
     GValue val= {0, {{0}}};
-    QByteArray tmpvalue;
 
-    switch (value.type())
-    {
-    case QVariant::String:
-        g_value_init(&val, G_TYPE_STRING);
-        tmpvalue = value.toString().toUtf8();
-        g_value_set_static_string(&val, tmpvalue.constData());
-        break;
-    case QVariant::Int:
-        g_value_init(&val, G_TYPE_INT);
-        g_value_set_int(&val, value.toInt());
-        break;
-    case QVariant::UInt:
-        g_value_init(&val, G_TYPE_UINT);
-        g_value_set_uint(&val, value.toUInt());
-        break;
-    case QVariant::LongLong:
-        g_value_init(&val, G_TYPE_INT64);
-        g_value_set_int64(&val, value.toLongLong());
-        break;
-    case QVariant::ULongLong:
-        g_value_init(&val, G_TYPE_UINT64);
-        g_value_set_uint64(&val, value.toULongLong());
-        break;
-    case QVariant::Bool:
-        g_value_init(&val, G_TYPE_BOOLEAN);
-        g_value_set_boolean(&val, value.toBool());
-        break;
-    default:
-        qWarning("unsupproted datatype %s", value.typeName());
+    if (!variantToGValue(value, &val)) {
         return;
     }
 
