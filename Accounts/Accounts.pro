@@ -5,19 +5,29 @@ include( ../common-vars.pri )
 TEMPLATE = lib
 
 # Input
-HEADERS += accountscommon.h \
+public_headers = \
+    accountscommon.h \
     Manager manager.h \
     Account account.h \
     Error error.h \
     Provider provider.h \
     Service service.h \
     ServiceType service-type.h
+
+private_headers = \
+    utils.h
+
+HEADERS += \
+    $$public_headers \
+    $$private_headers
+
 SOURCES += manager.cpp \
     account.cpp \
     error.cpp \
     provider.cpp \
     service.cpp \
-    service-type.cpp
+    service-type.cpp \
+    utils.cpp
 
 CONFIG += link_pkgconfig
 

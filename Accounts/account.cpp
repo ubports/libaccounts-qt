@@ -23,6 +23,7 @@
 
 #include "account.h"
 #include "manager.h"
+#include "utils.h"
 
 #undef signals
 #include <libaccounts-glib/ag-manager.h>
@@ -487,31 +488,7 @@ SettingSource Account::value(const QString &key, QVariant &value) const
     if (source == AG_SETTING_SOURCE_NONE)
         return NONE;
 
-    switch (type)
-    {
-    case G_TYPE_STRING:
-        value = UTF8(g_value_get_string(&val));
-        break;
-    case G_TYPE_INT:
-        value = g_value_get_int(&val);
-        break;
-    case G_TYPE_UINT:
-        value = g_value_get_uint(&val);
-        break;
-    case G_TYPE_INT64:
-        value = qint64(g_value_get_int64(&val));
-        break;
-    case G_TYPE_UINT64:
-        value = quint64(g_value_get_uint64(&val));
-        break;
-    case G_TYPE_BOOLEAN:
-        value = g_value_get_boolean(&val);
-        break;
-    default:
-        /* This can never be reached */
-        Q_ASSERT(false);
-        break;
-    }
+    value = gvalueToVariant(&val);
     g_value_unset(&val);
 
     return (source == AG_SETTING_SOURCE_ACCOUNT) ? ACCOUNT : TEMPLATE;
