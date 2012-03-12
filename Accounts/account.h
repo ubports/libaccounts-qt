@@ -54,6 +54,7 @@ namespace Accounts
 typedef quint32 AccountId;
 typedef QList<AccountId> AccountIdList;
 class Manager;
+class AccountServicePrivate;
 
 /*!
  * Tells the origin of an account setting: whether it was set on the account,
@@ -503,11 +504,13 @@ protected:
     // \endcond
 
 private:
+    AgAccount *account();
     // Don't include private data in docs: \cond
     class Private;
     friend class Manager;
     friend class Account::Private;
     friend class Watch;
+    friend class AccountServicePrivate;
 
     Private *d;
     // \endcond

@@ -42,6 +42,8 @@
 namespace Accounts
 {
 
+class AccountService;
+
 /*!
  * @class Manager
  *
@@ -262,6 +264,7 @@ private:
     Provider *providerInstance(AgProvider *provider) const;
     Service *serviceInstance(AgService *service) const;
     friend class Account;
+    friend class AccountService;
     // \endcond
 }; // Manager
 

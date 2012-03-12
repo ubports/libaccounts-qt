@@ -9,6 +9,7 @@ public_headers = \
     accountscommon.h \
     Manager manager.h \
     Account account.h \
+    AccountService account-service.h \
     Error error.h \
     Provider provider.h \
     Service service.h \
@@ -23,6 +24,7 @@ HEADERS += \
 
 SOURCES += manager.cpp \
     account.cpp \
+    account-service.cpp \
     error.cpp \
     provider.cpp \
     service.cpp \

@@ -595,3 +595,8 @@ qint32 Account::credentialsId()
     }
     return id;
 }
+
+AgAccount *Account::account()
+{
+    return d->m_account;
+}
