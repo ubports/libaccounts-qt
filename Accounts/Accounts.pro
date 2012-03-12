@@ -38,17 +38,6 @@ headers.files = $$HEADERS
 
 include( ../common-installs-config.pri )
 
-# Temporary: install header files in /usr/include/accounts-qt too,
-# while people are not #including <Accounts/*ClassName*>
-tmp_headers.files = \
-    accountscommon.h \
-    manager.h \
-    account.h \
-    provider.h \
-    service.h
-tmp_headers.path = $${INSTALL_PREFIX}/include/$${TARGET}
-INSTALLS += tmp_headers
-
 # configuration feature
 feature.files = accounts.prf
 feature.path = $$[QT_INSTALL_DATA]/mkspecs/features
