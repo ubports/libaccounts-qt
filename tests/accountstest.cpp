@@ -21,8 +21,10 @@
  * 02110-1301 USA
  */
 #include <QtTest/QtTest>
+#include <QSignalSpy>
 
 #include "Accounts/Manager"
+#include "Accounts/AccountService"
 
 using namespace Accounts;
 #include "accountstest.h"
@@ -465,6 +467,120 @@ void AccountsTest::w_parameters_notify(const char *key)
 {
     qDebug() << __func__ << ", key = " << key;
     m_parameters_notify++;
+}
+
+void AccountsTest::onAccountServiceEnabled(bool enabled)
+{
+    qDebug() << Q_FUNC_INFO;
+    m_accountServiceEnabledValue = enabled;
+}
+
+void AccountsTest::onAccountServiceChanged()
+{
+    qDebug() << Q_FUNC_INFO;
+    AccountService *accountService = qobject_cast<AccountService*>(sender());
+    m_accountServiceChangedFields = accountService->changedFields();
+}
+
+void AccountsTest::accountServiceTest()
+{
+    Manager *mgr = new Manager();
+    QVERIFY (mgr != NULL);
+
+    Service* service = mgr->service(MYSERVICE);
+    QVERIFY(service != NULL);
+
+    Account *account = mgr->createAccount(NULL);
+    QVERIFY(account != NULL);
+
+    AccountService *accountService = new AccountService(account, service);
+    QVERIFY(accountService != NULL);
+
+    QObject::connect(accountService, SIGNAL(changed()),
+                     this, SLOT(onAccountServiceChanged()));
+    QObject::connect(accountService, SIGNAL(enabled(bool)),
+                     this, SLOT(onAccountServiceEnabled(bool)));
+    QSignalSpy spyChanged(accountService, SIGNAL(changed()));
+    QSignalSpy spyEnabled(accountService, SIGNAL(enabled(bool)));
+
+    accountService->beginGroup("parameters");
+    QVERIFY(accountService->group() == "parameters");
+
+    /* test values from the template */
+    QCOMPARE(accountService->value("server").toString(),
+             UTF8("talk.google.com"));
+    QCOMPARE(accountService->value("port").toInt(), 5223);
+    QCOMPARE(accountService->value("old-ssl").toBool(), true);
+
+    /* now, change some values */
+    accountService->setValue("server", QString("www.example.com"));
+    account->selectService();
+    account->setEnabled(true);
+    account->selectService(service);
+    account->setEnabled(true);
+
+    /* write the data */
+    account->sync();
+
+    /* ensure that the callbacks have been called the correct number of times */
+    int changedEmissions = 0;
+    QCOMPARE(spyChanged.count(), ++changedEmissions);
+
+    QStringList expectedChanges;
+    expectedChanges << "parameters/server";
+    expectedChanges << "enabled";
+    QCOMPARE(m_accountServiceChangedFields.toSet(), expectedChanges.toSet());
+
+    QCOMPARE(accountService->value("server").toString(),
+             UTF8("www.example.com"));
+    QCOMPARE(accountService->enabled(), true);
+
+    int enabledEmissions = spyChanged.count();
+
+    /* check the enabled status */
+    account->selectService();
+    account->setEnabled(false);
+    account->sync();
+    QCOMPARE(spyChanged.count(), changedEmissions);
+    QCOMPARE(spyEnabled.count(), ++enabledEmissions);
+    QCOMPARE(accountService->enabled(), false);
+    QCOMPARE(m_accountServiceEnabledValue, accountService->enabled());
+
+    /* enable the account, but disable the service */
+    account->selectService();
+    account->setEnabled(true);
+    account->selectService(service);
+    account->setEnabled(false);
+    account->sync();
+    QCOMPARE(spyEnabled.count(), enabledEmissions);
+    QCOMPARE(accountService->enabled(), false);
+
+    /* re-enable the service */
+    account->selectService(service);
+    account->setEnabled(true);
+    account->sync();
+    QCOMPARE(spyEnabled.count(), ++enabledEmissions);
+    QCOMPARE(accountService->enabled(), true);
+    QCOMPARE(m_accountServiceEnabledValue, accountService->enabled());
+
+    changedEmissions = spyChanged.count();
+
+    /* test some more APIs */
+    QStringList expectedList;
+    expectedList << "server" << "fallback-conference-server" <<
+        "port" << "old-ssl";
+    QCOMPARE(accountService->childKeys().toSet(), expectedList.toSet());
+    QCOMPARE(accountService->childGroups().toSet(), QSet<QString>());
+    QCOMPARE(accountService->contains("port"), true);
+    accountService->endGroup();
+
+    expectedList.clear();
+    expectedList << "parameters";
+    QCOMPARE(accountService->childGroups().toSet(), expectedList.toSet());
+
+    delete accountService;
+    delete account;
+    delete mgr;
 }
 
 void AccountsTest::watchesTest()
