@@ -945,6 +945,74 @@ void AccountsTest::credentialsIdTest()
     QCOMPARE(account->credentialsId(), globalId);
 }
 
+void AccountsTest::authDataTest()
+{
+    Manager *manager = new Manager;
+    QVERIFY(manager != NULL);
+
+    Account *account = manager->createAccount("MyProvider");
+    QVERIFY(account != NULL);
+
+    Service *service = manager->service(MYSERVICE);
+    QVERIFY(service != NULL);
+
+    const uint credentialsId = 69;
+    const QString method = "mymethod";
+    const QString mechanism = "mymechanism";
+    QString prefix =
+        QString::fromLatin1("auth/%1/%2/").arg(method).arg(mechanism);
+
+    QVariantMap globalParameters;
+    globalParameters["server"] = UTF8("myserver.com");
+    globalParameters["port"] = 8080;
+    globalParameters["other"] = UTF8("overriden parameter");
+
+    QVariantMap serviceParameters;
+    globalParameters["other"] = UTF8("better parameter");
+    globalParameters["boolean"] = true;
+
+    account->setCredentialsId(credentialsId);
+    account->setValue("auth/method", method);
+    account->setValue("auth/mechanism", UTF8("overriden mechanism"));
+    QMapIterator<QString,QVariant> i(globalParameters);
+    while (i.hasNext()) {
+        i.next();
+        account->setValue(prefix + i.key(), i.value());
+    }
+
+    account->selectService(service);
+    account->setValue("auth/mechanism", mechanism);
+    i = QMapIterator<QString,QVariant>(serviceParameters);
+    while (i.hasNext()) {
+        i.next();
+        account->setValue(prefix + i.key(), i.value());
+    }
+
+    account->syncAndBlock();
+    QVERIFY(account->id() != 0);
+
+    AccountService *accountService = new AccountService(account, service);
+    QVERIFY(accountService != 0);
+
+    AuthData authData = accountService->authData();
+    QCOMPARE(authData.method(), method);
+    QCOMPARE(authData.mechanism(), mechanism);
+    QCOMPARE(authData.credentialsId(), credentialsId);
+
+    QVariantMap expectedParameters = globalParameters;
+    i = QMapIterator<QString,QVariant>(serviceParameters);
+    while (i.hasNext()) {
+        i.next();
+        expectedParameters.insert(i.key(), i.value());
+    }
+
+    QCOMPARE(authData.parameters(), expectedParameters);
+
+    delete accountService;
+    delete account;
+    delete manager;
+}
+
 void AccountsTest::listEnabledServices()
 {
     clearDb();

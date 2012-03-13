@@ -26,6 +26,7 @@
 #include "utils.h"
 #include <libaccounts-glib/ag-account.h>
 #include <libaccounts-glib/ag-account-service.h>
+#include <libaccounts-glib/ag-auth-data.h>
 
 namespace Accounts
 {
@@ -455,3 +456,20 @@ QStringList AccountService::changedFields() const
     return keyList;
 }
 
+/*!
+ * Read the authentication data stored in the account (merging the
+ * service-specific settings with the global account settings).
+ * The method and mechanism are read from the "auth/method" and
+ * "auth/mechanism" keys, respectively. The authentication parameters are
+ * found under the "auth/<method>/<mechanism>/" group.
+ *
+ * @return an AuthData object, describing the authentication settings.
+ */
+AuthData AccountService::authData() const
+{
+    Q_D(const AccountService);
+
+    AgAuthData *agAuthData =
+        ag_account_service_get_auth_data(d->m_accountService);
+    return AuthData(agAuthData);
+}

@@ -28,6 +28,7 @@
 #include <QStringList>
 
 #include "Accounts/account.h"
+#include "Accounts/auth-data.h"
 
 namespace Accounts
 {
@@ -72,6 +73,8 @@ public:
     QVariant value(const char *key, SettingSource *source = 0) const;
 
     QStringList changedFields() const;
+
+    AuthData authData() const;
 
 signals:
     void enabled(bool isEnabled);
