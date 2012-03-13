@@ -30,6 +30,19 @@
 
 using namespace Accounts;
 
+namespace Accounts {
+/*!
+ * @class Provider
+ * @headerfile provider.h Accounts/Provider
+ *
+ * @brief Representation of an account provider.
+ *
+ * @details The Provider object represents an account provider. It can be used
+ * to retrieve some basic properties of the provider (such as the name) and to
+ * get access to the contents of the XML file which defines it.
+ */
+}; // namespace
+
 Provider::Provider(AgProvider *provider)
     : m_provider(provider)
 {
@@ -55,16 +68,26 @@ QString Provider::displayName() const
     return UTF8(ag_provider_get_display_name(m_provider));
 }
 
+/*!
+ * @return The name of the translation catalog, which can be used to
+ * translate the displayName().
+ */
 QString Provider::trCatalog() const
 {
     return ASCII(ag_provider_get_i18n_domain(m_provider));
 }
 
+/*!
+ * @return The provider icon name.
+ */
 QString Provider::iconName() const
 {
     return ASCII(ag_provider_get_icon_name(m_provider));
 }
 
+/*!
+ * @return The DOM of the whole XML provider file.
+ */
 const QDomDocument Provider::domDocument() const
 {
     if (doc.isNull())
