@@ -32,6 +32,7 @@ namespace Accounts
 
 /*!
  * @class AccountService
+ * @headerfile account-service.h Accounts/AccountService
  *
  * @brief Account settings for a specific service
  *
@@ -170,7 +171,7 @@ void AccountServicePrivate::onChanged(AccountService *accountService)
 /*!
  * Constructor.
  * @param account An Account.
- * @param service A Service supported by @account.
+ * @param service A Service supported by the account.
  */
 AccountService::AccountService(Account *account, Service *service):
     d_ptr(new AccountServicePrivate(account, service, this))

@@ -50,6 +50,7 @@ typedef QList<Provider*> ProviderList;
 
 /*!
  * @class Provider
+ * @headerfile provider.h Accounts/Provider
  *
  * @brief Representation of an account provider.
  *
@@ -69,8 +70,8 @@ public:
     QString trCatalog() const;
 
     /*!
-      * @return The provider icon name
-      */
+     * @return The provider icon name
+     */
     QString iconName() const;
 
     /*!

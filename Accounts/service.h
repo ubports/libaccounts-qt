@@ -50,6 +50,7 @@ typedef QList<Service*> ServiceList;
 
 /*!
  * @class Service
+ * @headerfile service.h Accounts/Service
  *
  * @brief Representation of an account service.
  *

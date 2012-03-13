@@ -44,6 +44,7 @@ namespace Accounts
 
 /*!
  * @class ServiceType
+ * @headerfile service-type.h Accounts/ServiceType
  *
  * @brief Representation of an account service type.
  *
