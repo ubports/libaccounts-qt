@@ -31,6 +31,46 @@
 
 namespace Accounts {
 
+/*!
+ * @class Watch
+ * @headerfile account.h Accounts/Account
+ *
+ * @brief Monitors an account key or group of keys.
+ *
+ * @details A watch is created via the Account::watch method and is a simple
+ * object which will emit the notify() signal when the value of the key (or
+ * group) that it is monitoring is changed.
+ */
+
+/*!
+ * @class Account
+ * @headerfile account.h Accounts/Account
+ *
+ * @brief The Account class provides an interface to account settings.
+ *
+ * @details The Account class is used to access the account and service settings.
+ * This class has no constructor, therefore to instantiate one Account object
+ * one has to either use the Manager::createAccount method (to create a new
+ * empty account) or Manager::account (to load an existing account).
+ *
+ * @attention Do not call setParent() on an account object; the Account class
+ * assumes that the parent is always the Manager, and changing it will have
+ * unpredictable results.
+ *
+ * Most of the methods in the Account class act on the selected service: for
+ * example, calling setEnabled(false) on the NULL service (this is the service
+ * to be used for changing settings globally on the account) will disable the
+ * account, while the code
+ * \code
+ * account->selectService(myService);
+ * account->setEnabled(false);
+ * \endcode
+ * will disable the "myService" service.
+ *
+ * All changes made on an account (including deletion) are not stored until
+ * sync() is called.
+ */
+
 class Account::Private
 {
 public:
@@ -64,6 +104,15 @@ public:
 using namespace Accounts;
 
 static QChar slash = QChar::fromLatin1('/');
+
+/*!
+ * @fn Watch::notify(const char *key)
+ *
+ * Emitted when the value of the keys monitored by this watch change.
+ * @param key The string that was used to create this watch. Note that if
+ * this watch is monitor multiple keys this param only identifies their
+ * common prefix, and not the actual key being changed.
+ */
 
 Watch::Watch(QObject *parent)
     : QObject(parent)
@@ -103,6 +152,12 @@ void Account::Private::on_deleted(Account *self)
     emit self->removed();
 }
 
+/*!
+ * @fn Account::error(Accounts::Error error)
+ *
+ * Emitted when an error occurs.
+ */
+
 Account::Account(AgAccount *account, QObject *parent)
     : QObject(parent), d(new Private)
 {
@@ -119,6 +174,9 @@ Account::Account(AgAccount *account, QObject *parent)
                              G_CALLBACK(&Private::on_deleted), this);
 }
 
+/*!
+ * Destroys the current account object and free all resources.
+ */
 Account::~Account()
 {
     TRACE();
@@ -142,16 +200,26 @@ Account::~Account()
     d = 0;
 }
 
+/*!
+ * Returns the AccountId of this account (0 if the account has not yet been
+ * stored into the database).
+ */
 AccountId Account::id() const
 {
     return d->m_account ? d->m_account->id : 0;
 }
 
+/*!
+ * Returns the Manager.
+ */
 Manager *Account::manager() const
 {
     return qobject_cast<Manager *>(QObject::parent());
 }
 
+/*!
+ * Checks whether the account supports the given service.
+ */
 bool Account::supportsService(const QString &serviceType) const
 {
     TRACE() << serviceType;
@@ -160,6 +228,14 @@ bool Account::supportsService(const QString &serviceType) const
                                        serviceType.toUtf8().constData());
 }
 
+/*!
+ * Returns a list of services supported by this account. If the manager was
+ * constructed with given service type only the services which supports the
+ * service type will be returned.
+ *
+ * This is currently computed by returning all services having the same
+ * provider as the account.
+ */
 ServiceList Account::services(const QString &serviceType) const
 {
     TRACE() << serviceType;
@@ -188,6 +264,11 @@ ServiceList Account::services(const QString &serviceType) const
     return servList;
 }
 
+/*!
+ * Returns a list of enabled services supported by this account. If the manager
+ * was constructed with given service type only the services which supports the
+ * service type will be returned.
+ */
 ServiceList Account::enabledServices() const
 {
     GList *list;
@@ -209,32 +290,62 @@ ServiceList Account::enabledServices() const
     return servList;
 }
 
+/*!
+ * Checks whether the account or selected service is enabled.
+ *
+ * This method operates on the currently selected service or
+ * globally, if none selected.
+ */
 bool Account::enabled() const
 {
     return ag_account_get_enabled(d->m_account);
 }
 
+/*!
+ * Enables/disables the account or selected service.
+ * The change will be written only when sync() is called.
+ *
+ * This method operates on the currently selected service or
+ * globally, if none selected.
+ */
 void Account::setEnabled(bool enabled)
 {
     ag_account_set_enabled(d->m_account, enabled);
 }
 
+/*!
+ * Returns the display name of the account.
+ *
+ * This method operates on the currently selected service.
+ */
 QString Account::displayName() const
 {
     return UTF8(ag_account_get_display_name(d->m_account));
 }
 
+/*!
+ * Changes the display name of the account.
+ * The change will be written only when sync() is called.
+ */
 void Account::setDisplayName(const QString &displayName)
 {
     ag_account_set_display_name(d->m_account,
                                 displayName.toUtf8().constData());
 }
 
+/*!
+ * Returns the name of the provider of the account.
+ */
 QString Account::providerName() const
 {
     return UTF8(ag_account_get_provider_name(d->m_account));
 }
 
+/*!
+ * Selects the Service for the subsequent operations.
+ * @param service The Service to select. If this is NULL, the global
+ * account settings will be selected.
+ */
 void Account::selectService(const Service *service)
 {
     AgService *agService = NULL;
@@ -246,6 +357,9 @@ void Account::selectService(const Service *service)
     d->prefix = QString();
 }
 
+/*!
+ * Returns the currently selected service.
+ */
 Service* Account::selectedService() const
 {
     AgService *agService = ag_account_get_selected_service(d->m_account);
@@ -259,6 +373,11 @@ Service* Account::selectedService() const
     return service;
 }
 
+/*!
+ * Returns all keys in the current group.
+ *
+ * This method operates on the currently selected service.
+ */
 QStringList Account::allKeys() const
 {
     QStringList allKeys;
@@ -276,11 +395,22 @@ QStringList Account::allKeys() const
     return allKeys;
 }
 
+/*!
+ * Enters a group. This method never fails.
+ * @param prefix
+ *
+ * This method operates on the currently selected service.
+ */
 void Account::beginGroup(const QString &prefix)
 {
     d->prefix += prefix + slash;
 }
 
+/*!
+ * Returns all the groups which are direct children of the current group.
+ *
+ * This method operates on the currently selected service.
+ */
 QStringList Account::childGroups() const
 {
     QStringList groups, all_keys;
@@ -297,6 +427,11 @@ QStringList Account::childGroups() const
     return groups;
 }
 
+/*!
+ * Return all the keys which are direct children of the current group.
+ *
+ * This method operates on the currently selected service.
+ */
 QStringList Account::childKeys() const
 {
     QStringList keys, all_keys;
@@ -310,6 +445,10 @@ QStringList Account::childKeys() const
     return keys;
 }
 
+/*!
+ * Removes all the keys in the currently selected service.
+ * @see remove(const QString &key)
+ */
 void Account::clear()
 {
     /* clear() must ignore the group: so, temporarily reset it and call
@@ -320,11 +459,22 @@ void Account::clear()
     d->prefix = saved_prefix;
 }
 
+/*!
+ * Checks whether the given key is in the current group.
+ * @param key The key name of the settings.
+ *
+ * This method operates on the currently selected service.
+ */
 bool Account::contains(const QString &key) const
 {
     return childKeys().contains(key);
 }
 
+/*!
+ * Exits a group.
+ *
+ * This method operates on the currently selected service.
+ */
 void Account::endGroup()
 {
     d->prefix = d->prefix.section(slash, 0, -3,
@@ -332,6 +482,11 @@ void Account::endGroup()
     if (d->prefix[0] == slash) d->prefix.remove(0, 1);
 }
 
+/*!
+ * Returns the name of the current group.
+ *
+ * This method operates on the currently selected service.
+ */
 QString Account::group() const
 {
     if (d->prefix.endsWith(slash))
@@ -339,11 +494,21 @@ QString Account::group() const
     return d->prefix;
 }
 
+/*!
+ * Checks whether the account is writable. This always returns true.
+ */
 bool Account::isWritable() const
 {
     return true;
 }
 
+/*!
+ * Removes the given key. If the key is the empty string, all keys in the
+ * current group are removed.
+ * @param key The key name of the settings.
+ *
+ * This method operates on the currently selected service.
+ */
 void Account::remove(const QString &key)
 {
     if (key.isEmpty())
@@ -364,6 +529,13 @@ void Account::remove(const QString &key)
     }
 }
 
+/*!
+ * Changes the value of an account setting.
+ * @param key The key name of the setting.
+ * @param value The new value.
+ *
+ * This method operates on the currently selected service.
+ */
 void Account::setValue(const QString &key, const QVariant &value)
 {
     TRACE();
@@ -395,6 +567,18 @@ void Account::Private::account_store_cb(AgAccount *account, const GError *err,
     Q_UNUSED(account);
 }
 
+/*!
+ * Stores all account settings into the database.
+ * The signal synced() will be emitted in case of success, or
+ * error() in case of failure. No assumption must be made about when these
+ * signals will be emitted: if the database is locked, the signals might
+ * be emitted asynchronously, whereas if the operation can happen
+ * synchronously then the signals can be emitted before this method
+ * returns.
+ * If for some reason one would want to process the signals asynchronously
+ * from the event loop, one can use the Qt::QueuedConnection connection
+ * type as last parameter of the QObject::connect call.
+ */
 void Account::sync()
 {
     TRACE();
@@ -404,6 +588,13 @@ void Account::sync()
                      this);
 }
 
+/*!
+ * Blocking version of the sync() method: execution of the current thread
+ * will block until the operation has completed.
+ * Usage of this method is discouraged, especially for UI applications.
+ *
+ * @return True on success, false otherwise.
+ */
 bool Account::syncAndBlock()
 {
     TRACE();
@@ -421,6 +612,19 @@ bool Account::syncAndBlock()
     return ret;
 }
 
+/*!
+ * Retrieves the value of an account setting, as a QVariant.
+ * @param key The key whose value must be retrieved.
+ * @param value A QVariant initialized to the expected type of the value.
+ * @see valueAsString
+ * @see valueAsInt
+ * @see valueAsBool
+ *
+ * @return Whether the value comes from the account, the service template
+ * or was unset.
+ *
+ * This method operates on the currently selected service.
+ */
 SettingSource Account::value(const QString &key, QVariant &value) const
 {
     GType type;
@@ -465,6 +669,15 @@ SettingSource Account::value(const QString &key, QVariant &value) const
     return (source == AG_SETTING_SOURCE_ACCOUNT) ? ACCOUNT : TEMPLATE;
 }
 
+/*!
+ * Gets an account setting as a string.
+ * @param key The key whose value must be retrieved.
+ * @param default_value Value returned if the key is unset.
+ * @param source Indicates whether the value comes from the account, the
+ * service template or was unset.
+ *
+ * This method operates on the currently selected service.
+ */
 QString Account::valueAsString(const QString &key,
                                QString default_value,
                                SettingSource *source) const
@@ -476,6 +689,15 @@ QString Account::valueAsString(const QString &key,
     return var.toString();
 }
 
+/*!
+ * Gets an account setting as an integer.
+ * @param key The key whose value must be retrieved.
+ * @param default_value Value returned if the key is unset.
+ * @param source Indicates whether the value comes from the account, the
+ * service template or was unset.
+ *
+ * This method operates on the currently selected service.
+ */
 int Account::valueAsInt(const QString &key,
                         int default_value,
                         SettingSource *source) const
@@ -487,6 +709,15 @@ int Account::valueAsInt(const QString &key,
     return var.toInt();
 }
 
+/*!
+ * Gets an account setting as an unsigned long integer.
+ * @param key The key of which value must be retrieved.
+ * @param default_value Value returned if the key is unset.
+ * @param source Indicates whether the value comes from the account, the
+ * service template or was unset.
+ *
+ * This method operates on the currently selected service.
+ */
 quint64 Account::valueAsUInt64(const QString &key,
                         quint64 default_value,
                         SettingSource *source) const
@@ -498,6 +729,15 @@ quint64 Account::valueAsUInt64(const QString &key,
     return var.toULongLong();
 }
 
+/*!
+ * Gets an account setting as a boolean.
+ * @param key The key whose value must be retrieved.
+ * @param default_value Value returned if the key is unset.
+ * @param source Indicates whether the value comes from the account, the
+ * service template or was unset.
+ *
+ * This method operates on the currently selected service.
+ */
 bool Account::valueAsBool(const QString &key,
                           bool default_value,
                           SettingSource *source) const
@@ -517,6 +757,16 @@ void Watch::Private::account_notify_cb(AgAccount *account, const gchar *key,
     Q_UNUSED(account);
 }
 
+/*!
+ * Installs a key or group watch.
+ *
+ * @param key The key to watch; if %NULL, watches the currently selected
+ * group.
+ *
+ * @return A watch object.
+ *
+ * This method operates on the currently selected service.
+ */
 Watch *Account::watchKey(const QString &key)
 {
     AgAccountWatch ag_watch;
@@ -546,22 +796,58 @@ Watch *Account::watchKey(const QString &key)
     return watch;
 }
 
+/*!
+ * Marks the account for removal.
+ * The account will be deleted only when the sync() method is called.
+ */
 void Account::remove()
 {
     TRACE();
     ag_account_delete(d->m_account);
 }
 
+/*!
+ * Creates signature of key with given aegis token. The calling application
+ * must possess (request) the given aegis token. The account needs to be
+ * stored prior to executing this method.
+ * @param key The key or the prefix of set of the keys to be signed.
+ * @param token The aegis token to be used for signing the key.
+ *
+ * This method operates on the currently selected service.
+ */
 void Account::sign(const QString &key, const char *token)
 {
     ag_account_sign (d->m_account, key.toUtf8().constData(), token);
 }
 
+/*!
+ * Verifies if the key is signed and the signature matches the value
+ * and provides the aegis token which was used for signing the key.
+ *
+ * @param key The name of the key or prefix of the keys to be verified.
+ * @param token Aegis token to be retrieved.
+ *
+ * @return True if the key is signed and the signature matches the value.
+ *
+ * This method operates on the currently selected service.
+ */
 bool Account::verify(const QString &key, const char **token)
 {
     return ag_account_verify(d->m_account, key.toUtf8().constData(), token);
 }
 
+/*!
+ * Verifies if the key is signed with any of the aegis tokens and the
+ * signature is valid.
+ *
+ * @param key The name of the key or prefix of the keys to be verified.
+ * @param tokens Array of aegis tokens.
+ *
+ * @return True if the key is signed with any of the aegis tokens and
+ * the signature is valid.
+ *
+ * This method operates on the currently selected service.
+ */
 bool Account::verifyWithTokens(const QString &key, QList<const char*> tokens)
 {
     int tokensCount = tokens.count();

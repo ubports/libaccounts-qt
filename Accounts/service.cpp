@@ -33,6 +33,20 @@
 
 using namespace Accounts;
 
+namespace Accounts {
+/*!
+ * @class Service
+ * @headerfile service.h Accounts/Service
+ *
+ * @brief Representation of an account service.
+ *
+ * @details The Service object represents an account service. It can be used to
+ * retrieve some basic properties of the service (such as name, type and
+ * provider) and to get access to the contents of the XML file which defines
+ * it.
+ */
+}; // namespace
+
 Service::Service(AgService *service)
     : m_service(service)
 {
@@ -63,6 +77,9 @@ QString Service::serviceType() const
     return ASCII(ag_service_get_service_type(m_service));
 }
 
+/*!
+ * @return The translation catalog of the service
+ */
 QString Service::trCatalog() const
 {
     return ASCII(ag_service_get_i18n_domain(m_service));
@@ -73,6 +90,9 @@ QString Service::provider() const
     return UTF8(ag_service_get_provider(m_service));
 }
 
+/*!
+ * @return The icon name.
+ */
 QString Service::iconName() const
 {
     return ASCII(ag_service_get_icon_name(m_service));
@@ -99,6 +119,9 @@ QXmlStreamReader *Service::xmlStreamReader() const
     return reader;
 }
 
+/*!
+ * @return The DOM of the whole XML service file
+ */
 const QDomDocument Service::domDocument() const
 {
     if (doc.isNull())

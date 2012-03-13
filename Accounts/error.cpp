@@ -26,6 +26,12 @@
 
 namespace Accounts {
 
+/*!
+ * @class Error
+ * @headerfile error.h Accounts/Error
+ * @brief Base object definition for accounts error handling.
+ */
+
 Error::Error(const GError *error)
 {
     registerType();

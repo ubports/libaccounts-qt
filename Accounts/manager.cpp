@@ -33,6 +33,62 @@
 
 namespace Accounts {
 
+/*!
+ * @class Manager
+ * @headerfile manager.h Accounts/Manager
+ *
+ * @brief Manager of accounts, services and providers.
+ *
+ * @details The Manager offers ways to create accounts, list accounts, services
+ * and providers. It also emits signals when accounts are created and removed.
+ */
+
+/*!
+ * @fn Manager::accountCreated(Accounts::AccountId id)
+ *
+ * The signal is emitted when new account is created.
+ *
+ * @param id Identifier of the Account
+ */
+
+/*!
+ * @fn Manager::accountRemoved(Accounts::AccountId id)
+ *
+ * The signal is emitted when existing account is removed.
+ *
+ * @param id Identifier of the Account
+ */
+
+/*!
+ * @fn Manager::accountUpdated(Accounts::AccountId id)
+ *
+ * The signal is emitted when any account property for a particular service is
+ * updated.
+ *
+ * To receive this notification user has to create accounts manager using
+ * Manager(const QString &serviceType, QObject *parent) constructor.
+ * Update notification is only emitted when manager is created for particular
+ * type of service.
+ *
+ * @param id Identifier of the Account
+ */
+
+/*!
+ * @fn Manager::enabledEvent(Accounts::AccountId id)
+ *
+ * If the manager has been created with serviceType, this
+ * signal will be emitted when an account (identified by AccountId) has been
+ * modified in such a way that the application might be interested to
+ * start/stop using it: the "enabled" flag on the account or in some service
+ * supported by the account and matching the AgManager::serviceType have
+ * changed.
+ * @note In practice, this signal might be emitted more often than when
+ * strictly needed; applications must call Account::enabledServices() to get
+ * the current state.
+ *
+ * @param id identifier of the Account
+ */
+
 class Manager::Private
 {
     Q_DECLARE_PUBLIC(Manager)
@@ -142,6 +198,11 @@ void Manager::Private::on_enabled_event(Manager *self, AgAccountId id)
     emit self->enabledEvent(id);
 }
 
+/*!
+ * Constructor.
+ * Users should check for manager->lastError() to check if manager construction
+ * was fully succesful.
+ */
 Manager::Manager(QObject *parent)
     : QObject(parent), d(new Private)
 {
@@ -158,6 +219,18 @@ Manager::Manager(QObject *parent)
 
 }
 
+/*!
+ * Constructs a manager initialized with service type. This constructor
+ * should be used when there is an interest for just one service type.
+ * Such a manager has influence on some class methods. When listing the
+ * accounts and services only the ones supporting the given service type
+ * will be returned. Also the creating account with this manager will
+ * affect the acccount class method for listing services in same manner.
+ * The signal enabledEvent() will be emitted only when manager is created
+ * with this constructor.
+ * Users should check for manager->lastError() to check if manager construction
+ * was fully succesful.
+ */
 Manager::Manager(const QString &serviceType, QObject *parent)
     : QObject(parent), d(new Private)
 {
@@ -175,6 +248,9 @@ Manager::Manager(const QString &serviceType, QObject *parent)
 
 }
 
+/*!
+ * Destructor.
+ */
 Manager::~Manager()
 {
     TRACE();
@@ -193,6 +269,13 @@ Manager::~Manager()
     d = 0;
 }
 
+/*!
+ * Loads an account from the database.
+ * @param id Id of the account to be retrieved.
+ *
+ * @return Requested account or NULL if not found. If NULL is returned,
+ * call lastError() to find out why.
+ */
 Account *Manager::account(const AccountId &id) const
 {
     TRACE() << "get account id: " << id;
@@ -213,6 +296,15 @@ Account *Manager::account(const AccountId &id) const
     return NULL;
 }
 
+/*!
+ * Lists the accounts which support the requested service.
+ *
+ * @param serviceType Type of service that returned accounts must support.
+ * If not given and the manager is not constructed with service type,
+ * all accounts are returned.
+ *
+ * @return List of account IDs.
+ */
 AccountIdList Manager::accountList(const QString &serviceType) const
 {
     GList *list = NULL;
@@ -237,6 +329,17 @@ AccountIdList Manager::accountList(const QString &serviceType) const
 
     return idList;
 }
+
+/*!
+ * Lists the enabled accounts which support the requested service that also
+ * must be enabled.
+ *
+ * @param serviceType Type of service that returned accounts must support.
+ * If not given and the manager is not constructed with service type,
+ * all enabled accounts are returned.
+ *
+ * @return List of account IDs.
+ */
 AccountIdList Manager::accountListEnabled(const QString &serviceType) const
 {
     GList *list = NULL;
@@ -261,6 +364,12 @@ AccountIdList Manager::accountListEnabled(const QString &serviceType) const
     return idList;
 }
 
+/*!
+ * Creates a new account.
+ * @param providerName Name of account provider.
+ *
+ * @return Created account or NULL if some error occurs.
+ */
 Account *Manager::createAccount(const QString &providerName)
 {
     TRACE() << providerName;
@@ -292,6 +401,12 @@ Service *Manager::serviceInstance(AgService *service) const
     return ret;
 }
 
+/*!
+ * Gets an object representing a service.
+ * @param serviceName Name of service to get.
+ *
+ * @return Requested service or NULL if not found.
+ */
 Service *Manager::service(const QString &serviceName) const
 {
     TRACE() << serviceName;
@@ -306,6 +421,16 @@ Service *Manager::service(const QString &serviceName) const
     return serv;
 }
 
+/*!
+ * Gets the service list. If the manager is constructed with given service type
+ * only the services which supports the service type will be returned.
+ *
+ * @param serviceType Type of services to be listed. If not given and
+ * the manager is not constructed with service type, all
+ * services are listed.
+ *
+ * @return List of Service objects.
+ */
 ServiceList Manager::serviceList(const QString &serviceType) const
 {
     TRACE() << serviceType;
@@ -347,6 +472,12 @@ Provider *Manager::providerInstance(AgProvider *provider) const
     return ret;
 }
 
+/*!
+ * Gets an object representing a provider.
+ * @param providerName Name of provider to get.
+ *
+ * @return Requested provider or NULL if not found.
+ */
 Provider *Manager::provider(const QString &providerName) const
 {
     TRACE() << providerName;
@@ -362,6 +493,11 @@ Provider *Manager::provider(const QString &providerName) const
     return prov;
 }
 
+/*!
+ * Gets a provider list.
+ *
+ * @return List of registered providers.
+ */
 ProviderList Manager::providerList() const
 {
     GList *list;
@@ -383,6 +519,12 @@ ProviderList Manager::providerList() const
     return provList;
 }
 
+/*!
+ * Gets an object representing a service type.
+ * @param name Name of service type to load.
+ *
+ * @return Requested service type or NULL if not found.
+ */
 ServiceType *Manager::serviceType(const QString &name) const
 {
     ServiceType *serviceType = d->serviceTypes.value(name, NULL);
@@ -400,31 +542,66 @@ ServiceType *Manager::serviceType(const QString &name) const
     return serviceType;
 }
 
+/*!
+ * Gets the service type if given in manager constructor.
+ *
+ * @return Service type or NULL if not given.
+ */
 QString Manager::serviceType() const
 {
     return UTF8(ag_manager_get_service_type (d->m_manager));
 }
 
+/*!
+ * Sets the timeout for database operations.
+ * @param timeout The new timeout in milliseconds.
+ *
+ * This tells the library how long it is allowed to block while waiting
+ * for a locked DB to become accessible. Higher values mean a higher
+ * chance of successful reads, but also mean that the execution might be
+ * blocked for a longer time. The default is 5 seconds.
+ */
 void Manager::setTimeout(quint32 timeout)
 {
     ag_manager_set_db_timeout(d->m_manager, timeout);
 }
 
+/*!
+ * Gets the database timeout.
+ * @return The timeout (in milliseconds) for database operations.
+ */
 quint32 Manager::timeout()
 {
     return ag_manager_get_db_timeout(d->m_manager);
 }
 
+/*!
+ * Sets whether to abort the application when a database timeout occurs.
+ * By default the library does not abort the application.
+ */
 void Manager::setAbortOnTimeout(bool abort)
 {
     ag_manager_set_abort_on_db_timeout(d->m_manager, abort);
 }
 
+/*!
+ * @return Whether the application will be aborted when a database timeout
+ * occurs.
+ */
 bool Manager::abortOnTimeout() const
 {
     return ag_manager_get_abort_on_db_timeout(d->m_manager);
 }
 
+/*!
+ * Gets the last error. Not all operations set/reset the error; see the
+ * individual methods' documentation to see if they set the last error or
+ * not. Call this method right after an account operation
+ * has failed; if no error occurred, the result of this method are
+ * undefined.
+ *
+ * @return The last error.
+ */
 Error Manager::lastError() const
 {
     return d->lastError;

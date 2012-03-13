@@ -39,11 +39,6 @@ extern "C"
 
 namespace Accounts {
 
-/*!
- * @class Error
- * @headerfile error.h Accounts/Error
- * @brief Base object definition for accounts error handling.
- */
 class ACCOUNTS_EXPORT Error
 {
 public:
