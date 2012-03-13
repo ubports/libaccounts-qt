@@ -67,15 +67,6 @@ enum SettingSource
     TEMPLATE
 };
 
-enum ErrorCode
-{
-    /* The value of this enum must be the same as AgError */
-    // TODO remove when the deprecated Error() signal using it is removed
-    Database = 0,
-    Disposed,
-    Deleted,
-};
-
 class ACCOUNTS_EXPORT Watch : public QObject
 {
     Q_OBJECT
@@ -191,12 +182,6 @@ public:
 Q_SIGNALS:
     void displayNameChanged(const QString &displayName);
     void enabledChanged(const QString &serviceName, bool enabled);
-
-    /*!
-     * @deprecated This signal is deprecated and will eventually be removed.
-     * @sa error(Account::Error)
-     */
-    void error(Accounts::ErrorCode errorCode);
 
     void error(Accounts::Error error);
     void synced();
