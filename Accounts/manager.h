@@ -36,8 +36,8 @@
 #include "Accounts/service.h"
 #include "Accounts/service-type.h"
 
-/*! @namespace Accounts
- *
+/*!
+ * @namespace Accounts
  */
 namespace Accounts
 {
@@ -46,6 +46,7 @@ class AccountService;
 
 /*!
  * @class Manager
+ * @headerfile manager.h Accounts/Manager
  *
  * @brief Manager of accounts, services and providers.
  *

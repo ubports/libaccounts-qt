@@ -78,6 +78,7 @@ enum ErrorCode
 
 /*!
  * @class Watch
+ * @headerfile account.h Accounts/Account
  *
  * @brief Monitors an account key or group of keys.
  *
@@ -116,7 +117,9 @@ private:
     // \endcond
 };
 
-/*! @class Account
+/*!
+ * @class Account
+ * @headerfile account.h Accounts/Account
  *
  * @brief The Account class provides an interface to account settings.
  *
