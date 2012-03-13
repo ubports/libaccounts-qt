@@ -558,8 +558,6 @@ void Account::Private::account_store_cb(AgAccount *account, const GError *err,
 
     if (err) {
         emit self->error(Error(err));
-        // TODO: remove the next line at some point
-        emit self->error((ErrorCode)err->code);
     } else {
         emit self->synced();
     }
