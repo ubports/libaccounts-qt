@@ -76,14 +76,14 @@ namespace Accounts
  * }
  * @endcode
  *
- * User applications (with the notable exception of the accounts editing
+ * @note User applications (with the notable exception of the accounts editing
  * application) should never use account services which are not enabled, and
  * should stop using an account when the account service becomes disabled. The
  * latter can be done by connecting to the changed() signal and checking if
  * enabled() still returns true.
- * Note that if the account gets deleted, it will always get disabled first;
- * so, there is no need to connect to the Account::removed() signal; one can
- * just monitor the changed() signal from the AccountService objects.
+ * @note Note that if the account gets deleted, it will always get disabled
+ * first; so, there is no need to connect to the Account::removed() signal; one
+ * can just monitor the changed() signal from the AccountService objects.
  */
 
 /*!
