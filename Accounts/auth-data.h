@@ -2,9 +2,9 @@
 /*
  * This file is part of libaccounts-qt
  *
- * Copyright (C) 2009-2011 Nokia Corporation.
+ * Copyright (C) 2012 Canonical Ltd.
  *
- * Contact: Alberto Mardegan <alberto.mardegan@nokia.com>
+ * Contact: Alberto Mardegan <alberto.mardegan@canonical.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -21,55 +21,54 @@
  * 02110-1301 USA
  */
 /*!
- * @copyright Copyright (C) 2009-2011 Nokia Corporation.
+ * @copyright Copyright (C) 2012 Canonical Ltd.
  * @license LGPL
  */
 
-#ifndef PROVIDER_H
-#define PROVIDER_H
-
-
-#include <QObject>
-#include <QSettings>
-#include <QStringList>
-#include <QXmlStreamReader>
-#include <QDomDocument>
+#ifndef ACCOUNTS_AUTH_DATA_H
+#define ACCOUNTS_AUTH_DATA_H
 
 #include "Accounts/accountscommon.h"
 
+#include <QString>
+#include <QVariantMap>
+
 extern "C"
 {
-    typedef struct _AgProvider AgProvider;
+    typedef struct _AgAuthData AgAuthData;
 }
 
+/*!
+ * @namespace Accounts
+ */
 namespace Accounts
 {
-class Provider;
 
-typedef QList<Provider*> ProviderList;
+class AccountService;
 
-class ACCOUNTS_EXPORT Provider
+class ACCOUNTS_EXPORT AuthData
 {
 public:
-    QString name() const;
-    QString displayName() const;
-    QString trCatalog() const;
-    QString iconName() const;
-    const QDomDocument domDocument() const;
+    AuthData(const AuthData &other);
+    virtual ~AuthData();
 
-    // \cond
-    AgProvider *provider() const;
+    uint credentialsId() const;
+
+    QString method() const;
+
+    QString mechanism() const;
+
+    QVariantMap parameters() const;
 
 private:
-    ~Provider();
+    // Don't include private data in docs: \cond
+    friend class AccountService;
+    AuthData(AgAuthData *authData);
 
-    friend class Manager;
-    Provider(AgProvider *provider);
-    AgProvider *m_provider;
-    mutable QDomDocument doc;
+    AgAuthData *m_authData;
     // \endcond
 };
 
-} //namespace Accounts
+} // namespace
 
-#endif // PROVIDER_H
+#endif // ACCOUNTS_AUTH_DATA_H

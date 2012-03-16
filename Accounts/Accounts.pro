@@ -5,19 +5,33 @@ include( ../common-vars.pri )
 TEMPLATE = lib
 
 # Input
-HEADERS += accountscommon.h \
+public_headers = \
+    accountscommon.h \
     Manager manager.h \
     Account account.h \
+    AccountService account-service.h \
+    AuthData auth-data.h \
     Error error.h \
     Provider provider.h \
     Service service.h \
     ServiceType service-type.h
+
+private_headers = \
+    utils.h
+
+HEADERS += \
+    $$public_headers \
+    $$private_headers
+
 SOURCES += manager.cpp \
     account.cpp \
+    account-service.cpp \
+    auth-data.cpp \
     error.cpp \
     provider.cpp \
     service.cpp \
-    service-type.cpp
+    service-type.cpp \
+    utils.cpp
 
 CONFIG += link_pkgconfig
 
@@ -37,17 +51,6 @@ QMAKE_CXXFLAGS += \
 headers.files = $$HEADERS
 
 include( ../common-installs-config.pri )
-
-# Temporary: install header files in /usr/include/accounts-qt too,
-# while people are not #including <Accounts/*ClassName*>
-tmp_headers.files = \
-    accountscommon.h \
-    manager.h \
-    account.h \
-    provider.h \
-    service.h
-tmp_headers.path = $${INSTALL_PREFIX}/include/$${TARGET}
-INSTALLS += tmp_headers
 
 # configuration feature
 feature.files = accounts.prf

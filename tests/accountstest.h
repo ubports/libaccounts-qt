@@ -46,6 +46,8 @@ public slots:
     void w_port_notify(const char *);
     void w_parameters_notify(const char *);
     void updateAccount(Accounts::AccountId id);
+    void onAccountServiceEnabled(bool enabled);
+    void onAccountServiceChanged();
 
 private slots:
     void initTestCase();
@@ -76,6 +78,8 @@ private slots:
 
     void removeTestCase();
 
+    void accountServiceTest();
+
     void watchesTest();
 
     void serviceDataTest();
@@ -89,6 +93,8 @@ private slots:
     void selectGlobalAccountSettingsTest();
 
     void credentialsIdTest();
+
+    void authDataTest();
 
     void listEnabledServices();
 
@@ -112,6 +118,8 @@ private:
     int m_port_notify;
     int m_parameters_notify;
     AccountId m_updateEvent;
+    bool m_accountServiceEnabledValue;
+    QStringList m_accountServiceChangedFields;
 };
 
 #endif

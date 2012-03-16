@@ -33,6 +33,20 @@
 
 using namespace Accounts;
 
+namespace Accounts {
+/*!
+ * @class ServiceType
+ * @headerfile service-type.h Accounts/ServiceType
+ *
+ * @brief Representation of an account service type.
+ *
+ * @details The ServiceType object represents an account service type. It can
+ * be used to retrieve some basic properties of the service type (such as
+ * name and icon) and to get access to the contents of the XML file which
+ * defines it.
+ */
+}; // namespace
+
 ServiceType::ServiceType(AgServiceType *serviceType)
     : m_serviceType(serviceType)
 {
@@ -47,11 +61,22 @@ ServiceType::~ServiceType()
     m_serviceType = 0;
 }
 
+/*!
+ * Returns the name (ID) of the service type.
+ */
 QString ServiceType::name() const
 {
     return UTF8(ag_service_type_get_name(m_serviceType));
 }
 
+/*!
+ * @return The display name of the service type; this is a string that
+ * could be shown in the UI to describe the service type to the user.
+ *
+ * The library attempts to translate this string by passing it to the
+ * qtTrId() function; in order for this to work you must make sure that
+ * the translation catalogue has been loaded before, if needed.
+ */
 QString ServiceType::displayName() const
 {
     const gchar *id;
@@ -65,16 +90,26 @@ QString ServiceType::displayName() const
     }
 }
 
+/*!
+ * @return The name of the translation catalog, which can be used to
+ * translate the displayName()
+ */
 QString ServiceType::trCatalog() const
 {
     return ASCII(ag_service_type_get_i18n_domain(m_serviceType));
 }
 
+/*!
+ * @return The icon name
+ */
 QString ServiceType::iconName() const
 {
     return ASCII(ag_service_type_get_icon_name(m_serviceType));
 }
 
+/*!
+ * @return The DOM of the whole XML service file
+ */
 const QDomDocument ServiceType::domDocument() const
 {
     if (doc.isNull()) {

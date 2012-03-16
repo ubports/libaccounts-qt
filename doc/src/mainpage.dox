@@ -47,6 +47,7 @@ which are going to use the account information.</p>
 Accounts::Manager to list and instantiate accounts, providers,
 services.</td></tr>
   <tr><td>Accounts::Account</td><td>Interface to account settings and data.</td></tr>
+  <tr><td>Accounts::AccountService</td><td>Service settings of an account.</td></tr>
   <tr><td>Accounts::Provider</td><td>Representation of an installed account
 provider.</td></tr>
   <tr><td>Accounts::Service</td><td>Representation of an installed account

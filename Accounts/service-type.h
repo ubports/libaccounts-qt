@@ -42,48 +42,13 @@ extern "C"
 namespace Accounts
 {
 
-/*!
- * @class ServiceType
- *
- * @brief Representation of an account service type.
- *
- * @details The ServiceType object represents an account service type. It can
- * be used to retrieve some basic properties of the service type (such as
- * name and icon) and to get access to the contents of the XML file which
- * defines it.
- */
 class ACCOUNTS_EXPORT ServiceType
 {
 public:
-    /*!
-     * Returns the name (ID) of the service type.
-     */
     QString name() const;
-
-    /*!
-     * @return The display name of the service type; this is a string that
-     * could be shown in the UI to describe the service type to the user.
-     *
-     * The library attempts to translate this string by passing it to the
-     * qtTrId() function; in order for this to work you must make sure that
-     * the translation catalogue has been loaded before, if needed.
-     */
     QString displayName() const;
-
-    /*!
-     * @return The name of the translation catalog, which can be used to
-     * translate the displayName()
-     */
     QString trCatalog() const;
-
-    /*!
-     * @return The icon name
-     */
     QString iconName() const;
-
-    /*!
-     * @return The DOM of the whole XML service file
-     */
     const QDomDocument domDocument() const;
 
 private:
