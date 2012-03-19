@@ -106,6 +106,8 @@ private slots:
 
     void updateAccountTestCase();
 
+    void applicationTest();
+
 private:
     bool m_stored;
     bool m_enabled;

@@ -23,6 +23,7 @@
 
 #include <QtCore>
 
+#include "application.h"
 #include "service.h"
 #include "manager.h"
 
@@ -540,6 +541,42 @@ ServiceType *Manager::serviceType(const QString &name) const
         ag_service_type_unref(type);
     }
     return serviceType;
+}
+
+/*!
+ * Get an object representing an application.
+ * @param applicationName Name of the application to load.
+ *
+ * @return The requested Application, or an invalid Application object if not
+ * found.
+ */
+Application Manager::application(const QString &applicationName) const
+{
+    QByteArray ba = applicationName.toUtf8();
+    AgApplication *application =
+        ag_manager_get_application(d->m_manager, ba.constData());
+    return Application(application);
+}
+
+/*!
+ * List the registered applications which support the given service.
+ * @param service The service to be supported.
+ *
+ * @return A list of Application objects.
+ */
+ApplicationList Manager::applicationList(const Service *service) const
+{
+    ApplicationList ret;
+    GList *applications, *list;
+
+    applications = ag_manager_list_applications_by_service(d->m_manager,
+                                                           service->service());
+    for (list = applications; list != NULL; list = list->next) {
+        AgApplication *application = (AgApplication *)list->data;
+        ret.append(Application(application));
+    }
+    g_list_free (applications);
+    return ret;
 }
 
 /*!
