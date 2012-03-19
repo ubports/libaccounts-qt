@@ -1,0 +1,17 @@
+libaccounts-qt (1.1++bzr77-0precise1) precise; urgency=low
+
+  * snapshot based on r77
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Mon, 19 Mar 2012 11:16:50 -0400
+
+libaccounts-qt (1.1-0precise2) precise; urgency=low
+
+  * Converted to native package
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Tue, 31 Jan 2012 16:46:31 -0500
+
+libaccounts-qt (1.1-0precise1) precise; urgency=low
+
+  * Initial release
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Fri, 06 Jan 2012 10:07:38 -0500

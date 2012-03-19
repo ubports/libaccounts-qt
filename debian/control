@@ -1,0 +1,38 @@
+Source: libaccounts-qt
+Priority: optional
+Maintainer: Ken VanDine <ken.vandine@canonical.com>
+Build-Depends: debhelper (>= 8.0.0),
+               doxygen,
+               pkg-config,
+               libglib2.0-dev,
+               libqt4-dev,
+               libaccounts-glib-dev
+Standards-Version: 3.9.3
+Section: libs
+Homepage: https://launchpad.net/opensesame-libaccounts-qt
+
+Package: libaccounts-qt-dev
+Section: libdevel
+Architecture: any
+Depends: libaccounts-qt1 (= ${binary:Version}),
+         ${shlibs:Depends},
+         ${misc:Depends}
+Description: QT library for single sign on - development files
+ .
+ This package contains files that are needed to build applications.
+
+Package: libaccounts-qt1
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: QT library for single sign on
+ .
+ This package contains shared libraries to be used by applications.
+
+Package: libaccounts-qt-doc
+Section: doc
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: QT library for single sign on - documentation
+ .
+ This package contains developer documentation.
