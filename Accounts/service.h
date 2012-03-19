@@ -68,15 +68,16 @@ public:
 
     const QDomDocument domDocument() const;
 
-    // \cond
-    AgService *service() const;
 
 private:
+    // \cond
     ~Service();
 
     friend class Account;
+    friend class AccountServicePrivate;
     friend class Manager;
     Service(AgService *service);
+    AgService *service() const;
     AgService *m_service;
     mutable QDomDocument doc;
     // \endcond
