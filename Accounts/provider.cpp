@@ -3,8 +3,9 @@
  * This file is part of libaccounts-qt
  *
  * Copyright (C) 2009-2011 Nokia Corporation.
+ * Copyright (C) 2012 Canonical Ltd.
  *
- * Contact: Alberto Mardegan <alberto.mardegan@nokia.com>
+ * Contact: Alberto Mardegan <alberto.mardegan@canonical.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -22,7 +23,6 @@
  */
 
 #include "provider.h"
-#include "accountscommon.h"
 
 #undef signals
 #include <libaccounts-glib/ag-provider.h>
@@ -43,11 +43,42 @@ namespace Accounts {
  */
 }; // namespace
 
-Provider::Provider(AgProvider *provider)
-    : m_provider(provider)
+Provider::Provider(AgProvider *provider, ReferenceMode mode):
+    m_provider(provider)
 {
     TRACE();
-    ag_provider_ref(m_provider);
+    if (m_provider != 0 && mode == AddReference)
+        ag_provider_ref(m_provider);
+}
+
+/*!
+ * Construct an invalid provider.
+ */
+Provider::Provider():
+    m_provider(0)
+{
+}
+
+/*!
+ * Copy constructor. Copying a Provider object is very cheap, because the
+ * data is shared among copies.
+ */
+Provider::Provider(const Provider &other):
+    m_provider(other.m_provider)
+{
+    if (m_provider != 0)
+        ag_provider_ref(m_provider);
+}
+
+Provider &Provider::operator=(const Provider &other)
+{
+    if (m_provider == other.m_provider) return *this;
+    if (m_provider != 0)
+        ag_provider_unref(m_provider);
+    m_provider = other.m_provider;
+    if (m_provider != 0)
+        ag_provider_ref(m_provider);
+    return *this;
 }
 
 Provider::~Provider()
@@ -58,11 +89,29 @@ Provider::~Provider()
     m_provider = 0;
 }
 
+/*!
+ * Check whether this object represents a Provider.
+ * @return true if the Provider is a valid one.
+ */
+bool Provider::isValid() const
+{
+    return m_provider != 0;
+}
+
+/*!
+ * Get the name of the provider. This can be used as a unique identifier for
+ * this provider.
+ * @return The unique name of the provider.
+ */
 QString Provider::name() const
 {
     return UTF8(ag_provider_get_name(m_provider));
 }
 
+/*!
+ * Get the display name of the provider, untranslated.
+ * @return The display name of the provider.
+ */
 QString Provider::displayName() const
 {
     return UTF8(ag_provider_get_display_name(m_provider));
@@ -90,24 +139,21 @@ QString Provider::iconName() const
  */
 const QDomDocument Provider::domDocument() const
 {
-    if (doc.isNull())
+    const gchar *data;
+
+    ag_provider_get_file_contents(m_provider, &data);
+
+    QDomDocument doc;
+    QString errorStr;
+    int errorLine;
+    int errorColumn;
+    if (!doc.setContent(QByteArray(data), true,
+                        &errorStr, &errorLine, &errorColumn))
     {
-        const gchar *data;
-
-        ag_provider_get_file_contents(m_provider, &data);
-
-        QString errorStr;
-        int errorLine;
-        int errorColumn;
-        if (!doc.setContent(QByteArray(data), true,
-                            &errorStr, &errorLine, &errorColumn))
-        {
-            QString message(ASCII("Parse error reading account provider file "
-                                  "at line %1, column %2:\n%3"));
-            message.arg(errorLine).arg(errorColumn).arg(errorStr);
-            qWarning() << __PRETTY_FUNCTION__ << message;
-            return QDomDocument();
-        }
+        QString message(ASCII("Parse error reading account provider file "
+                              "at line %1, column %2:\n%3"));
+        message.arg(errorLine).arg(errorColumn).arg(errorStr);
+        qWarning() << __PRETTY_FUNCTION__ << message;
     }
 
     return doc;

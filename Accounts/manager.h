@@ -67,7 +67,7 @@ public:
     Service service(const QString &serviceName) const;
     ServiceList serviceList(const QString &serviceType = QString::null) const;
 
-    Provider *provider(const QString &providerName) const;
+    Provider provider(const QString &providerName) const;
     ProviderList providerList() const;
 
     ServiceType serviceType(const QString &name) const;
@@ -98,7 +98,6 @@ private:
     friend class Private;
     Private *d; // Owned.
 
-    Provider *providerInstance(AgProvider *provider) const;
     friend class Account;
     friend class AccountService;
     // \endcond

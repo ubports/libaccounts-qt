@@ -93,28 +93,20 @@ class Manager::Private
 {
     Q_DECLARE_PUBLIC(Manager)
 
-    typedef QHash<AgProvider *, Provider *> ProviderHash;
 public:
     Private():
         q_ptr(0),
-        m_manager(0),
-        providers()
+        m_manager(0)
     {
     }
 
     ~Private() {
-        foreach (Provider *provider, providers)
-        {
-            delete provider;
-        }
-        providers.clear();
     }
 
     void init(Manager *q, AgManager *manager);
 
     mutable Manager *q_ptr;
     AgManager *m_manager; //real manager
-    ProviderHash providers;
     Error lastError;
 
     static void on_account_created(Manager *self, AgAccountId id);
@@ -424,38 +416,20 @@ ServiceList Manager::serviceList(const QString &serviceType) const
     return servList;
 }
 
-Provider *Manager::providerInstance(AgProvider *provider) const
-{
-    Provider *ret;
-
-    ret = d->providers.value(provider);
-    if (!ret)
-    {
-        ret = new Provider(provider);
-        d->providers.insert(provider, ret);
-    }
-    return ret;
-}
-
 /*!
  * Gets an object representing a provider.
  * @param providerName Name of provider to get.
  *
  * @return Requested provider or NULL if not found.
  */
-Provider *Manager::provider(const QString &providerName) const
+Provider Manager::provider(const QString &providerName) const
 {
     TRACE() << providerName;
     AgProvider *provider;
 
     provider = ag_manager_get_provider(d->m_manager,
                                        providerName.toUtf8().constData());
-    if (!provider)
-        return NULL;
-
-    Provider *prov = providerInstance(provider);
-    ag_provider_unref(provider);
-    return prov;
+    return Provider(provider, StealReference);
 }
 
 /*!
@@ -475,11 +449,11 @@ ProviderList Manager::providerList() const
 
     for (iter = list; iter; iter = g_list_next(iter))
     {
-        Provider *prov = providerInstance((AgProvider*)(iter->data));
-        provList.append(prov);
+        AgProvider *provider = (AgProvider*)iter->data;
+        provList.append(Provider(provider, StealReference));
     }
 
-    ag_provider_list_free(list);
+    g_list_free(list);
 
     return provList;
 }
