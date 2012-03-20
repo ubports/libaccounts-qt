@@ -1124,18 +1124,18 @@ void AccountsTest::serviceTypeTestCase()
     Manager *mgr = new Manager();
     QVERIFY(mgr != NULL);
 
-    ServiceType *serviceType;
+    ServiceType serviceType;
 
     serviceType = mgr->serviceType("unexisting-type");
-    QVERIFY(serviceType == NULL);
+    QVERIFY(!serviceType.isValid());
 
     serviceType = mgr->serviceType(EMAIL_SERVICE_TYPE);
-    QVERIFY(serviceType != NULL);
+    QVERIFY(serviceType.isValid());
 
-    QCOMPARE(serviceType->name(), EMAIL_SERVICE_TYPE);
-    QCOMPARE(serviceType->displayName(), QLatin1String("Electronic mail"));
-    QCOMPARE(serviceType->trCatalog(), QLatin1String("translation_file"));
-    QCOMPARE(serviceType->iconName(), QLatin1String("email_icon"));
+    QCOMPARE(serviceType.name(), EMAIL_SERVICE_TYPE);
+    QCOMPARE(serviceType.displayName(), QLatin1String("Electronic mail"));
+    QCOMPARE(serviceType.trCatalog(), QLatin1String("translation_file"));
+    QCOMPARE(serviceType.iconName(), QLatin1String("email_icon"));
 
     delete mgr;
 }
