@@ -3,8 +3,9 @@
  * This file is part of libaccounts-qt
  *
  * Copyright (C) 2009-2011 Nokia Corporation.
+ * Copyright (C) 2012 Canonical Ltd.
  *
- * Contact: Alberto Mardegan <alberto.mardegan@nokia.com>
+ * Contact: Alberto Mardegan <alberto.mardegan@canonical.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -25,17 +26,13 @@
  * @license LGPL
  */
 
-#ifndef PROVIDER_H
-#define PROVIDER_H
-
-
-#include <QObject>
-#include <QSettings>
-#include <QStringList>
-#include <QXmlStreamReader>
-#include <QDomDocument>
+#ifndef ACCOUNTS_PROVIDER_H
+#define ACCOUNTS_PROVIDER_H
 
 #include "Accounts/accountscommon.h"
+
+#include <QStringList>
+#include <QDomDocument>
 
 extern "C"
 {
@@ -46,30 +43,38 @@ namespace Accounts
 {
 class Provider;
 
-typedef QList<Provider*> ProviderList;
+typedef QList<Provider> ProviderList;
 
 class ACCOUNTS_EXPORT Provider
 {
 public:
+    Provider();
+    Provider(const Provider &other);
+    Provider &operator=(const Provider &other);
+    ~Provider();
+
+    bool isValid() const;
+
     QString name() const;
     QString displayName() const;
     QString trCatalog() const;
     QString iconName() const;
     const QDomDocument domDocument() const;
 
-    // \cond
-    AgProvider *provider() const;
+    friend inline bool operator==(const Accounts::Provider &p1,
+                                  const Accounts::Provider &p2) {
+        return p1.m_provider == p2.m_provider || p1.name() == p2.name();
+    }
 
 private:
-    ~Provider();
-
+    // \cond
     friend class Manager;
-    Provider(AgProvider *provider);
+    Provider(AgProvider *provider, ReferenceMode mode = AddReference);
+    AgProvider *provider() const;
     AgProvider *m_provider;
-    mutable QDomDocument doc;
     // \endcond
 };
 
 } //namespace Accounts
 
-#endif // PROVIDER_H
+#endif // ACCOUNTS_PROVIDER_H

@@ -150,15 +150,15 @@ void AccountsTest::providerTestCase()
     delete account;
 
     /* Check listing and loading of XML files */
-    Provider *provider = mgr->provider("MyProvider");
-    QVERIFY(provider != NULL);
+    Provider provider = mgr->provider("MyProvider");
+    QVERIFY(provider.isValid());
 
-    QCOMPARE(provider->displayName(), QString("My Provider"));
+    QCOMPARE(provider.displayName(), QString("My Provider"));
 
     ProviderList providers = mgr->providerList();
     QVERIFY(!providers.isEmpty());
     QVERIFY(providers.size() == 1);
-    QCOMPARE(providers[0]->displayName(), QString("My Provider"));
+    QCOMPARE(providers[0].displayName(), QString("My Provider"));
 
     delete mgr;
 }
