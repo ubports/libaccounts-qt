@@ -3,8 +3,9 @@
  * This file is part of libaccounts-qt
  *
  * Copyright (C) 2009-2011 Nokia Corporation.
+ * Copyright (C) 2012 Canonical Ltd.
  *
- * Contact: Alberto Mardegan <alberto.mardegan@nokia.com>
+ * Contact: Alberto Mardegan <alberto.mardegan@canonical.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -861,20 +862,20 @@ bool Account::verifyWithTokens(const QString &key, QList<const char*> tokens)
     return ag_account_verify_with_tokens(d->m_account, key.toUtf8().constData(), tmp);
 }
 
-qint32 Account::credentialsId()
+uint Account::credentialsId()
 {
     QString key = ACCOUNTS_KEY_CREDENTIALS_ID;
     QVariant val(QVariant::Int);
 
     if (value(key, val) != NONE)
-        return val.toInt();
+        return val.toUInt();
 
-    qint32 id = 0;
+    uint id = 0;
     Service *service = selectedService();
     if (service) {
         selectService(NULL);
         if (value(key, val) != NONE)
-            id = val.toInt();
+            id = val.toUInt();
         selectService(service);
     }
     return id;
