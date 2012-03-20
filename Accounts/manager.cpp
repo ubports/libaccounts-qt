@@ -3,8 +3,9 @@
  * This file is part of libaccounts-qt
  *
  * Copyright (C) 2009-2011 Nokia Corporation.
+ * Copyright (C) 2012 Canonical Ltd.
  *
- * Contact: Alberto Mardegan <alberto.mardegan@nokia.com>
+ * Contact: Alberto Mardegan <alberto.mardegan@canonical.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -20,8 +21,6 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA
  */
-
-#include <QtCore>
 
 #include "application.h"
 #include "service.h"
@@ -95,14 +94,12 @@ class Manager::Private
     Q_DECLARE_PUBLIC(Manager)
 
     typedef QHash<AgProvider *, Provider *> ProviderHash;
-    typedef QHash<AgService *, Service *> ServiceHash;
     typedef QHash<const QString, ServiceType *> ServiceTypeHash;
 public:
     Private():
         q_ptr(0),
         m_manager(0),
         providers(),
-        services(),
         serviceTypes()
     {
     }
@@ -113,11 +110,6 @@ public:
             delete provider;
         }
         providers.clear();
-        foreach (Service *service, services)
-        {
-            delete service;
-        }
-        services.clear();
 
         foreach (ServiceType *serviceType, serviceTypes)
         {
@@ -131,7 +123,6 @@ public:
     mutable Manager *q_ptr;
     AgManager *m_manager; //real manager
     ProviderHash providers;
-    ServiceHash services;
     ServiceTypeHash serviceTypes;
     Error lastError;
 
@@ -389,37 +380,19 @@ Account *Manager::createAccount(const QString &providerName)
     return NULL;
 }
 
-Service *Manager::serviceInstance(AgService *service) const
-{
-    Service *ret;
-
-    ret = d->services.value(service);
-    if (!ret)
-    {
-        ret = new Service(service);
-        d->services.insert(service, ret);
-    }
-    return ret;
-}
-
 /*!
  * Gets an object representing a service.
  * @param serviceName Name of service to get.
  *
- * @return Requested service or NULL if not found.
+ * @return The requested service or an invalid service if not found.
  */
-Service *Manager::service(const QString &serviceName) const
+Service Manager::service(const QString &serviceName) const
 {
     TRACE() << serviceName;
     AgService *service =
         ag_manager_get_service(d->m_manager,
                                serviceName.toUtf8().constData());
-    if (!service)
-        return NULL;
-
-    Service *serv= serviceInstance(service);
-    ag_service_unref(service);
-    return serv;
+    return Service(service, StealReference);
 }
 
 /*!
@@ -451,11 +424,11 @@ ServiceList Manager::serviceList(const QString &serviceType) const
 
     for (iter = list; iter; iter = g_list_next(iter))
     {
-        Service *serv = serviceInstance((AgService*)(iter->data));
-        servList.append(serv);
+        AgService *service = (AgService*)iter->data;
+        servList.append(Service(service, StealReference));
     }
 
-    ag_service_list_free(list);
+    g_list_free(list);
 
     return servList;
 }
@@ -564,13 +537,13 @@ Application Manager::application(const QString &applicationName) const
  *
  * @return A list of Application objects.
  */
-ApplicationList Manager::applicationList(const Service *service) const
+ApplicationList Manager::applicationList(const Service &service) const
 {
     ApplicationList ret;
     GList *applications, *list;
 
     applications = ag_manager_list_applications_by_service(d->m_manager,
-                                                           service->service());
+                                                           service.service());
     for (list = applications; list != NULL; list = list->next) {
         AgApplication *application = (AgApplication *)list->data;
         ret.append(Application(application));

@@ -50,7 +50,7 @@ public:
     QString description() const;
     QString trCatalog() const;
 
-    QString serviceUsage(const Service *service) const;
+    QString serviceUsage(const Service &service) const;
 
 private:
     // Don't include private data in docs: \cond

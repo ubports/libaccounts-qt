@@ -252,15 +252,13 @@ ServiceList Account::services(const QString &serviceType) const
     /* convert glist -> ServiceList */
     ServiceList servList;
     GList *iter;
-    Manager *mgr = manager();
-    Q_ASSERT(mgr != 0);
-    for (iter = list; iter; iter = g_list_next(iter))
+    for (iter = list; iter; iter = iter->next)
     {
-        Service *serv = mgr->serviceInstance((AgService*)(iter->data));
-        servList.append(serv);
+        AgService *service = (AgService*)iter->data;
+        servList.append(Service(service, StealReference));
     }
 
-    ag_service_list_free(list);
+    g_list_free(list);
 
     return servList;
 }
@@ -278,15 +276,13 @@ ServiceList Account::enabledServices() const
     /* convert glist -> ServiceList */
     ServiceList servList;
     GList *iter;
-    Manager *mgr = manager();
-    Q_ASSERT(mgr != 0);
     for (iter = list; iter; iter = g_list_next(iter))
     {
-        Service *serv = mgr->serviceInstance((AgService*)(iter->data));
-        servList.append(serv);
+        AgService *service = (AgService*)iter->data;
+        servList.append(Service(service, StealReference));
     }
 
-    ag_service_list_free(list);
+    g_list_free(list);
 
     return servList;
 }
@@ -343,35 +339,28 @@ QString Account::providerName() const
 }
 
 /*!
- * Selects the Service for the subsequent operations.
- * @param service The Service to select. If this is NULL, the global
+ * Select the Service for the subsequent operations.
+ * @param service The Service to select. If this is invalid, the global
  * account settings will be selected.
  */
-void Account::selectService(const Service *service)
+void Account::selectService(const Service &service)
 {
     AgService *agService = NULL;
 
-    if (service != NULL)
-        agService = service->service();
+    if (service.isValid())
+        agService = service.service();
 
     ag_account_select_service(d->m_account, agService);
     d->prefix = QString();
 }
 
 /*!
- * Returns the currently selected service.
+ * @return The currently selected service.
  */
-Service* Account::selectedService() const
+Service Account::selectedService() const
 {
     AgService *agService = ag_account_get_selected_service(d->m_account);
-    if (agService == NULL)
-        return NULL;
-
-    Manager *mgr = manager();
-    Q_ASSERT(mgr != 0);
-    Service *service = mgr->serviceInstance(agService);
-
-    return service;
+    return Service(agService);
 }
 
 /*!
@@ -871,9 +860,9 @@ uint Account::credentialsId()
         return val.toUInt();
 
     uint id = 0;
-    Service *service = selectedService();
-    if (service) {
-        selectService(NULL);
+    Service service = selectedService();
+    if (service.isValid()) {
+        selectService();
         if (value(key, val) != NONE)
             id = val.toUInt();
         selectService(service);
