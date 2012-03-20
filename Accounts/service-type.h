@@ -3,8 +3,9 @@
  * This file is part of libaccounts-qt
  *
  * Copyright (C) 2011 Nokia Corporation.
+ * Copyright (C) 2012 Canonical Ltd.
  *
- * Contact: Alberto Mardegan <alberto.mardegan@nokia.com>
+ * Contact: Alberto Mardegan <alberto.mardegan@canonical.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -28,11 +29,10 @@
 #ifndef ACCOUNTS_SERVICE_TYPE_H
 #define ACCOUNTS_SERVICE_TYPE_H
 
+#include "Accounts/accountscommon.h"
 
 #include <QObject>
 #include <QDomDocument>
-
-#include "Accounts/accountscommon.h"
 
 extern "C"
 {
@@ -45,20 +45,29 @@ namespace Accounts
 class ACCOUNTS_EXPORT ServiceType
 {
 public:
+    ServiceType();
+    ServiceType(const ServiceType &other);
+    ServiceType &operator=(const ServiceType &other);
+    ~ServiceType();
+
+    bool isValid() const;
+
     QString name() const;
     QString displayName() const;
     QString trCatalog() const;
     QString iconName() const;
     const QDomDocument domDocument() const;
 
+    friend inline bool operator==(const Accounts::ServiceType &s1,
+                                  const Accounts::ServiceType &s2) {
+        return s1.m_serviceType == s2.m_serviceType || s1.name() == s2.name();
+    }
+
 private:
     // \cond
-    ~ServiceType();
-
     friend class Manager;
-    ServiceType(AgServiceType *serviceType);
+    ServiceType(AgServiceType *serviceType, ReferenceMode mode = AddReference);
     AgServiceType *m_serviceType;
-    mutable QDomDocument doc;
     // \endcond
 };
 

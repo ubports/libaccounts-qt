@@ -70,7 +70,7 @@ public:
     Provider *provider(const QString &providerName) const;
     ProviderList providerList() const;
 
-    ServiceType *serviceType(const QString &name) const;
+    ServiceType serviceType(const QString &name) const;
 
     Application application(const QString &applicationName) const;
     ApplicationList applicationList(const Service &service) const;

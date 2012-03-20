@@ -94,13 +94,11 @@ class Manager::Private
     Q_DECLARE_PUBLIC(Manager)
 
     typedef QHash<AgProvider *, Provider *> ProviderHash;
-    typedef QHash<const QString, ServiceType *> ServiceTypeHash;
 public:
     Private():
         q_ptr(0),
         m_manager(0),
-        providers(),
-        serviceTypes()
+        providers()
     {
     }
 
@@ -110,12 +108,6 @@ public:
             delete provider;
         }
         providers.clear();
-
-        foreach (ServiceType *serviceType, serviceTypes)
-        {
-            delete serviceType;
-        }
-        serviceTypes.clear();
     }
 
     void init(Manager *q, AgManager *manager);
@@ -123,7 +115,6 @@ public:
     mutable Manager *q_ptr;
     AgManager *m_manager; //real manager
     ProviderHash providers;
-    ServiceTypeHash serviceTypes;
     Error lastError;
 
     static void on_account_created(Manager *self, AgAccountId id);
@@ -499,21 +490,12 @@ ProviderList Manager::providerList() const
  *
  * @return Requested service type or NULL if not found.
  */
-ServiceType *Manager::serviceType(const QString &name) const
+ServiceType Manager::serviceType(const QString &name) const
 {
-    ServiceType *serviceType = d->serviceTypes.value(name, NULL);
-    if (serviceType == 0) {
-        AgServiceType *type;
-        type = ag_manager_load_service_type(d->m_manager,
-                                            name.toUtf8().constData());
-        if (type == NULL)
-            return NULL;
-
-        serviceType = new ServiceType(type);
-        d->serviceTypes.insert(name, serviceType);
-        ag_service_type_unref(type);
-    }
-    return serviceType;
+    AgServiceType *type;
+    type = ag_manager_load_service_type(d->m_manager,
+                                        name.toUtf8().constData());
+    return ServiceType(type, StealReference);
 }
 
 /*!
