@@ -919,7 +919,7 @@ void AccountsTest::credentialsIdTest()
     Service* service = mgr->service(MYSERVICE);
     QVERIFY(service != NULL);
 
-    qint32 globalId = 69, myServiceId = 0xDEAD;
+    uint globalId = 69, myServiceId = 0xDEAD;
 
     account->setCredentialsId(globalId);
 
