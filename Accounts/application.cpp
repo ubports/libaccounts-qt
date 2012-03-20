@@ -122,8 +122,8 @@ QString Application::trCatalog() const
  * service; if not found, get the service-type description instead.
  * @return Usage description of the service.
  */
-QString Application::serviceUsage(const Service *service) const
+QString Application::serviceUsage(const Service &service) const
 {
     return UTF8(ag_application_get_service_usage(m_application,
-                                                 service->service()));
+                                                 service.service()));
 }

@@ -26,19 +26,16 @@
  * @license LGPL
  */
 
-#ifndef ACCOUNT_H
-#define ACCOUNT_H
-
-
-#include <QObject>
-#include <QSettings>
-#include <QStringList>
+#ifndef ACCOUNTS_ACCOUNT_H
+#define ACCOUNTS_ACCOUNT_H
 
 #include "Accounts/accountscommon.h"
 #include "Accounts/error.h"
 #include "Accounts/service.h"
 
 #define ACCOUNTS_KEY_CREDENTIALS_ID QLatin1String("CredentialsId")
+#include <QObject>
+#include <QStringList>
 
 extern "C"
 {
@@ -136,9 +133,9 @@ public:
 
     QString providerName() const;
 
-    void selectService(const Service *service = 0);
+    void selectService(const Service &service = Service());
 
-    Service *selectedService() const;
+    Service selectedService() const;
 
     /* QSettings-like methods */
     QStringList allKeys() const;
@@ -210,4 +207,4 @@ private:
 
 } //namespace Accounts
 
-#endif // ACCOUNT_H
+#endif // ACCOUNTS_ACCOUNT_H
