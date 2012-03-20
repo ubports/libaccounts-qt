@@ -23,6 +23,7 @@
 #include <QtTest/QtTest>
 #include <QSignalSpy>
 
+#include "Accounts/Application"
 #include "Accounts/Manager"
 #include "Accounts/AccountService"
 
@@ -1192,6 +1193,41 @@ void AccountsTest::updateAccountTestCase()
 void AccountsTest::updateAccount(Accounts::AccountId id)
 {
     m_updateEvent = id;
+}
+
+void AccountsTest::applicationTest()
+{
+    Manager *manager = new Manager();
+    QVERIFY(manager != 0);
+
+    Application application = manager->application("Mailer");
+    QVERIFY(application.isValid());
+
+    Service *email = manager->service("MyService");
+    QVERIFY(email != 0);
+
+    Service *sharing = manager->service("OtherService");
+    QVERIFY(sharing != 0);
+
+    QCOMPARE(application.name(), UTF8("Mailer"));
+    QCOMPARE(application.description(), UTF8("Mailer application"));
+    QCOMPARE(application.trCatalog(), UTF8("mailer-catalog"));
+    QCOMPARE(application.serviceUsage(email),
+             UTF8("Mailer can retrieve your e-mails"));
+
+    ApplicationList apps = manager->applicationList(email);
+    QCOMPARE(apps.count(), 1);
+    QCOMPARE(apps[0].name(), UTF8("Mailer"));
+
+    apps = manager->applicationList(sharing);
+    QCOMPARE(apps.count(), 1);
+    application = apps[0];
+    QCOMPARE(application.name(), UTF8("Gallery"));
+    QCOMPARE(application.description(), UTF8("Image gallery"));
+    QCOMPARE(application.serviceUsage(sharing),
+             UTF8("Publish images on OtherService"));
+
+    delete manager;
 }
 
 QTEST_MAIN(AccountsTest)

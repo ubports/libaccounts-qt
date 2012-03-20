@@ -75,6 +75,7 @@ private:
 
     friend class Account;
     friend class AccountServicePrivate;
+    friend class Application;
     friend class Manager;
     Service(AgService *service);
     AgService *service() const;

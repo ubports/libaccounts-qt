@@ -43,6 +43,9 @@ namespace Accounts
 {
 
 class AccountService;
+class Application;
+
+typedef QList<Application> ApplicationList;
 
 class ACCOUNTS_EXPORT Manager : public QObject
 {
@@ -67,6 +70,9 @@ public:
     ProviderList providerList() const;
 
     ServiceType *serviceType(const QString &name) const;
+
+    Application application(const QString &applicationName) const;
+    ApplicationList applicationList(const Service *service) const;
 
     QString serviceType() const;
 
