@@ -3,8 +3,9 @@
  * This file is part of libaccounts-qt
  *
  * Copyright (C) 2009-2011 Nokia Corporation.
+ * Copyright (C) 2012 Canonical Ltd.
  *
- * Contact: Alberto Mardegan <alberto.mardegan@nokia.com>
+ * Contact: Alberto Mardegan <alberto.mardegan@canonical.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -21,15 +22,10 @@
  * 02110-1301 USA
  */
 
-#include "account.h"
-#include "manager.h"
+#include "service.h"
 
 #undef signals
-#include <libaccounts-glib/ag-manager.h>
-#include <libaccounts-glib/ag-account.h>
 #include <libaccounts-glib/ag-service.h>
-#include <QtDebug>
-
 
 using namespace Accounts;
 
@@ -47,50 +43,109 @@ namespace Accounts {
  */
 }; // namespace
 
-Service::Service(AgService *service)
-    : m_service(service)
+Service::Service(AgService *service, ReferenceMode mode):
+    m_service(service)
 {
-    TRACE();
-    ag_service_ref(m_service);
+    if (m_service != 0 && mode == AddReference)
+        ag_service_ref(m_service);
+}
+
+/*!
+ * Construct an invalid service.
+ */
+Service::Service():
+    m_service(0)
+{
+}
+
+/*!
+ * Copy constructor. Copying a Service object is very cheap, because the
+ * data is shared among copies.
+ */
+Service::Service(const Service &other):
+    m_service(other.m_service)
+{
+    if (m_service != 0)
+        ag_service_ref(m_service);
+}
+
+Service &Service::operator=(const Service &other)
+{
+    if (m_service == other.m_service) return *this;
+    if (m_service != 0)
+        ag_service_unref(m_service);
+    m_service = other.m_service;
+    if (m_service != 0)
+        ag_service_ref(m_service);
+    return *this;
 }
 
 Service::~Service()
 {
     TRACE();
 
-    ag_service_unref(m_service);
-    m_service = 0;
+    if (m_service != 0) {
+        ag_service_unref(m_service);
+        m_service = 0;
+    }
 }
 
+/*!
+ * Check whether this object represents a Service.
+ * @return true if the Service is a valid one.
+ */
+bool Service::isValid() const
+{
+    return m_service != 0;
+}
+
+/*!
+ * Get the name of the service. This can be used as a unique identifier for
+ * this service.
+ * @return The unique name of the service.
+ */
 QString Service::name() const
 {
     return UTF8(ag_service_get_name(m_service));
 }
 
+/*!
+ * Get the display name of the service, untranslated.
+ * @return The display name of the service.
+ */
 QString Service::displayName() const
 {
     return UTF8(ag_service_get_display_name(m_service));
 }
 
+/*!
+ * Get the service type ID of the service.
+ * @return The service type of the service.
+ */
 QString Service::serviceType() const
 {
     return ASCII(ag_service_get_service_type(m_service));
 }
 
 /*!
- * @return The translation catalog of the service
+ * @return The translation catalog of the service.
  */
 QString Service::trCatalog() const
 {
     return ASCII(ag_service_get_i18n_domain(m_service));
 }
 
+/*!
+ * Get the provider ID of the service.
+ * @return The provider of the service.
+ */
 QString Service::provider() const
 {
     return UTF8(ag_service_get_provider(m_service));
 }
 
 /*!
+ * Get the icon name for this service.
  * @return The icon name.
  */
 QString Service::iconName() const
@@ -98,52 +153,28 @@ QString Service::iconName() const
     return ASCII(ag_service_get_icon_name(m_service));
 }
 
-QXmlStreamReader *Service::xmlStreamReader() const
-{
-    const gchar *data;
-    gsize offset;
-
-    ag_service_get_file_contents(m_service, &data, &offset);
-    if (data)
-        data += offset;
-
-    QXmlStreamReader *reader = new QXmlStreamReader(QByteArray(data));
-
-    /* Read the startDocument token */
-    if (reader->readNext() != QXmlStreamReader::StartDocument)
-    {
-        delete reader;
-        return NULL;
-    }
-
-    return reader;
-}
-
 /*!
+ * Get the contents of the service XML file.
  * @return The DOM of the whole XML service file
  */
 const QDomDocument Service::domDocument() const
 {
-    if (doc.isNull())
+    const gchar *data;
+
+    ag_service_get_file_contents(m_service, &data, NULL);
+
+    QDomDocument doc;
+    QString errorStr;
+    int errorLine;
+    int errorColumn;
+    if (!doc.setContent(QByteArray(data), true,
+                        &errorStr, &errorLine, &errorColumn))
     {
-        const gchar *data;
-
-        ag_service_get_file_contents(m_service, &data, NULL);
-
-        QString errorStr;
-        int errorLine;
-        int errorColumn;
-        if (!doc.setContent(QByteArray(data), true,
-                            &errorStr, &errorLine, &errorColumn))
-        {
-            QString message(ASCII("Parse error reading account service file "
-                                  "at line %1, column %2:\n%3"));
-            message.arg(errorLine).arg(errorColumn).arg(errorStr);
-            qWarning() << __PRETTY_FUNCTION__ << message;
-            return QDomDocument();
-        }
+        QString message(ASCII("Parse error reading account service file "
+                              "at line %1, column %2:\n%3"));
+        message.arg(errorLine).arg(errorColumn).arg(errorStr);
+        qWarning() << __PRETTY_FUNCTION__ << message;
     }
-
     return doc;
 }
 

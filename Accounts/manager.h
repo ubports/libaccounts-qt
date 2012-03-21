@@ -3,8 +3,9 @@
  * This file is part of libaccounts-qt
  *
  * Copyright (C) 2009-2011 Nokia Corporation.
+ * Copyright (C) 2012 Canonical Ltd.
  *
- * Contact: Alberto Mardegan <alberto.mardegan@nokia.com>
+ * Contact: Alberto Mardegan <alberto.mardegan@canonical.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -21,8 +22,8 @@
  * 02110-1301 USA
  */
 
-#ifndef ACCOUNTMANAGER_H
-#define ACCOUNTMANAGER_H
+#ifndef ACCOUNTS_MANAGER_H
+#define ACCOUNTS_MANAGER_H
 
 #include <QObject>
 #include <QSettings>
@@ -43,6 +44,9 @@ namespace Accounts
 {
 
 class AccountService;
+class Application;
+
+typedef QList<Application> ApplicationList;
 
 class ACCOUNTS_EXPORT Manager : public QObject
 {
@@ -60,13 +64,16 @@ public:
 
     Account *createAccount(const QString &providerName);
 
-    Service *service(const QString &serviceName) const;
+    Service service(const QString &serviceName) const;
     ServiceList serviceList(const QString &serviceType = QString::null) const;
 
-    Provider *provider(const QString &providerName) const;
+    Provider provider(const QString &providerName) const;
     ProviderList providerList() const;
 
-    ServiceType *serviceType(const QString &name) const;
+    ServiceType serviceType(const QString &name) const;
+
+    Application application(const QString &applicationName) const;
+    ApplicationList applicationList(const Service &service) const;
 
     QString serviceType() const;
 
@@ -91,8 +98,6 @@ private:
     friend class Private;
     Private *d; // Owned.
 
-    Provider *providerInstance(AgProvider *provider) const;
-    Service *serviceInstance(AgService *service) const;
     friend class Account;
     friend class AccountService;
     // \endcond
@@ -100,4 +105,4 @@ private:
 
 } //namespace Accounts
 
-#endif // ACCOUNTMANAGER_H
+#endif // ACCOUNTS_MANAGER_H

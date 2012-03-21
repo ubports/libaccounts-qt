@@ -23,6 +23,7 @@
 #include <QtTest/QtTest>
 #include <QSignalSpy>
 
+#include "Accounts/Application"
 #include "Accounts/Manager"
 #include "Accounts/AccountService"
 
@@ -149,15 +150,15 @@ void AccountsTest::providerTestCase()
     delete account;
 
     /* Check listing and loading of XML files */
-    Provider *provider = mgr->provider("MyProvider");
-    QVERIFY(provider != NULL);
+    Provider provider = mgr->provider("MyProvider");
+    QVERIFY(provider.isValid());
 
-    QCOMPARE(provider->displayName(), QString("My Provider"));
+    QCOMPARE(provider.displayName(), QString("My Provider"));
 
     ProviderList providers = mgr->providerList();
     QVERIFY(!providers.isEmpty());
     QVERIFY(providers.size() == 1);
-    QCOMPARE(providers[0]->displayName(), QString("My Provider"));
+    QCOMPARE(providers[0].displayName(), QString("My Provider"));
 
     delete mgr;
 }
@@ -167,12 +168,12 @@ void AccountsTest::serviceTestCase()
     Manager * mgr=new Manager();
     QVERIFY(mgr!=NULL);
 
-    Service* service = mgr->service(MYSERVICE);
-    QVERIFY(service!=NULL);
-    QCOMPARE(service->name(), MYSERVICE);
+    Service service = mgr->service(MYSERVICE);
+    QVERIFY(service.isValid());
+    QCOMPARE(service.name(), MYSERVICE);
 
     service = mgr->service(SERVICE);
-    QVERIFY(service==NULL);
+    QVERIFY(!service.isValid());
 
     delete mgr;
 }
@@ -184,11 +185,11 @@ void AccountsTest::serviceListTestCase()
 
     ServiceList list = mgr->serviceList();
     QVERIFY(!list.isEmpty());
-    QVERIFY(list.size()==2);
+    QCOMPARE(list.count(), 2);
 
     for (int i = 0; i < list.size(); i++) {
-         qDebug("%d : %s",i,((Service*)list.at(i))->name().toLocal8Bit().constData());
-     }
+         qDebug("%d : %s",i,list.at(i).name().toLocal8Bit().constData());
+    }
 
     delete mgr;
 }
@@ -200,13 +201,12 @@ void AccountsTest::serviceConstTestCase()
     Manager * mgr=new Manager();
     QVERIFY(mgr!=NULL);
 
-    Service* service = mgr->service(MYSERVICE);
-    QVERIFY(service!=NULL);
-    QCOMPARE(service->name(), MYSERVICE);
-    QCOMPARE(service->displayName(), QString("My Service"));
-    QCOMPARE(service->serviceType(), QString("e-mail"));
-    QCOMPARE(service->provider(), QString(""));
-    QVERIFY(service->service()!=NULL);
+    Service service = mgr->service(MYSERVICE);
+    QVERIFY(service.isValid());
+    QCOMPARE(service.name(), MYSERVICE);
+    QCOMPARE(service.displayName(), QString("My Service"));
+    QCOMPARE(service.serviceType(), QString("e-mail"));
+    QCOMPARE(service.provider(), QString("MyProvider"));
 
     delete mgr;
 }
@@ -232,20 +232,15 @@ void AccountsTest::accountServiceTestCase()
     Manager * mgr=new Manager();
     QVERIFY(mgr!=NULL);
 
-    Account *account = mgr->createAccount(PROVIDER);
+    Account *account = mgr->createAccount("MyProvider");
     QVERIFY(account!=NULL);
 
-    //TODO not implemented yet
     QVERIFY(!account->supportsService(QString("unsupported")));
-    //QVERIFY(account->supportsService(QString("e-mail")));
+    QVERIFY(account->supportsService(QString("e-mail")));
 
-    //TODO not implemented yet
     ServiceList list = account->services();
-    //QVERIFY(!list.isEmpty());
-    //QVERIFY(list.size()==2);
-    for (int i = 0; i < list.size(); i++) {
-         qDebug("%d : %s",i,((Service*)list.at(i))->name().toLocal8Bit().constData());
-     }
+    QVERIFY(!list.isEmpty());
+    QCOMPARE(list.count(), 1);
 
     delete account;
     delete mgr;
@@ -487,8 +482,8 @@ void AccountsTest::accountServiceTest()
     Manager *mgr = new Manager();
     QVERIFY (mgr != NULL);
 
-    Service* service = mgr->service(MYSERVICE);
-    QVERIFY(service != NULL);
+    Service service = mgr->service(MYSERVICE);
+    QVERIFY(service.isValid());
 
     Account *account = mgr->createAccount(NULL);
     QVERIFY(account != NULL);
@@ -588,8 +583,8 @@ void AccountsTest::watchesTest()
     Manager *mgr = new Manager();
     QVERIFY (mgr != NULL);
 
-    Service* service = mgr->service(MYSERVICE);
-    QVERIFY(service != NULL);
+    Service service = mgr->service(MYSERVICE);
+    QVERIFY(service.isValid());
 
     /* create an account and some watches */
     Account *account = mgr->createAccount(NULL);
@@ -677,16 +672,12 @@ void AccountsTest::serviceDataTest()
     Manager *mgr = new Manager();
     QVERIFY (mgr != NULL);
 
-    Service* service = mgr->service(MYSERVICE);
-    QVERIFY(service != NULL);
+    Service service = mgr->service(MYSERVICE);
+    QVERIFY(service.isValid());
 
-    QXmlStreamReader *xml = service->xmlStreamReader();
-    QVERIFY(xml != NULL);
+    QDomDocument doc = service.domDocument();
+    QVERIFY(!doc.isNull());
 
-    QVERIFY(xml->readNext() == QXmlStreamReader::StartElement);
-    QVERIFY(xml->name() == QString("type_data"));
-
-    delete xml;
     delete mgr;
 }
 
@@ -861,6 +852,8 @@ void AccountsTest::keySignVerifyTest()
 
     ok = account->verifyWithTokens(key, listOfTokens);
     QVERIFY(ok == true);
+
+    delete mgr;
 }
 
 void AccountsTest::incrementalAccountIdsTest()
@@ -904,8 +897,10 @@ void AccountsTest::selectGlobalAccountSettingsTest()
     QVERIFY(account->id() > 0);
 
     account->selectService();
-    Service *selectedService = account->selectedService();
-    QVERIFY(selectedService == NULL);
+    Service selectedService = account->selectedService();
+    QVERIFY(!selectedService.isValid());
+
+    delete mgr;
 }
 
 void AccountsTest::credentialsIdTest()
@@ -916,10 +911,10 @@ void AccountsTest::credentialsIdTest()
     Account *account = mgr->createAccount("MyProvider");
     QVERIFY(account != NULL);
 
-    Service* service = mgr->service(MYSERVICE);
-    QVERIFY(service != NULL);
+    Service service = mgr->service(MYSERVICE);
+    QVERIFY(service.isValid());
 
-    qint32 globalId = 69, myServiceId = 0xDEAD;
+    uint globalId = 69, myServiceId = 0xDEAD;
 
     account->setCredentialsId(globalId);
 
@@ -934,15 +929,17 @@ void AccountsTest::credentialsIdTest()
     /* select a service with no credentials: we should get the global
      * credentials ID, but the selected service shouldn't change */
     service = mgr->service(OTHERSERVICE);
-    QVERIFY(service != NULL);
+    QVERIFY(service.isValid());
 
     account->selectService(service);
     QCOMPARE(account->credentialsId(), globalId);
     QCOMPARE(account->selectedService(), service);
 
     /* now make sure that we can get the ID from the global accounts settings */
-    account->selectService(NULL);
+    account->selectService();
     QCOMPARE(account->credentialsId(), globalId);
+
+    delete mgr;
 }
 
 void AccountsTest::authDataTest()
@@ -953,8 +950,8 @@ void AccountsTest::authDataTest()
     Account *account = manager->createAccount("MyProvider");
     QVERIFY(account != NULL);
 
-    Service *service = manager->service(MYSERVICE);
-    QVERIFY(service != NULL);
+    Service service = manager->service(MYSERVICE);
+    QVERIFY(service.isValid());
 
     const uint credentialsId = 69;
     const QString method = "mymethod";
@@ -1011,6 +1008,7 @@ void AccountsTest::authDataTest()
     delete accountService;
     delete account;
     delete manager;
+    QVERIFY(service.isValid());
 }
 
 void AccountsTest::listEnabledServices()
@@ -1020,8 +1018,8 @@ void AccountsTest::listEnabledServices()
     Manager *mgr = new Manager();
     QVERIFY(mgr != NULL);
 
-    Service* service = mgr->service(MYSERVICE);
-    QVERIFY(service!=NULL);
+    Service service = mgr->service(MYSERVICE);
+    QVERIFY(service.isValid());
 
     Account* account = mgr->createAccount("MyProvider");
     QVERIFY(account != NULL);
@@ -1056,8 +1054,8 @@ void AccountsTest::listEnabledByServiceType()
     QVERIFY(account != NULL);
     account->setEnabled(true);
 
-    Service* service = mgr->service(MYSERVICE);
-    QVERIFY(service!=NULL);
+    Service service = mgr->service(MYSERVICE);
+    QVERIFY(service.isValid());
     account->selectService(service);
     account->setEnabled(true);
     account->sync();
@@ -1126,18 +1124,18 @@ void AccountsTest::serviceTypeTestCase()
     Manager *mgr = new Manager();
     QVERIFY(mgr != NULL);
 
-    ServiceType *serviceType;
+    ServiceType serviceType;
 
     serviceType = mgr->serviceType("unexisting-type");
-    QVERIFY(serviceType == NULL);
+    QVERIFY(!serviceType.isValid());
 
     serviceType = mgr->serviceType(EMAIL_SERVICE_TYPE);
-    QVERIFY(serviceType != NULL);
+    QVERIFY(serviceType.isValid());
 
-    QCOMPARE(serviceType->name(), EMAIL_SERVICE_TYPE);
-    QCOMPARE(serviceType->displayName(), QLatin1String("Electronic mail"));
-    QCOMPARE(serviceType->trCatalog(), QLatin1String("translation_file"));
-    QCOMPARE(serviceType->iconName(), QLatin1String("email_icon"));
+    QCOMPARE(serviceType.name(), EMAIL_SERVICE_TYPE);
+    QCOMPARE(serviceType.displayName(), QLatin1String("Electronic mail"));
+    QCOMPARE(serviceType.trCatalog(), QLatin1String("translation_file"));
+    QCOMPARE(serviceType.iconName(), QLatin1String("email_icon"));
 
     delete mgr;
 }
@@ -1157,8 +1155,8 @@ void AccountsTest::updateAccountTestCase()
     QVERIFY(account != NULL);
     account->syncAndBlock();
 
-    Service* service = mgr->service(MYSERVICE);
-    QVERIFY(service!=NULL);
+    Service service = mgr->service(MYSERVICE);
+    QVERIFY(service.isValid());
     account->selectService(service);
 
     account->setValue("key", QVariant("value"));
@@ -1193,6 +1191,41 @@ void AccountsTest::updateAccountTestCase()
 void AccountsTest::updateAccount(Accounts::AccountId id)
 {
     m_updateEvent = id;
+}
+
+void AccountsTest::applicationTest()
+{
+    Manager *manager = new Manager();
+    QVERIFY(manager != 0);
+
+    Application application = manager->application("Mailer");
+    QVERIFY(application.isValid());
+
+    Service email = manager->service("MyService");
+    QVERIFY(email.isValid());
+
+    Service sharing = manager->service("OtherService");
+    QVERIFY(sharing.isValid());
+
+    QCOMPARE(application.name(), UTF8("Mailer"));
+    QCOMPARE(application.description(), UTF8("Mailer application"));
+    QCOMPARE(application.trCatalog(), UTF8("mailer-catalog"));
+    QCOMPARE(application.serviceUsage(email),
+             UTF8("Mailer can retrieve your e-mails"));
+
+    ApplicationList apps = manager->applicationList(email);
+    QCOMPARE(apps.count(), 1);
+    QCOMPARE(apps[0].name(), UTF8("Mailer"));
+
+    apps = manager->applicationList(sharing);
+    QCOMPARE(apps.count(), 1);
+    application = apps[0];
+    QCOMPARE(application.name(), UTF8("Gallery"));
+    QCOMPARE(application.description(), UTF8("Image gallery"));
+    QCOMPARE(application.serviceUsage(sharing),
+             UTF8("Publish images on OtherService"));
+
+    delete manager;
 }
 
 QTEST_MAIN(AccountsTest)

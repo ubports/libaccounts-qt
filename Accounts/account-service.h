@@ -2,7 +2,7 @@
 /*
 * This file is part of libaccounts-qt
 *
-* Copyright (C) 2012 Nokia Corporation.
+* Copyright (C) 2012 Canonical Ltd.
 *
 * Contact: Alberto Mardegan <alberto.mardegan@canonical.com>
 *
@@ -41,11 +41,11 @@ class ACCOUNTS_EXPORT AccountService: public QObject
     Q_OBJECT
 
 public:
-    explicit AccountService(Account *account, Service *service);
+    explicit AccountService(Account *account, const Service &service);
     virtual ~AccountService();
 
     Account *account() const;
-    Service *service() const;
+    Service service() const;
 
     bool enabled() const;
 
