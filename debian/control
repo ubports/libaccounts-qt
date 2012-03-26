@@ -36,3 +36,15 @@ Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: QT library for single sign on - documentation
  .
  This package contains developer documentation.
+
+Package: libaccounts-qt1-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Depends: libaccounts-qt1 (= ${binary:Version}),
+         ${misc:Depends}
+Description: QT library for single signon - Debug symbols
+ .
+ This package provides the debugging symbols for the libaccounts-qt
+ library.
+

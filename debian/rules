@@ -7,10 +7,13 @@
 export QMAKE_LIBDIR=/usr/lib
 
 override_dh_auto_configure:
-	qmake LIBDIR=/usr/lib "QMAKE_CXXFLAGS=$(CFLAGS)" accounts-qt.pro
+	qmake LIBDIR=/usr/lib "QMAKE_CXXFLAGS=$(CFLAGS)" "CONFIG+=debug" accounts-qt.pro
 
 override_dh_install:
 	dh_install --list-missing
+
+override_dh_strip:
+	dh_strip --dbg-package=libaccounts-qt1-dbg
 
 override_dh_auto_test:
 
