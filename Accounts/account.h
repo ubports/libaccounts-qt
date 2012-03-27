@@ -36,6 +36,7 @@
 #define ACCOUNTS_KEY_CREDENTIALS_ID QLatin1String("CredentialsId")
 #include <QObject>
 #include <QStringList>
+#include <QVariant>
 
 extern "C"
 {
