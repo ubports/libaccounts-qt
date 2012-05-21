@@ -48,7 +48,7 @@ class Application;
 
 typedef QList<Application> ApplicationList;
 
-class ACCOUNTS_EXPORT Manager : public QObject
+class ACCOUNTS_EXPORT Manager: public QObject
 {
     Q_OBJECT
 

@@ -207,6 +207,7 @@ void AccountsTest::serviceConstTestCase()
     QCOMPARE(service.displayName(), QString("My Service"));
     QCOMPARE(service.serviceType(), QString("e-mail"));
     QCOMPARE(service.provider(), QString("MyProvider"));
+    QVERIFY(service.hasTag(QString("messaging")));
 
     delete mgr;
 }
@@ -1136,6 +1137,7 @@ void AccountsTest::serviceTypeTestCase()
     QCOMPARE(serviceType.displayName(), QLatin1String("Electronic mail"));
     QCOMPARE(serviceType.trCatalog(), QLatin1String("translation_file"));
     QCOMPARE(serviceType.iconName(), QLatin1String("email_icon"));
+    QVERIFY(serviceType.tags().contains(QString("email")));
 
     delete mgr;
 }
