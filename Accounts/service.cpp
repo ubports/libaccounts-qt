@@ -4,8 +4,10 @@
  *
  * Copyright (C) 2009-2011 Nokia Corporation.
  * Copyright (C) 2012 Canonical Ltd.
+ * Copyright (C) 2012 Intel Corporation.
  *
  * Contact: Alberto Mardegan <alberto.mardegan@canonical.com>
+ * Contact: Jussi Laako <jussi.laako@linux.intel.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -44,7 +46,8 @@ namespace Accounts {
 }; // namespace
 
 Service::Service(AgService *service, ReferenceMode mode):
-    m_service(service)
+    m_service(service),
+    m_tags(0)
 {
     if (m_service != 0 && mode == AddReference)
         ag_service_ref(m_service);
@@ -54,7 +57,8 @@ Service::Service(AgService *service, ReferenceMode mode):
  * Construct an invalid service.
  */
 Service::Service():
-    m_service(0)
+    m_service(0),
+    m_tags(0)
 {
 }
 
@@ -63,7 +67,8 @@ Service::Service():
  * data is shared among copies.
  */
 Service::Service(const Service &other):
-    m_service(other.m_service)
+    m_service(other.m_service),
+    m_tags(0)
 {
     if (m_service != 0)
         ag_service_ref(m_service);
@@ -87,6 +92,10 @@ Service::~Service()
     if (m_service != 0) {
         ag_service_unref(m_service);
         m_service = 0;
+    }
+    if (m_tags != 0) {
+        delete m_tags;
+        m_tags = 0;
     }
 }
 
@@ -151,6 +160,39 @@ QString Service::provider() const
 QString Service::iconName() const
 {
     return ASCII(ag_service_get_icon_name(m_service));
+}
+
+/*!
+ * Check if this service has a tag.
+ *
+ * @param tag Tag to look for
+ *
+ * @return Service has the tag?
+ */
+bool Service::hasTag(const QString &tag) const
+{
+    return ag_service_has_tag(m_service, tag.toUtf8().constData());
+}
+
+/*!
+ * Return all tags of the service as a set.
+ *
+ * @return Set of tags
+ */
+QSet<QString> Service::tags() const
+{
+    if (m_tags)
+        return *m_tags;
+
+    m_tags = new QSet<QString>;
+    GList *list = ag_service_get_tags(m_service);
+    GList *iter = list;
+    while (iter != NULL) {
+        m_tags->insert(UTF8(reinterpret_cast<const gchar *> (iter->data)));
+        iter = g_list_next(iter);
+    }
+    g_list_free(list);
+    return *m_tags;
 }
 
 /*!

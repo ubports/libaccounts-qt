@@ -4,8 +4,10 @@
  *
  * Copyright (C) 2011 Nokia Corporation.
  * Copyright (C) 2012 Canonical Ltd.
+ * Copyright (C) 2012 Intel Corporation.
  *
  * Contact: Alberto Mardegan <alberto.mardegan@canonical.com>
+ * Contact: Jussi Laako <jussi.laako@linux.intel.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -32,6 +34,8 @@
 #include "Accounts/accountscommon.h"
 
 #include <QObject>
+#include <QSet>
+#include <QString>
 #include <QDomDocument>
 
 extern "C"
@@ -56,6 +60,9 @@ public:
     QString displayName() const;
     QString trCatalog() const;
     QString iconName() const;
+    bool hasTag(const QString &tag) const;
+    QSet<QString> tags() const;
+
     const QDomDocument domDocument() const;
 
     friend inline bool operator==(const Accounts::ServiceType &s1,
@@ -68,6 +75,7 @@ private:
     friend class Manager;
     ServiceType(AgServiceType *serviceType, ReferenceMode mode = AddReference);
     AgServiceType *m_serviceType;
+    mutable QSet<QString> *m_tags;
     // \endcond
 };
 
