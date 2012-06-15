@@ -1,3 +1,9 @@
+libaccounts-qt (1.1++bzr77-0precise3) precise; urgency=low
+
+  * no change rebuild
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Fri, 15 Jun 2012 16:49:32 -0400
+
 libaccounts-qt (1.1++bzr77-0precise2) precise; urgency=low
 
   * debian/control, debian/rules
