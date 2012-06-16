@@ -1,3 +1,10 @@
+libaccounts-qt (1.1++bzr77-0precise4) precise; urgency=low
+
+  * debian/rules
+    - disable tests
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Fri, 15 Jun 2012 22:45:52 -0400
+
 libaccounts-qt (1.1++bzr77-0precise3) precise; urgency=low
 
   * no change rebuild
