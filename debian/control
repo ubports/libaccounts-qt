@@ -6,6 +6,7 @@ Build-Depends: debhelper (>= 8.0.0),
                pkg-config,
                libglib2.0-dev,
                libqt4-dev,
+               qt4-dev-tools,
                libaccounts-glib-dev
 Standards-Version: 3.9.3
 Section: libs

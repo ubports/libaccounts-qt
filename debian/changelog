@@ -1,3 +1,10 @@
+libaccounts-qt (1.1++bzr77-0precise5) precise; urgency=low
+
+  * debian/control
+    - added build depends for qt4-dev-tools, needed for doc generation
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Fri, 22 Jun 2012 12:59:56 -0400
+
 libaccounts-qt (1.1++bzr77-0precise4) precise; urgency=low
 
   * debian/rules
