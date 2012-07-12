@@ -54,5 +54,7 @@ isEmpty( LIBDIR ) {
     message("==== library install path set to `$${INSTALL_LIBDIR}'")
 }
 
+include( coverage.pri )
+
 # End of File
 
