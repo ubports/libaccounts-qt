@@ -3,8 +3,9 @@
  * This file is part of libaccounts-qt
  *
  * Copyright (C) 2009-2011 Nokia Corporation.
+ * Copyright (C) 2012 Canonical Ltd.
  *
- * Contact: Alberto Mardegan <alberto.mardegan@nokia.com>
+ * Contact: Alberto Mardegan <alberto.mardegan@canonical.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -21,8 +22,7 @@
  * 02110-1301 USA
  */
 
-#include <QtCore>
-
+#include "application.h"
 #include "service.h"
 #include "manager.h"
 
@@ -93,45 +93,20 @@ class Manager::Private
 {
     Q_DECLARE_PUBLIC(Manager)
 
-    typedef QHash<AgProvider *, Provider *> ProviderHash;
-    typedef QHash<AgService *, Service *> ServiceHash;
-    typedef QHash<const QString, ServiceType *> ServiceTypeHash;
 public:
     Private():
         q_ptr(0),
-        m_manager(0),
-        providers(),
-        services(),
-        serviceTypes()
+        m_manager(0)
     {
     }
 
     ~Private() {
-        foreach (Provider *provider, providers)
-        {
-            delete provider;
-        }
-        providers.clear();
-        foreach (Service *service, services)
-        {
-            delete service;
-        }
-        services.clear();
-
-        foreach (ServiceType *serviceType, serviceTypes)
-        {
-            delete serviceType;
-        }
-        serviceTypes.clear();
     }
 
     void init(Manager *q, AgManager *manager);
 
     mutable Manager *q_ptr;
     AgManager *m_manager; //real manager
-    ProviderHash providers;
-    ServiceHash services;
-    ServiceTypeHash serviceTypes;
     Error lastError;
 
     static void on_account_created(Manager *self, AgAccountId id);
@@ -388,37 +363,19 @@ Account *Manager::createAccount(const QString &providerName)
     return NULL;
 }
 
-Service *Manager::serviceInstance(AgService *service) const
-{
-    Service *ret;
-
-    ret = d->services.value(service);
-    if (!ret)
-    {
-        ret = new Service(service);
-        d->services.insert(service, ret);
-    }
-    return ret;
-}
-
 /*!
  * Gets an object representing a service.
  * @param serviceName Name of service to get.
  *
- * @return Requested service or NULL if not found.
+ * @return The requested service or an invalid service if not found.
  */
-Service *Manager::service(const QString &serviceName) const
+Service Manager::service(const QString &serviceName) const
 {
     TRACE() << serviceName;
     AgService *service =
         ag_manager_get_service(d->m_manager,
                                serviceName.toUtf8().constData());
-    if (!service)
-        return NULL;
-
-    Service *serv= serviceInstance(service);
-    ag_service_unref(service);
-    return serv;
+    return Service(service, StealReference);
 }
 
 /*!
@@ -450,26 +407,13 @@ ServiceList Manager::serviceList(const QString &serviceType) const
 
     for (iter = list; iter; iter = g_list_next(iter))
     {
-        Service *serv = serviceInstance((AgService*)(iter->data));
-        servList.append(serv);
+        AgService *service = (AgService*)iter->data;
+        servList.append(Service(service, StealReference));
     }
 
-    ag_service_list_free(list);
+    g_list_free(list);
 
     return servList;
-}
-
-Provider *Manager::providerInstance(AgProvider *provider) const
-{
-    Provider *ret;
-
-    ret = d->providers.value(provider);
-    if (!ret)
-    {
-        ret = new Provider(provider);
-        d->providers.insert(provider, ret);
-    }
-    return ret;
 }
 
 /*!
@@ -478,19 +422,14 @@ Provider *Manager::providerInstance(AgProvider *provider) const
  *
  * @return Requested provider or NULL if not found.
  */
-Provider *Manager::provider(const QString &providerName) const
+Provider Manager::provider(const QString &providerName) const
 {
     TRACE() << providerName;
     AgProvider *provider;
 
     provider = ag_manager_get_provider(d->m_manager,
                                        providerName.toUtf8().constData());
-    if (!provider)
-        return NULL;
-
-    Provider *prov = providerInstance(provider);
-    ag_provider_unref(provider);
-    return prov;
+    return Provider(provider, StealReference);
 }
 
 /*!
@@ -510,11 +449,11 @@ ProviderList Manager::providerList() const
 
     for (iter = list; iter; iter = g_list_next(iter))
     {
-        Provider *prov = providerInstance((AgProvider*)(iter->data));
-        provList.append(prov);
+        AgProvider *provider = (AgProvider*)iter->data;
+        provList.append(Provider(provider, StealReference));
     }
 
-    ag_provider_list_free(list);
+    g_list_free(list);
 
     return provList;
 }
@@ -525,21 +464,48 @@ ProviderList Manager::providerList() const
  *
  * @return Requested service type or NULL if not found.
  */
-ServiceType *Manager::serviceType(const QString &name) const
+ServiceType Manager::serviceType(const QString &name) const
 {
-    ServiceType *serviceType = d->serviceTypes.value(name, NULL);
-    if (serviceType == 0) {
-        AgServiceType *type;
-        type = ag_manager_load_service_type(d->m_manager,
-                                            name.toUtf8().constData());
-        if (type == NULL)
-            return NULL;
+    AgServiceType *type;
+    type = ag_manager_load_service_type(d->m_manager,
+                                        name.toUtf8().constData());
+    return ServiceType(type, StealReference);
+}
 
-        serviceType = new ServiceType(type);
-        d->serviceTypes.insert(name, serviceType);
-        ag_service_type_unref(type);
+/*!
+ * Get an object representing an application.
+ * @param applicationName Name of the application to load.
+ *
+ * @return The requested Application, or an invalid Application object if not
+ * found.
+ */
+Application Manager::application(const QString &applicationName) const
+{
+    QByteArray ba = applicationName.toUtf8();
+    AgApplication *application =
+        ag_manager_get_application(d->m_manager, ba.constData());
+    return Application(application);
+}
+
+/*!
+ * List the registered applications which support the given service.
+ * @param service The service to be supported.
+ *
+ * @return A list of Application objects.
+ */
+ApplicationList Manager::applicationList(const Service &service) const
+{
+    ApplicationList ret;
+    GList *applications, *list;
+
+    applications = ag_manager_list_applications_by_service(d->m_manager,
+                                                           service.service());
+    for (list = applications; list != NULL; list = list->next) {
+        AgApplication *application = (AgApplication *)list->data;
+        ret.append(Application(application));
     }
-    return serviceType;
+    g_list_free (applications);
+    return ret;
 }
 
 /*!

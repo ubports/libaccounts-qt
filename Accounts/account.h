@@ -3,8 +3,9 @@
  * This file is part of libaccounts-qt
  *
  * Copyright (C) 2009-2011 Nokia Corporation.
+ * Copyright (C) 2012 Canonical Ltd.
  *
- * Contact: Alberto Mardegan <alberto.mardegan@nokia.com>
+ * Contact: Alberto Mardegan <alberto.mardegan@canonical.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -25,19 +26,16 @@
  * @license LGPL
  */
 
-#ifndef ACCOUNT_H
-#define ACCOUNT_H
-
-
-#include <QObject>
-#include <QSettings>
-#include <QStringList>
+#ifndef ACCOUNTS_ACCOUNT_H
+#define ACCOUNTS_ACCOUNT_H
 
 #include "Accounts/accountscommon.h"
 #include "Accounts/error.h"
 #include "Accounts/service.h"
 
 #define ACCOUNTS_KEY_CREDENTIALS_ID QLatin1String("CredentialsId")
+#include <QObject>
+#include <QStringList>
 
 extern "C"
 {
@@ -118,7 +116,7 @@ public:
      * if it is not found, then it is ready from the global account settings.
      * In any case, the currently selected service is not altered.
      */
-    qint32 credentialsId();
+    uint credentialsId();
 
     /*!
      * Sets the accounts credentials ID.
@@ -126,7 +124,7 @@ public:
      *
      * This method operates on the currently selected service.
      */
-    void setCredentialsId(const qint32 id) {
+    void setCredentialsId(const uint id) {
         setValue(ACCOUNTS_KEY_CREDENTIALS_ID, id);
     }
 
@@ -135,9 +133,9 @@ public:
 
     QString providerName() const;
 
-    void selectService(const Service *service = 0);
+    void selectService(const Service &service = Service());
 
-    Service *selectedService() const;
+    Service selectedService() const;
 
     /* QSettings-like methods */
     QStringList allKeys() const;
@@ -209,4 +207,4 @@ private:
 
 } //namespace Accounts
 
-#endif // ACCOUNT_H
+#endif // ACCOUNTS_ACCOUNT_H

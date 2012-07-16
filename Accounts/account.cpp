@@ -3,8 +3,9 @@
  * This file is part of libaccounts-qt
  *
  * Copyright (C) 2009-2011 Nokia Corporation.
+ * Copyright (C) 2012 Canonical Ltd.
  *
- * Contact: Alberto Mardegan <alberto.mardegan@nokia.com>
+ * Contact: Alberto Mardegan <alberto.mardegan@canonical.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -251,15 +252,13 @@ ServiceList Account::services(const QString &serviceType) const
     /* convert glist -> ServiceList */
     ServiceList servList;
     GList *iter;
-    Manager *mgr = manager();
-    Q_ASSERT(mgr != 0);
-    for (iter = list; iter; iter = g_list_next(iter))
+    for (iter = list; iter; iter = iter->next)
     {
-        Service *serv = mgr->serviceInstance((AgService*)(iter->data));
-        servList.append(serv);
+        AgService *service = (AgService*)iter->data;
+        servList.append(Service(service, StealReference));
     }
 
-    ag_service_list_free(list);
+    g_list_free(list);
 
     return servList;
 }
@@ -277,15 +276,13 @@ ServiceList Account::enabledServices() const
     /* convert glist -> ServiceList */
     ServiceList servList;
     GList *iter;
-    Manager *mgr = manager();
-    Q_ASSERT(mgr != 0);
     for (iter = list; iter; iter = g_list_next(iter))
     {
-        Service *serv = mgr->serviceInstance((AgService*)(iter->data));
-        servList.append(serv);
+        AgService *service = (AgService*)iter->data;
+        servList.append(Service(service, StealReference));
     }
 
-    ag_service_list_free(list);
+    g_list_free(list);
 
     return servList;
 }
@@ -342,35 +339,28 @@ QString Account::providerName() const
 }
 
 /*!
- * Selects the Service for the subsequent operations.
- * @param service The Service to select. If this is NULL, the global
+ * Select the Service for the subsequent operations.
+ * @param service The Service to select. If this is invalid, the global
  * account settings will be selected.
  */
-void Account::selectService(const Service *service)
+void Account::selectService(const Service &service)
 {
     AgService *agService = NULL;
 
-    if (service != NULL)
-        agService = service->service();
+    if (service.isValid())
+        agService = service.service();
 
     ag_account_select_service(d->m_account, agService);
     d->prefix = QString();
 }
 
 /*!
- * Returns the currently selected service.
+ * @return The currently selected service.
  */
-Service* Account::selectedService() const
+Service Account::selectedService() const
 {
     AgService *agService = ag_account_get_selected_service(d->m_account);
-    if (agService == NULL)
-        return NULL;
-
-    Manager *mgr = manager();
-    Q_ASSERT(mgr != 0);
-    Service *service = mgr->serviceInstance(agService);
-
-    return service;
+    return Service(agService);
 }
 
 /*!
@@ -861,20 +851,20 @@ bool Account::verifyWithTokens(const QString &key, QList<const char*> tokens)
     return ag_account_verify_with_tokens(d->m_account, key.toUtf8().constData(), tmp);
 }
 
-qint32 Account::credentialsId()
+uint Account::credentialsId()
 {
     QString key = ACCOUNTS_KEY_CREDENTIALS_ID;
     QVariant val(QVariant::Int);
 
     if (value(key, val) != NONE)
-        return val.toInt();
+        return val.toUInt();
 
-    qint32 id = 0;
-    Service *service = selectedService();
-    if (service) {
-        selectService(NULL);
+    uint id = 0;
+    Service service = selectedService();
+    if (service.isValid()) {
+        selectService();
         if (value(key, val) != NONE)
-            id = val.toInt();
+            id = val.toUInt();
         selectService(service);
     }
     return id;
