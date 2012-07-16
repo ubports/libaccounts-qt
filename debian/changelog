@@ -1,3 +1,9 @@
+libaccounts-qt (1.1++bzr77-0quantal1) quantal; urgency=low
+
+  * rebuild for quantal
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Mon, 16 Jul 2012 10:11:39 -0400
+
 libaccounts-qt (1.1++bzr77-0precise5) precise; urgency=low
 
   * debian/control
