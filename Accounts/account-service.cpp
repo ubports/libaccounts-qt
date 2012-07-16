@@ -66,13 +66,13 @@ namespace Accounts
  * Accounts::AccountServiceList services = manager->enabledAccountServices();
  *
  * // Loop through the account services and do something useful with them.
- * foreach (Accounts::AccountService *service, services) {
- *     QString server = service->value("pop3/hostname").toString();
- *     int port = service->value("pop3/port").toInt();
+ * foreach (Accounts::AccountService service, services) {
+ *     QString server = service.value("pop3/hostname").toString();
+ *     int port = service.value("pop3/port").toInt();
  *
  *     // Suppose that the e-mail address is stored in the global account
  *     // settings; let's get it from there:
- *     QString fromAddress = service->account()->valueAsString("username");
+ *     QString fromAddress = service.account()->valueAsString("username");
  *
  *     ...
  * }
@@ -108,7 +108,7 @@ class AccountServicePrivate
 
 public:
     AccountServicePrivate(Account *account,
-                          Service *service,
+                          const Service &service,
                           AccountService *accountService);
     ~AccountServicePrivate();
 
@@ -130,13 +130,13 @@ using namespace Accounts;
 static QChar slash = QChar::fromLatin1('/');
 
 AccountServicePrivate::AccountServicePrivate(Account *account,
-                                             Service *service,
+                                             const Service &service,
                                              AccountService *accountService):
     m_manager(account->manager()),
     q_ptr(accountService)
 {
     m_accountService = ag_account_service_new(account->account(),
-                                              service->service());
+                                              service.service());
     g_signal_connect_swapped(m_accountService, "enabled",
                              G_CALLBACK(&onEnabled), accountService);
     g_signal_connect_swapped(m_accountService, "changed",
@@ -174,7 +174,7 @@ void AccountServicePrivate::onChanged(AccountService *accountService)
  * @param account An Account.
  * @param service A Service supported by the account.
  */
-AccountService::AccountService(Account *account, Service *service):
+AccountService::AccountService(Account *account, const Service &service):
     d_ptr(new AccountServicePrivate(account, service, this))
 {
 }
@@ -202,11 +202,11 @@ Account *AccountService::account() const
 /*!
  * Return the Service. Do not delete this object explicitly.
  */
-Service *AccountService::service() const
+Service AccountService::service() const
 {
     Q_D(const AccountService);
     AgService *service = ag_account_service_get_service(d->m_accountService);
-    return d->m_manager->serviceInstance(service);
+    return Service(service);
 }
 
 /*!

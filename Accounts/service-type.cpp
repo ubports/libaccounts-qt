@@ -3,8 +3,9 @@
  * This file is part of libaccounts-qt
  *
  * Copyright (C) 2009-2011 Nokia Corporation.
+ * Copyright (C) 2012 Canonical Ltd.
  *
- * Contact: Alberto Mardegan <alberto.mardegan@nokia.com>
+ * Contact: Alberto Mardegan <alberto.mardegan@canonical.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -24,12 +25,7 @@
 #include "service-type.h"
 
 #undef signals
-#include <libaccounts-glib/ag-manager.h>
 #include <libaccounts-glib/ag-service-type.h>
-#include "manager.h"
-#include <QtDebug>
-#include <QtGlobal>
-
 
 using namespace Accounts;
 
@@ -47,18 +43,60 @@ namespace Accounts {
  */
 }; // namespace
 
-ServiceType::ServiceType(AgServiceType *serviceType)
-    : m_serviceType(serviceType)
+ServiceType::ServiceType(AgServiceType *serviceType, ReferenceMode mode):
+    m_serviceType(serviceType)
 {
     TRACE();
-    ag_service_type_ref(m_serviceType);
+    if (m_serviceType != 0 && mode == AddReference)
+        ag_service_type_ref(m_serviceType);
+}
+
+/*!
+ * Construct an invalid serviceType.
+ */
+ServiceType::ServiceType():
+    m_serviceType(0)
+{
+}
+
+/*!
+ * Copy constructor. Copying a ServiceType object is very cheap, because the
+ * data is shared among copies.
+ */
+ServiceType::ServiceType(const ServiceType &other):
+    m_serviceType(other.m_serviceType)
+{
+    if (m_serviceType != 0)
+        ag_service_type_ref(m_serviceType);
+}
+
+ServiceType &ServiceType::operator=(const ServiceType &other)
+{
+    if (m_serviceType == other.m_serviceType) return *this;
+    if (m_serviceType != 0)
+        ag_service_type_unref(m_serviceType);
+    m_serviceType = other.m_serviceType;
+    if (m_serviceType != 0)
+        ag_service_type_ref(m_serviceType);
+    return *this;
 }
 
 ServiceType::~ServiceType()
 {
     TRACE();
-    ag_service_type_unref(m_serviceType);
-    m_serviceType = 0;
+    if (m_serviceType != 0) {
+        ag_service_type_unref(m_serviceType);
+        m_serviceType = 0;
+    }
+}
+
+/*!
+ * Check whether this object represents a ServiceType.
+ * @return true if the ServiceType is a valid one.
+ */
+bool ServiceType::isValid() const
+{
+    return m_serviceType != 0;
 }
 
 /*!
@@ -112,23 +150,21 @@ QString ServiceType::iconName() const
  */
 const QDomDocument ServiceType::domDocument() const
 {
-    if (doc.isNull()) {
-        const gchar *data;
-        gsize len;
+    const gchar *data;
+    gsize len;
 
-        ag_service_type_get_file_contents(m_serviceType, &data, &len);
+    ag_service_type_get_file_contents(m_serviceType, &data, &len);
 
-        QString errorStr;
-        int errorLine;
-        int errorColumn;
-        if (!doc.setContent(QByteArray(data, len), true,
-                            &errorStr, &errorLine, &errorColumn)) {
-            QString message(ASCII("Parse error reading serviceType file "
-                                  "at line %1, column %2:\n%3"));
-            message.arg(errorLine).arg(errorColumn).arg(errorStr);
-            qWarning() << __PRETTY_FUNCTION__ << message;
-            return QDomDocument();
-        }
+    QDomDocument doc;
+    QString errorStr;
+    int errorLine;
+    int errorColumn;
+    if (!doc.setContent(QByteArray(data, len), true,
+                        &errorStr, &errorLine, &errorColumn)) {
+        QString message(ASCII("Parse error reading serviceType file "
+                              "at line %1, column %2:\n%3"));
+        message.arg(errorLine).arg(errorColumn).arg(errorStr);
+        qWarning() << __PRETTY_FUNCTION__ << message;
     }
 
     return doc;

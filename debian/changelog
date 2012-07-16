@@ -1,3 +1,9 @@
+libaccounts-qt (1.1++bzr78-0quantal1) quantal; urgency=low
+
+  * snapshot based on r78
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Mon, 16 Jul 2012 11:31:32 -0400
+
 libaccounts-qt (1.1++bzr77-0quantal1) quantal; urgency=low
 
   * rebuild for quantal

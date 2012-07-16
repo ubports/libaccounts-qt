@@ -3,8 +3,9 @@
  * This file is part of libaccounts-qt
  *
  * Copyright (C) 2009-2011 Nokia Corporation.
+ * Copyright (C) 2012 Canonical Ltd.
  *
- * Contact: Alberto Mardegan <alberto.mardegan@nokia.com>
+ * Contact: Alberto Mardegan <alberto.mardegan@canonical.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -25,17 +26,13 @@
  * @license LGPL
  */
 
-#ifndef SERVICE_H
-#define SERVICE_H
-
-
-#include <QObject>
-#include <QSettings>
-#include <QStringList>
-#include <QXmlStreamReader>
-#include <QDomDocument>
+#ifndef ACCOUNTS_SERVICE_H
+#define ACCOUNTS_SERVICE_H
 
 #include "Accounts/accountscommon.h"
+
+#include <QDomDocument>
+#include <QStringList>
 
 extern "C"
 {
@@ -44,13 +41,16 @@ extern "C"
 
 namespace Accounts
 {
-class Service;
-
-typedef QList<Service*> ServiceList;
-
 class ACCOUNTS_EXPORT Service
 {
 public:
+    Service();
+    Service(const Service &other);
+    Service &operator=(const Service &other);
+    ~Service();
+
+    bool isValid() const;
+
     QString name() const;
     QString displayName() const;
     QString trCatalog() const;
@@ -58,30 +58,28 @@ public:
     QString provider() const;
     QString iconName() const;
 
-    /*!
-     * Creates a QXmlStreamReader for the service XML file, positioned at the
-     * "type_data" element.
-     *
-     * @deprecated This method is deprecated and will eventually be removed.
-     */
-    QXmlStreamReader *xmlStreamReader() const;
-
     const QDomDocument domDocument() const;
 
-    // \cond
-    AgService *service() const;
+    friend inline bool operator==(const Accounts::Service &s1,
+                                  const Accounts::Service &s2) {
+        return s1.m_service == s2.m_service || s1.name() == s2.name();
+    }
 
 private:
-    ~Service();
-
+    // \cond
     friend class Account;
+    friend class AccountService;
+    friend class AccountServicePrivate;
+    friend class Application;
     friend class Manager;
-    Service(AgService *service);
+    Service(AgService *service, ReferenceMode mode = AddReference);
+    AgService *service() const;
     AgService *m_service;
-    mutable QDomDocument doc;
     // \endcond
 };
 
+typedef QList<Service> ServiceList;
+
 } //namespace Accounts
 
-#endif // SERVICE_H
+#endif // ACCOUNTS_SERVICE_H

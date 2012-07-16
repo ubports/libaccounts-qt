@@ -62,4 +62,13 @@
     #define ACCOUNTS_EXPORT
 #endif
 
+namespace Accounts {
+
+enum ReferenceMode {
+    AddReference = 0,
+    StealReference,
+};
+
+}; // namespace
+
 #endif /* ACCOUNTSCOMMON_H_ */
