@@ -2,12 +2,14 @@ include( ../common-project-config.pri )
 include( ../common-vars.pri )
 
 TARGET = accountstest
-CONFIG += qtestlib
 SOURCES += \
     accountstest.cpp
 HEADERS += \
     accountstest.h
-QT = core xml
+QT = \
+    core \
+    testlib \
+    xml
 
 LIBS += -laccounts-qt
 QMAKE_RPATHDIR = $${QMAKE_LIBDIR}
