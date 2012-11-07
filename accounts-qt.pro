@@ -6,7 +6,7 @@ SUBDIRS  += Accounts utils tests
 
 include( common-installs-config.pri )
 include( doc/doc.pri )
-
+include( coverage.pri )
 
 DISTNAME = $${PROJECT_NAME}-$${PROJECT_VERSION}
 EXCLUDES = \

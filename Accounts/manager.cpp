@@ -178,8 +178,9 @@ void Manager::Private::on_enabled_event(Manager *self, AgAccountId id)
  * Users should check for manager->lastError() to check if manager construction
  * was fully succesful.
  */
-Manager::Manager(QObject *parent)
-    : QObject(parent), d(new Private)
+Manager::Manager(QObject *parent):
+    QObject(parent),
+    d(new Private)
 {
     g_type_init();
 
@@ -206,8 +207,9 @@ Manager::Manager(QObject *parent)
  * Users should check for manager->lastError() to check if manager construction
  * was fully succesful.
  */
-Manager::Manager(const QString &serviceType, QObject *parent)
-    : QObject(parent), d(new Private)
+Manager::Manager(const QString &serviceType, QObject *parent):
+    QObject(parent),
+    d(new Private)
 {
     g_type_init();
 

@@ -11,10 +11,10 @@ QT = core xml
 CONFIG += console
 CONFIG += link_pkgconfig
 
-LIBS += -laccounts-glib
 LIBS += -laccounts-qt
 INCLUDEPATH += ../libaccounts-qt
 PKGCONFIG += glib-2.0 \
-             gobject-2.0
+             gobject-2.0 \
+             libaccounts-glib
 
 include( ../common-installs-config.pri )

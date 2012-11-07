@@ -115,8 +115,8 @@ static QChar slash = QChar::fromLatin1('/');
  * common prefix, and not the actual key being changed.
  */
 
-Watch::Watch(QObject *parent)
-    : QObject(parent)
+Watch::Watch(QObject *parent):
+    QObject(parent)
 {
 }
 
@@ -159,8 +159,9 @@ void Account::Private::on_deleted(Account *self)
  * Emitted when an error occurs.
  */
 
-Account::Account(AgAccount *account, QObject *parent)
-    : QObject(parent), d(new Private)
+Account::Account(AgAccount *account, QObject *parent):
+    QObject(parent),
+    d(new Private)
 {
     TRACE();
     d->m_account = account;
@@ -556,51 +557,6 @@ void Account::Private::account_store_cb(AgAccount *account, const GError *err,
 }
 
 /*!
- * Stores all account settings into the database.
- * The signal synced() will be emitted in case of success, or
- * error() in case of failure. No assumption must be made about when these
- * signals will be emitted: if the database is locked, the signals might
- * be emitted asynchronously, whereas if the operation can happen
- * synchronously then the signals can be emitted before this method
- * returns.
- * If for some reason one would want to process the signals asynchronously
- * from the event loop, one can use the Qt::QueuedConnection connection
- * type as last parameter of the QObject::connect call.
- */
-void Account::sync()
-{
-    TRACE();
-
-    ag_account_store(d->m_account,
-                     (AgAccountStoreCb)&Private::account_store_cb,
-                     this);
-}
-
-/*!
- * Blocking version of the sync() method: execution of the current thread
- * will block until the operation has completed.
- * Usage of this method is discouraged, especially for UI applications.
- *
- * @return True on success, false otherwise.
- */
-bool Account::syncAndBlock()
-{
-    TRACE();
-
-    GError *error = NULL;
-    bool ret;
-
-    ret = ag_account_store_blocking(d->m_account, &error);
-    if (error)
-    {
-        qWarning() << "Store operation failed: " << error->message;
-        g_error_free(error);
-    }
-
-    return ret;
-}
-
-/*!
  * Retrieves the value of an account setting, as a QVariant.
  * @param key The key whose value must be retrieved.
  * @param value A QVariant initialized to the expected type of the value.
@@ -782,6 +738,51 @@ Watch *Account::watchKey(const QString &key)
 
     watch->setWatch(ag_watch);
     return watch;
+}
+
+/*!
+ * Stores all account settings into the database.
+ * The signal synced() will be emitted in case of success, or
+ * error() in case of failure. No assumption must be made about when these
+ * signals will be emitted: if the database is locked, the signals might
+ * be emitted asynchronously, whereas if the operation can happen
+ * synchronously then the signals can be emitted before this method
+ * returns.
+ * If for some reason one would want to process the signals asynchronously
+ * from the event loop, one can use the Qt::QueuedConnection connection
+ * type as last parameter of the QObject::connect call.
+ */
+void Account::sync()
+{
+    TRACE();
+
+    ag_account_store(d->m_account,
+                     (AgAccountStoreCb)&Private::account_store_cb,
+                     this);
+}
+
+/*!
+ * Blocking version of the sync() method: execution of the current thread
+ * will block until the operation has completed.
+ * Usage of this method is discouraged, especially for UI applications.
+ *
+ * @return True on success, false otherwise.
+ */
+bool Account::syncAndBlock()
+{
+    TRACE();
+
+    GError *error = NULL;
+    bool ret;
+
+    ret = ag_account_store_blocking(d->m_account, &error);
+    if (error)
+    {
+        qWarning() << "Store operation failed: " << error->message;
+        g_error_free(error);
+    }
+
+    return ret;
 }
 
 /*!

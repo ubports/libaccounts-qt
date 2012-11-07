@@ -4,8 +4,10 @@
  *
  * Copyright (C) 2009-2011 Nokia Corporation.
  * Copyright (C) 2012 Canonical Ltd.
+ * Copyright (C) 2012 Intel Corporation.
  *
  * Contact: Alberto Mardegan <alberto.mardegan@canonical.com>
+ * Contact: Jussi Laako <jussi.laako@linux.intel.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -44,7 +46,8 @@ namespace Accounts {
 }; // namespace
 
 ServiceType::ServiceType(AgServiceType *serviceType, ReferenceMode mode):
-    m_serviceType(serviceType)
+    m_serviceType(serviceType),
+    m_tags(0)
 {
     TRACE();
     if (m_serviceType != 0 && mode == AddReference)
@@ -55,7 +58,8 @@ ServiceType::ServiceType(AgServiceType *serviceType, ReferenceMode mode):
  * Construct an invalid serviceType.
  */
 ServiceType::ServiceType():
-    m_serviceType(0)
+    m_serviceType(0),
+    m_tags(0)
 {
 }
 
@@ -64,7 +68,8 @@ ServiceType::ServiceType():
  * data is shared among copies.
  */
 ServiceType::ServiceType(const ServiceType &other):
-    m_serviceType(other.m_serviceType)
+    m_serviceType(other.m_serviceType),
+    m_tags(0)
 {
     if (m_serviceType != 0)
         ag_service_type_ref(m_serviceType);
@@ -87,6 +92,10 @@ ServiceType::~ServiceType()
     if (m_serviceType != 0) {
         ag_service_type_unref(m_serviceType);
         m_serviceType = 0;
+    }
+    if (m_tags != 0) {
+        delete m_tags;
+        m_tags = 0;
     }
 }
 
@@ -143,6 +152,39 @@ QString ServiceType::trCatalog() const
 QString ServiceType::iconName() const
 {
     return ASCII(ag_service_type_get_icon_name(m_serviceType));
+}
+
+/*!
+ * Check if this service type has a tag.
+ *
+ * @param tag Tag to look for
+ *
+ * @return Service type has the tag?
+ */
+bool ServiceType::hasTag(const QString &tag) const
+{
+    return ag_service_type_has_tag(m_serviceType, tag.toUtf8().constData());
+}
+
+/*!
+ * Return all tags of the service type as a set.
+ *
+ * @return Set of tags
+ */
+QSet<QString> ServiceType::tags() const
+{
+    if (m_tags)
+        return *m_tags;
+
+    m_tags = new QSet<QString>;
+    GList *list = ag_service_type_get_tags(m_serviceType);
+    GList *iter = list;
+    while (iter != NULL) {
+        m_tags->insert(UTF8(reinterpret_cast<const gchar *> (iter->data)));
+        iter = g_list_next(iter);
+    }
+    g_list_free(list);
+    return *m_tags;
 }
 
 /*!

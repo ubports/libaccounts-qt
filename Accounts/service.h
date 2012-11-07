@@ -4,8 +4,10 @@
  *
  * Copyright (C) 2009-2011 Nokia Corporation.
  * Copyright (C) 2012 Canonical Ltd.
+ * Copyright (C) 2012 Intel Corporation.
  *
  * Contact: Alberto Mardegan <alberto.mardegan@canonical.com>
+ * Contact: Jussi Laako <jussi.laako@linux.intel.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -31,6 +33,8 @@
 
 #include "Accounts/accountscommon.h"
 
+#include <QString>
+#include <QSet>
 #include <QDomDocument>
 #include <QStringList>
 
@@ -57,6 +61,8 @@ public:
     QString serviceType() const;
     QString provider() const;
     QString iconName() const;
+    bool hasTag(const QString &tag) const;
+    QSet<QString> tags() const;
 
     const QDomDocument domDocument() const;
 
@@ -75,6 +81,7 @@ private:
     Service(AgService *service, ReferenceMode mode = AddReference);
     AgService *service() const;
     AgService *m_service;
+    mutable QSet<QString> *m_tags;
     // \endcond
 };
 

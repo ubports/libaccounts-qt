@@ -15,7 +15,7 @@ PROJECT_NAME = libaccounts-qt
 # Project version
 # remember to update debian/* files if you changes this
 #-----------------------------------------------------------------------------
-PROJECT_VERSION = 1.1
+PROJECT_VERSION = 1.2
 
 #-----------------------------------------------------------------------------
 # Library version
