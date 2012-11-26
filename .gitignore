@@ -1,7 +1,13 @@
+.*.swp
 .cproject
 .project
 Makefile*
 debian
+/coverage-html/
+/coverage.info
+/doc/accounts-qt.tags
+/doc/html
+/doc/qch
 moc_*
 *~
 *.o

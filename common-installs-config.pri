@@ -2,24 +2,6 @@
 # Common installation configuration for all projects.
 #-----------------------------------------------------------------------------
 
-
-#-----------------------------------------------------------------------------
-# setup the installation prefix
-#-----------------------------------------------------------------------------
-INSTALL_PREFIX = /usr  # default installation prefix
-
-# default prefix can be overriden by defining PREFIX when running qmake
-isEmpty( PREFIX ) {
-    message("====")
-    message("==== NOTE: To override the installation path run: `qmake PREFIX=/custom/path'")
-    message("==== (current installation path is `$${INSTALL_PREFIX}')")
-} else {
-    INSTALL_PREFIX = $${PREFIX}
-    message("====")
-    message("==== install prefix set to `$${INSTALL_PREFIX}'")
-}
-
-
 #-----------------------------------------------------------------------------
 # default installation target for applications
 #-----------------------------------------------------------------------------
