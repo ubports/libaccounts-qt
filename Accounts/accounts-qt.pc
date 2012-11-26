@@ -10,7 +10,6 @@ Name: libaccounts-qt
 Description: Accounts Library
 Version: 0.0.1
 Libs: -L${libdir} -laccounts-qt
-Libs.private: -L/usr/lib  -lQtSql -lQtCore -lpthread  
-Requires: QtXml
+Requires: QtCore QtXml
 Cflags:  -I${includedir}
 
