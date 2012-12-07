@@ -2,7 +2,7 @@ include( common-vars.pri )
 
 TEMPLATE  = subdirs
 CONFIG   += ordered
-SUBDIRS  += Accounts utils tests
+SUBDIRS  += Accounts tests
 
 include( common-project-config.pri )
 include( doc/doc.pri )
