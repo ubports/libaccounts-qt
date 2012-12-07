@@ -54,11 +54,6 @@ headers.files = $$HEADERS
 
 include( ../common-installs-config.pri )
 
-# configuration feature
-feature.files = accounts.prf
-feature.path = $$[QT_INSTALL_DATA]/mkspecs/features
-INSTALLS += feature
-
 pkgconfig.files = accounts-qt.pc
 include($${TOP_SRC_DIR}/common-pkgconfig.pri)
 INSTALLS += pkgconfig
