@@ -11,7 +11,12 @@ QT = \
     testlib \
     xml
 
-LIBS += -laccounts-qt
+greaterThan(QT_MAJOR_VERSION, 4) {
+    LIBS += -laccounts-qt5
+} else {
+    LIBS += -laccounts-qt
+}
+
 QMAKE_RPATHDIR = $${QMAKE_LIBDIR}
 
 #Check for the existence of aegis-crypto

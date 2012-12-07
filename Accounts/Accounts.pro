@@ -40,7 +40,13 @@ CONFIG += link_pkgconfig
 DEFINES += QT_NO_CAST_TO_ASCII QT_NO_CAST_FROM_ASCII
 QT += core xml
 QT -= gui
-TARGET = accounts-qt
+
+greaterThan(QT_MAJOR_VERSION, 4) {
+    TARGET = accounts-qt5
+} else {
+    TARGET = accounts-qt
+}
+
 PKGCONFIG += \
 	glib-2.0 \
 	gobject-2.0 \
@@ -54,6 +60,6 @@ headers.files = $$HEADERS
 
 include( ../common-installs-config.pri )
 
-pkgconfig.files = accounts-qt.pc
+pkgconfig.files = $${TARGET}.pc
 include($${TOP_SRC_DIR}/common-pkgconfig.pri)
 INSTALLS += pkgconfig
