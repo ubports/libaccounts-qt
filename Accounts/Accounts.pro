@@ -60,6 +60,6 @@ headers.files = $$HEADERS
 
 include( ../common-installs-config.pri )
 
-pkgconfig.files = $${TARGET}.pc
+pkgconfig.files = $${TOP_BUILD_DIR}/$${TARGET}.pc
 include($${TOP_SRC_DIR}/common-pkgconfig.pri)
 INSTALLS += pkgconfig

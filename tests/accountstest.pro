@@ -36,21 +36,21 @@ DEFINES += \
     PROVIDERS_DIR=\\\"$$DATA_PATH\\\"
 
 service.path = $$DATA_PATH
-service.files += *.service
+service.files += $${TOP_SRC_DIR}/tests/*.service
 INSTALLS     += service
 
 service-type.path = $$DATA_PATH
-service-type.files += *.service-type
+service-type.files += $${TOP_SRC_DIR}/tests/*.service-type
 INSTALLS += service-type
 
 provider.path = $$DATA_PATH
-provider.files += *.provider
+provider.files += $${TOP_SRC_DIR}/tests/*.provider
 INSTALLS     += provider
 
-testsuite.files = tests.xml
+testsuite.files = $${TOP_SRC_DIR}/tests/tests.xml
 testsuite.path = $$DATA_PATH
 INSTALLS += testsuite
 
 QMAKE_EXTRA_TARGETS += check
 check.depends = accountstest
-check.commands = "TESTDIR=. ./accountstest.sh"
+check.commands = "TESTDIR=$${TOP_SRC_DIR}/tests $${TOP_SRC_DIR}/tests/accountstest.sh"
