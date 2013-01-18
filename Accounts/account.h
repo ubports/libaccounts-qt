@@ -150,6 +150,9 @@ public:
     void remove(const QString &key);
 
     void setValue(const QString &key, const QVariant &value);
+    QVariant value(const QString &key,
+                   const QVariant &defaultValue = QVariant(),
+                   SettingSource *source = 0) const;
     SettingSource value(const QString &key, QVariant &value) const;
     QString valueAsString(const QString &key,
                           QString default_value = QString::null,

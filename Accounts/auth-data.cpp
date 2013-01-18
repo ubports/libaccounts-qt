@@ -103,18 +103,13 @@ QString AuthData::mechanism() const
  */
 QVariantMap AuthData::parameters() const
 {
-    QVariantMap params;
-    GHashTable *glib_parameters;
-    GHashTableIter iter;
-    const gchar *key;
-    const GValue *value;
+    GVariant *glibParameters;
 
-    glib_parameters = ag_auth_data_get_parameters(m_authData);
-    if (glib_parameters == 0) return params;
+    glibParameters = ag_auth_data_get_login_parameters(m_authData, NULL);
+    if (glibParameters == 0) return QVariantMap();
 
-    g_hash_table_iter_init(&iter, glib_parameters);
-    while (g_hash_table_iter_next(&iter, (gpointer*)&key, (gpointer*)&value)) {
-        params.insert(UTF8(key), gvalueToVariant(value));
-    }
-    return params;
+    QVariant variant = gVariantToQVariant(glibParameters);
+    if (!variant.isValid()) return QVariantMap();
+
+    return variant.toMap();
 }
