@@ -24,6 +24,8 @@
 #include "accountscommon.h"
 #include "utils.h"
 
+#include <QStringList>
+
 namespace Accounts {
 
 static QVariantMap gVariantToQVariantMap(GVariant *variant)
@@ -38,6 +40,31 @@ static QVariantMap gVariantToQVariantMap(GVariant *variant)
         ret.insert(UTF8(key), gVariantToQVariant(value));
     }
 
+    return ret;
+}
+
+static GVariant *qStringListToGVariant(const QStringList &stringList)
+{
+    GVariantBuilder builder;
+
+    g_variant_builder_init(&builder, G_VARIANT_TYPE_STRING_ARRAY);
+    foreach (const QString &string, stringList) {
+        g_variant_builder_add(&builder, "s", string.toUtf8().constData());
+    }
+    return g_variant_builder_end(&builder);
+}
+
+static QStringList gVariantToQStringList(GVariant *variant)
+{
+    QStringList ret;
+
+    gsize length;
+    const gchar **strings = g_variant_get_strv(variant, &length);
+    for (gsize i = 0; i < length; i++) {
+        ret.append(UTF8(strings[i]));
+    }
+
+    g_free(strings);
     return ret;
 }
 
@@ -70,6 +97,9 @@ QVariant gVariantToQVariant(GVariant *value)
     case G_VARIANT_CLASS_ARRAY:
         if (g_variant_is_of_type(value, G_VARIANT_TYPE_VARDICT)) {
             variant = gVariantToQVariantMap(value);
+            break;
+        } else if (g_variant_is_of_type(value, G_VARIANT_TYPE_STRING_ARRAY)) {
+            variant = gVariantToQStringList(value);
             break;
         }
         // fall through
@@ -106,6 +136,9 @@ GVariant *qVariantToGVariant(const QVariant &variant)
         break;
     case QVariant::Bool:
         ret = g_variant_new_boolean(variant.toBool());
+        break;
+    case QVariant::StringList:
+        ret = qStringListToGVariant(variant.toStringList());
         break;
     default:
         qWarning() << "Unsupported datatype" << variant.typeName();
