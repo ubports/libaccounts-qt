@@ -321,6 +321,7 @@ void AccountsTest::accountValueTestCase()
     account->setValue("testint", int_value);
     account->sync();
 
+    QTest::qWait(10);
     QVERIFY(m_stored);
 
     /* check that the values we wrote are retrieved successfully */
@@ -382,6 +383,7 @@ void AccountsTest::accountSyncTestCase()
                       this,  SLOT(stored()));
 
     account->sync();
+    QTest::qWait(10);
     QVERIFY(m_stored);
 
     delete account;

@@ -75,20 +75,28 @@ namespace Accounts {
 class Account::Private
 {
 public:
-    Private()
+    Private():
+        m_account(0),
+        m_cancellable(g_cancellable_new())
     {
-        m_account = 0;
     }
 
-    ~Private() {}
+    ~Private()
+    {
+        g_cancellable_cancel(m_cancellable);
+        g_object_unref(m_cancellable);
+        m_cancellable = NULL;
+    }
 
     AgAccount *m_account;  //real account
+    GCancellable *m_cancellable;
     QString prefix;
 
     static void on_display_name_changed(Account *self);
     static void on_enabled(Account *self, const gchar *service_name,
                            gboolean enabled);
-    static void account_store_cb(AgAccount *account, const GError *error,
+    static void account_store_cb(AgAccount *account,
+                                 GAsyncResult *res,
                                  Account *self);
     static void on_deleted(Account *self);
 };
@@ -542,18 +550,25 @@ void Account::setValue(const QString &key, const QVariant &value)
     g_value_unset(&val);
 }
 
-void Account::Private::account_store_cb(AgAccount *account, const GError *err,
+void Account::Private::account_store_cb(AgAccount *account,
+                                        GAsyncResult *res,
                                         Account *self)
 {
     TRACE() << "Saved accunt ID:" << account->id;
 
-    if (err) {
-        emit self->error(Error(err));
+    GError *error = NULL;
+    ag_account_store_finish(account, res, &error);
+    if (error) {
+        if (error->domain == G_IO_ERROR &&
+            error->code == G_IO_ERROR_CANCELLED) {
+            TRACE() << "Account destroyed, operation cancelled";
+        } else {
+            emit self->error(Error(error));
+        }
+        g_error_free(error);
     } else {
         emit self->synced();
     }
-
-    Q_UNUSED(account);
 }
 
 /*!
@@ -756,9 +771,10 @@ void Account::sync()
 {
     TRACE();
 
-    ag_account_store(d->m_account,
-                     (AgAccountStoreCb)&Private::account_store_cb,
-                     this);
+    ag_account_store_async(d->m_account,
+                           d->m_cancellable,
+                           (GAsyncReadyCallback)&Private::account_store_cb,
+                           this);
 }
 
 /*!
