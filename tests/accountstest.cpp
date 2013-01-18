@@ -319,6 +319,9 @@ void AccountsTest::accountValueTestCase()
     account->setValue(QString("test"),QString("value"));
     int int_value = 666;
     account->setValue("testint", int_value);
+    QStringList names;
+    names << "Tom" << "Dick" << "Harry";
+    account->setValue("names", names);
     account->sync();
 
     QTest::qWait(10);
@@ -339,6 +342,8 @@ void AccountsTest::accountValueTestCase()
     QVERIFY(intval.toInt() == int_value);
 
     QVERIFY(source == ACCOUNT);
+
+    QCOMPARE(account->value("names").toStringList(), names);
 
     /* test the convenience methods */
     QString strval = account->valueAsString("test");
@@ -966,6 +971,7 @@ void AccountsTest::authDataTest()
     globalParameters["server"] = UTF8("myserver.com");
     globalParameters["port"] = 8080;
     globalParameters["other"] = UTF8("overriden parameter");
+    globalParameters["scopes"] = QStringList() << "read" << "write" << "edit";
 
     QVariantMap serviceParameters;
     serviceParameters["other"] = UTF8("better parameter");
