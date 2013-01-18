@@ -382,12 +382,12 @@ QStringList Account::allKeys() const
     QStringList allKeys;
     AgAccountSettingIter iter;
     const gchar *key;
-    const GValue *val;
+    GVariant *val;
 
     /* iterate the settings */
     QByteArray tmp = d->prefix.toLatin1();
     ag_account_settings_iter_init(d->m_account, &iter, tmp.constData());
-    while (ag_account_settings_iter_next(&iter, &key, &val))
+    while (ag_account_settings_iter_get_next(&iter, &key, &val))
     {
         allKeys.append(QString(ASCII(key)));
     }
@@ -524,7 +524,7 @@ void Account::remove(const QString &key)
     {
         QString full_key = d->prefix + key;
         QByteArray tmpkey = full_key.toLatin1();
-        ag_account_set_value(d->m_account, tmpkey.constData(), NULL);
+        ag_account_set_variant(d->m_account, tmpkey.constData(), NULL);
     }
 }
 
@@ -538,16 +538,15 @@ void Account::remove(const QString &key)
 void Account::setValue(const QString &key, const QVariant &value)
 {
     TRACE();
-    GValue val= {0, {{0}}};
 
-    if (!variantToGValue(value, &val)) {
+    GVariant *variant = qVariantToGVariant(value);
+    if (variant == 0) {
         return;
     }
 
     QString full_key = d->prefix + key;
     QByteArray tmpkey = full_key.toLatin1();
-    ag_account_set_value(d->m_account, tmpkey.constData(), &val);
-    g_value_unset(&val);
+    ag_account_set_variant(d->m_account, tmpkey.constData(), variant);
 }
 
 void Account::Private::account_store_cb(AgAccount *account,
@@ -574,6 +573,39 @@ void Account::Private::account_store_cb(AgAccount *account,
 /*!
  * Retrieves the value of an account setting, as a QVariant.
  * @param key The key whose value must be retrieved.
+ * @param defaultValue Value returned if the key is unset.
+ * @param source Indicates whether the value comes from the account, the
+ * service template or was unset.
+ * @see valueAsString
+ * @see valueAsInt
+ * @see valueAsBool
+ *
+ * @return The value associated to \a key.
+ *
+ * This method operates on the currently selected service.
+ */
+QVariant Account::value(const QString &key, const QVariant &defaultValue,
+                        SettingSource *source) const
+{
+    QString full_key = d->prefix + key;
+    QByteArray ba = full_key.toLatin1();
+    AgSettingSource settingSource;
+    GVariant *variant =
+        ag_account_get_variant(d->m_account, ba.constData(), &settingSource);
+    if (source != 0) {
+        switch (settingSource) {
+        case AG_SETTING_SOURCE_ACCOUNT: *source = ACCOUNT; break;
+        case AG_SETTING_SOURCE_PROFILE: *source = TEMPLATE; break;
+        default: *source = NONE; break;
+        }
+    }
+
+    return (variant != 0) ? gVariantToQVariant(variant) : defaultValue;
+}
+
+/*!
+ * Retrieves the value of an account setting, as a QVariant.
+ * @param key The key whose value must be retrieved.
  * @param value A QVariant initialized to the expected type of the value.
  * @see valueAsString
  * @see valueAsInt
@@ -583,49 +615,21 @@ void Account::Private::account_store_cb(AgAccount *account,
  * or was unset.
  *
  * This method operates on the currently selected service.
+ * @deprecated Use value(const QString &key, const QVariant &defaultValue,
+ * SettingSource *source) const instead.
  */
 SettingSource Account::value(const QString &key, QVariant &value) const
 {
-    GType type;
-
-    switch (value.type())
-    {
-    case QVariant::String:
-        type = G_TYPE_STRING;
-        break;
-    case QVariant::Int:
-        type = G_TYPE_INT;
-        break;
-    case QVariant::UInt:
-        type = G_TYPE_UINT;
-        break;
-    case QVariant::LongLong:
-        type = G_TYPE_INT64;
-        break;
-    case QVariant::ULongLong:
-        type = G_TYPE_UINT64;
-        break;
-    case QVariant::Bool:
-        type = G_TYPE_BOOLEAN;
-        break;
-    default:
-        qWarning("Unsupported type %s", value.typeName());
-        return NONE;
+    SettingSource source;
+    QVariant variant = this->value(key, QVariant(), &source);
+    if (variant.isValid()) {
+        if (value.type() != variant.type()) {
+            if (!variant.convert(value.type())) source = NONE;
+        }
+        value = variant;
     }
 
-    GValue val= {0, {{0}}};
-    g_value_init(&val, type);
-    QString full_key = d->prefix + key;
-    AgSettingSource source =
-        ag_account_get_value(d->m_account,
-                             full_key.toLatin1().constData(), &val);
-    if (source == AG_SETTING_SOURCE_NONE)
-        return NONE;
-
-    value = gvalueToVariant(&val);
-    g_value_unset(&val);
-
-    return (source == AG_SETTING_SOURCE_ACCOUNT) ? ACCOUNT : TEMPLATE;
+    return source;
 }
 
 /*!

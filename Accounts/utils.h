@@ -30,8 +30,8 @@
 
 namespace Accounts {
 
-QVariant gvalueToVariant(const GValue *value);
-bool variantToGValue(const QVariant &variant, GValue *value);
+QVariant gVariantToQVariant(GVariant *value);
+GVariant *qVariantToGVariant(const QVariant &variant);
 
 } // namespace
 

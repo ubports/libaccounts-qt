@@ -227,13 +227,13 @@ QStringList AccountService::allKeys() const
     QStringList allKeys;
     AgAccountSettingIter iter;
     const gchar *key;
-    const GValue *val;
+    GVariant *val;
 
     /* iterate the settings */
     QByteArray tmp = d->prefix.toLatin1();
     ag_account_service_settings_iter_init(d->m_accountService,
                                           &iter, tmp.constData());
-    while (ag_account_service_settings_iter_next(&iter, &key, &val))
+    while (ag_account_settings_iter_get_next(&iter, &key, &val))
     {
         allKeys.append(ASCII(key));
     }
@@ -353,9 +353,9 @@ void AccountService::remove(const QString &key)
     {
         QString full_key = d->prefix + key;
         QByteArray tmpkey = full_key.toLatin1();
-        ag_account_service_set_value(d->m_accountService,
-                                     tmpkey.constData(),
-                                     NULL);
+        ag_account_service_set_variant(d->m_accountService,
+                                       tmpkey.constData(),
+                                       NULL);
     }
 }
 
@@ -368,23 +368,56 @@ void AccountService::setValue(const QString &key, const QVariant &value)
 {
     Q_D(AccountService);
     TRACE();
-    GValue val= {0, {{0}}};
 
-    if (!variantToGValue(value, &val)) {
+    GVariant *variant = qVariantToGVariant(value);
+    if (variant == 0) {
         return;
     }
 
     QString full_key = d->prefix + key;
     QByteArray tmpkey = full_key.toLatin1();
-    ag_account_service_set_value(d->m_accountService,
-                                 tmpkey.constData(),
-                                 &val);
-    g_value_unset(&val);
+    ag_account_service_set_variant(d->m_accountService,
+                                   tmpkey.constData(),
+                                   variant);
 }
 
 void AccountService::setValue(const char *key, const QVariant &value)
 {
     setValue(ASCII(key), value);
+}
+
+/*!
+ * Retrieves the value of an account setting, as a QVariant.
+ * @param key The key whose value must be retrieved.
+ * @param defaultValue Value returned if the key is unset.
+ * @param source Indicates whether the value comes from the account, the
+ * service template or was unset.
+ *
+ * @return The value associated to \a key.
+ *
+ * This method operates on the currently selected service.
+ */
+QVariant AccountService::value(const QString &key,
+                               const QVariant &defaultValue,
+                               SettingSource *source) const
+{
+    Q_D(const AccountService);
+    QString full_key = d->prefix + key;
+    QByteArray ba = full_key.toLatin1();
+    AgSettingSource settingSource;
+    GVariant *variant =
+        ag_account_service_get_variant(d->m_accountService,
+                                       ba.constData(),
+                                       &settingSource);
+    if (source != 0) {
+        switch (settingSource) {
+        case AG_SETTING_SOURCE_ACCOUNT: *source = ACCOUNT; break;
+        case AG_SETTING_SOURCE_PROFILE: *source = TEMPLATE; break;
+        default: *source = NONE; break;
+        }
+    }
+
+    return (variant != 0) ? gVariantToQVariant(variant) : defaultValue;
 }
 
 /*!
@@ -397,30 +430,7 @@ void AccountService::setValue(const char *key, const QVariant &value)
  */
 QVariant AccountService::value(const QString &key, SettingSource *source) const
 {
-    Q_D(const AccountService);
-    GValue val= {0, {{0}}};
-    g_value_init(&val, G_TYPE_STRING);
-    QString full_key = d->prefix + key;
-    QByteArray ba = full_key.toLatin1();
-    AgSettingSource agSource =
-        ag_account_service_get_value(d->m_accountService,
-                                     ba.constData(), &val);
-    if (source != 0) {
-        switch (agSource) {
-        case AG_SETTING_SOURCE_ACCOUNT: *source = ACCOUNT; break;
-        case AG_SETTING_SOURCE_PROFILE: *source = TEMPLATE; break;
-        default: *source = NONE; break;
-        }
-    }
-
-    QVariant variant;
-    if (agSource == AG_SETTING_SOURCE_NONE)
-        return variant;
-
-    variant = UTF8(g_value_get_string(&val));
-    g_value_unset(&val);
-
-    return variant;
+    return value(key, QVariant(), source);
 }
 
 QVariant AccountService::value(const char *key, SettingSource *source) const
