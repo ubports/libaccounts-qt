@@ -968,8 +968,8 @@ void AccountsTest::authDataTest()
     globalParameters["other"] = UTF8("overriden parameter");
 
     QVariantMap serviceParameters;
-    globalParameters["other"] = UTF8("better parameter");
-    globalParameters["boolean"] = true;
+    serviceParameters["other"] = UTF8("better parameter");
+    serviceParameters["boolean"] = true;
 
     account->setCredentialsId(credentialsId);
     account->setValue("auth/method", method);
