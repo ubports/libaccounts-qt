@@ -1,0 +1,44 @@
+Source: libaccounts-qt
+Priority: optional
+Maintainer: Ubuntu Desktop Team <ubuntu-desktop@lists.ubuntu.com>
+Build-Depends: dbus-test-runner,
+               debhelper (>= 9),
+               doxygen,
+               libaccounts-glib-dev,
+               libglib2.0-dev,
+               libqt4-dev,
+               pkg-config,
+               qt4-dev-tools,
+Standards-Version: 3.9.3
+Section: libs
+Homepage: http://code.google.com/p/accounts-sso/
+# If you aren't a member of ~online-accounts but need to upload packaging changes,
+# just go ahead.  ~online-accounts will notice and sync up the code again.
+Vcs-Bzr: https://code.launchpad.net/~online-accounts/libaccounts-qt/trunk
+
+Package: libaccounts-qt-dev
+Section: libdevel
+Architecture: any
+Depends: libaccounts-qt1 (= ${binary:Version}),
+         ${shlibs:Depends},
+         ${misc:Depends}
+Description: QT library for single sign on - development files
+ .
+ This package contains files that are needed to build applications.
+
+Package: libaccounts-qt1
+Section: libs
+Architecture: any
+Pre-Depends: ${misc:Pre-Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: QT library for single sign on
+ .
+ This package contains shared libraries to be used by applications.
+
+Package: libaccounts-qt-doc
+Section: doc
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: QT library for single sign on - documentation
+ .
+ This package contains developer documentation.

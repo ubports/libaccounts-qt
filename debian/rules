@@ -1,0 +1,20 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+export DPKG_GENSYMBOLS_CHECK_LEVEL=4
+
+override_dh_auto_configure:
+	qmake LIBDIR=/usr/lib/$(DEB_HOST_MULTIARCH) "QMAKE_CXXFLAGS=$(CFLAGS)" accounts-qt.pro
+
+override_dh_install:
+	rm -f debian/tmp/usr/share/libaccounts-qt-tests/*
+	rm -f debian/tmp/usr/bin/*
+	dh_install --fail-missing
+
+override_dh_auto_test:
+	dbus-test-runner -t make -p check
+
+%:
+	dh $@
