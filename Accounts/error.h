@@ -104,8 +104,7 @@ private:
     friend class Manager;
     Error(const GError *error);
 
-    void registerType()
-        { qRegisterMetaType<Error>("Accounts::Error"); }
+    inline void registerType();
     // \endcond
 
 private:
@@ -118,5 +117,10 @@ private:
 } //namespace
 
 Q_DECLARE_METATYPE(Accounts::Error)
+
+void Accounts::Error::registerType()
+{
+    qRegisterMetaType<Accounts::Error>("Accounts::Error");
+}
 
 #endif // ACCOUNTS_ERROR_H
