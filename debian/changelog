@@ -1,4 +1,4 @@
-libaccounts-qt (1.4bzr13.01.21-0ubuntu1) UNRELEASED; urgency=low
+libaccounts-qt (1.4-0ubuntu2) UNRELEASED; urgency=low
 
   * Inline packaging metadata.
 
