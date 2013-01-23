@@ -8,7 +8,7 @@ DEFINES += BUILDING_ACCOUNTS_QT
 # Project name (used e.g. in include file and doc install path).
 # remember to update debian/* files if you changes this
 #-----------------------------------------------------------------------------
-PROJECT_NAME = accounts-qt
+PROJECT_NAME = libaccounts-qt
 
 
 #-----------------------------------------------------------------------------
