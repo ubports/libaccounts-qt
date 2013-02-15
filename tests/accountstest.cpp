@@ -496,6 +496,13 @@ void AccountsTest::accountServiceTest()
     Account *account = mgr->createAccount(NULL);
     QVERIFY(account != NULL);
 
+    QObject *parent = new QObject();
+    QPointer<AccountService> shortLivedAccountService =
+        new AccountService(account, service, parent);
+    QVERIFY(shortLivedAccountService != 0);
+    delete parent;
+    QVERIFY(shortLivedAccountService == 0);
+
     AccountService *accountService = new AccountService(account, service);
     QVERIFY(accountService != NULL);
 

@@ -42,6 +42,8 @@ class ACCOUNTS_EXPORT AccountService: public QObject
 
 public:
     explicit AccountService(Account *account, const Service &service);
+    explicit AccountService(Account *account, const Service &service,
+                            QObject *parent);
     virtual ~AccountService();
 
     Account *account() const;
