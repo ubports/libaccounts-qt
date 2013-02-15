@@ -53,6 +53,7 @@ namespace Accounts
 typedef quint32 AccountId;
 typedef QList<AccountId> AccountIdList;
 class Manager;
+class Provider;
 class AccountServicePrivate;
 
 /*!
@@ -133,6 +134,7 @@ public:
     void setDisplayName(const QString &displayName);
 
     QString providerName() const;
+    Provider provider() const;
 
     void selectService(const Service &service = Service());
     Service selectedService() const;

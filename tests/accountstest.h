@@ -66,6 +66,7 @@ private slots:
 
     void accountConstTestCase();
 
+    void accountProviderTestCase();
     void accountServiceTestCase();
     void accountEnabledTestCase();
     void accountDisplayNameTestCase();
