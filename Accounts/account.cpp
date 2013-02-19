@@ -130,7 +130,6 @@ Watch::Watch(QObject *parent):
 
 Watch::~Watch()
 {
-    TRACE();
     Account *account = qobject_cast<Account *>(QObject::parent());
     /* The destructor of Account deletes the child Watches before detaching
      * them, so here account should always be not NULL */
@@ -140,7 +139,6 @@ Watch::~Watch()
 
 void Account::Private::on_display_name_changed(Account *self)
 {
-    TRACE();
     const gchar *name = ag_account_get_display_name(self->d->m_account);
 
     emit self->displayNameChanged(UTF8(name));
@@ -149,8 +147,6 @@ void Account::Private::on_display_name_changed(Account *self)
 void Account::Private::on_enabled(Account *self, const gchar *service_name,
                                   gboolean enabled)
 {
-    TRACE();
-
     emit self->enabledChanged(UTF8(service_name), enabled);
 }
 
@@ -171,7 +167,6 @@ Account::Account(AgAccount *account, QObject *parent):
     QObject(parent),
     d(new Private)
 {
-    TRACE();
     d->m_account = account;
     g_object_ref(account);
 
@@ -189,8 +184,6 @@ Account::Account(AgAccount *account, QObject *parent):
  */
 Account::~Account()
 {
-    TRACE();
-
     QObjectList list = children();
     for (int i = 0; i < list.count(); i++)
     {
@@ -232,8 +225,6 @@ Manager *Account::manager() const
  */
 bool Account::supportsService(const QString &serviceType) const
 {
-    TRACE() << serviceType;
-
     return ag_account_supports_service(d->m_account,
                                        serviceType.toUtf8().constData());
 }
@@ -248,8 +239,6 @@ bool Account::supportsService(const QString &serviceType) const
  */
 ServiceList Account::services(const QString &serviceType) const
 {
-    TRACE() << serviceType;
-
     GList *list;
     if (serviceType.isEmpty()) {
         list = ag_account_list_services(d->m_account);
@@ -545,8 +534,6 @@ void Account::remove(const QString &key)
  */
 void Account::setValue(const QString &key, const QVariant &value)
 {
-    TRACE();
-
     GVariant *variant = qVariantToGVariant(value);
     if (variant == 0) {
         return;
@@ -781,8 +768,6 @@ Watch *Account::watchKey(const QString &key)
  */
 void Account::sync()
 {
-    TRACE();
-
     ag_account_store_async(d->m_account,
                            d->m_cancellable,
                            (GAsyncReadyCallback)&Private::account_store_cb,
@@ -798,8 +783,6 @@ void Account::sync()
  */
 bool Account::syncAndBlock()
 {
-    TRACE();
-
     GError *error = NULL;
     bool ret;
 
@@ -819,7 +802,6 @@ bool Account::syncAndBlock()
  */
 void Account::remove()
 {
-    TRACE();
     ag_account_delete(d->m_account);
 }
 

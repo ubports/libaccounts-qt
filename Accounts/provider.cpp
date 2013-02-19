@@ -46,7 +46,6 @@ namespace Accounts {
 Provider::Provider(AgProvider *provider, ReferenceMode mode):
     m_provider(provider)
 {
-    TRACE();
     if (m_provider != 0 && mode == AddReference)
         ag_provider_ref(m_provider);
 }
@@ -83,8 +82,6 @@ Provider &Provider::operator=(const Provider &other)
 
 Provider::~Provider()
 {
-    TRACE();
-
     ag_provider_unref(m_provider);
     m_provider = 0;
 }

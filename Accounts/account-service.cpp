@@ -381,7 +381,6 @@ void AccountService::remove(const QString &key)
 void AccountService::setValue(const QString &key, const QVariant &value)
 {
     Q_D(AccountService);
-    TRACE();
 
     GVariant *variant = qVariantToGVariant(value);
     if (variant == 0) {
