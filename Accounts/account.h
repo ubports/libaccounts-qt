@@ -201,6 +201,7 @@ private:
     friend class Manager;
     friend class Account::Private;
     friend class Watch;
+    friend class AccountService;
     friend class AccountServicePrivate;
 
     Private *d;
