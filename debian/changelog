@@ -1,16 +1,4 @@
-libaccounts-qt (1.5-0ubuntu1~quantal1) quantal; urgency=low
-
-  * rebuild for quantal
-
- -- Ken VanDine <ken.vandine@canonical.com>  Tue, 19 Feb 2013 11:28:26 +0000
-
-libaccounts-qt (1.5-0ubuntu1~ppa2) raring; urgency=low
-
-  * Fixed pkg-config requires for accounts-qt5
-
- -- Ken VanDine <ken.vandine@canonical.com>  Tue, 19 Feb 2013 11:23:56 +0000
-
-libaccounts-qt (1.5-0ubuntu1~ppa1) raring; urgency=low
+libaccounts-qt (1.5-0ubuntu1~raring1) raring; urgency=low
 
   [ Alberto Mardegan ]
   * New upstream release.
@@ -30,6 +18,7 @@ libaccounts-qt (1.5-0ubuntu1~ppa1) raring; urgency=low
     - add build depends for qt5 builds
   * debian/rules
     - dual build for qt4 and qt5
+  * Fixed pkg-config requires for accounts-qt5
 
  -- Ken VanDine <ken.vandine@canonical.com>  Tue, 19 Feb 2013 09:47:21 +0000
 
