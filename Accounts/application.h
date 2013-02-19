@@ -55,7 +55,7 @@ public:
 private:
     // Don't include private data in docs: \cond
     friend class Manager;
-    Application(AgApplication *authData);
+    Application(AgApplication *application);
 
     AgApplication *m_application;
     // \endcond
