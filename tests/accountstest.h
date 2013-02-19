@@ -96,6 +96,7 @@ private slots:
     void credentialsIdTest();
 
     void authDataTest();
+    void globalAuthDataTest();
 
     void listEnabledServices();
 
