@@ -1044,6 +1044,35 @@ void AccountsTest::authDataTest()
     QVERIFY(service.isValid());
 }
 
+void AccountsTest::globalAuthDataTest()
+{
+    Manager *manager = new Manager;
+    QVERIFY(manager != NULL);
+
+    Account *account = manager->createAccount("MyProvider");
+    QVERIFY(account != NULL);
+
+    Service service; // global account
+    QVERIFY(!service.isValid());
+
+    AccountService *accountService = new AccountService(account, service);
+    QVERIFY(accountService != 0);
+
+    AuthData authData = accountService->authData();
+    QCOMPARE(authData.method(), QString("oauth2"));
+    QCOMPARE(authData.mechanism(), QString("user_agent"));
+    QCOMPARE(authData.credentialsId(), uint(0));
+
+    QVariantMap expectedParameters;
+    expectedParameters.insert("Host", QString("myserver.example"));
+
+    QCOMPARE(authData.parameters(), expectedParameters);
+
+    delete accountService;
+    delete account;
+    delete manager;
+}
+
 void AccountsTest::listEnabledServices()
 {
     clearDb();
