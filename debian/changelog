@@ -1,3 +1,9 @@
+libaccounts-qt (1.5-0ubuntu1~ppa2) UNRELEASED; urgency=low
+
+  * Fixed pkg-config requires for accounts-qt5
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Tue, 19 Feb 2013 11:23:56 +0000
+
 libaccounts-qt (1.5-0ubuntu1~ppa1) raring; urgency=low
 
   [ Alberto Mardegan ]

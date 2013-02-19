@@ -10,6 +10,6 @@ Name: libaccounts-qt5
 Description: Accounts Library
 Version: $$PROJECT_VERSION
 Libs: -L${libdir} -laccounts-qt5
-Requires: QtCore QtXml
+Requires: Qt5Core Qt5Xml
 Cflags:  -I${includedir}
 
