@@ -202,15 +202,13 @@ AccountService::~AccountService()
 }
 
 /*!
- * Return the Account. Do not delete this object explicitly.
+ * Return the Account.
  */
 Account *AccountService::account() const
 {
     Q_D(const AccountService);
     AgAccount *account = ag_account_service_get_account(d->m_accountService);
-    AgAccountId account_id = account->id;
-
-    return d->m_manager->account(account_id);
+    return new Account(account, d->m_manager);
 }
 
 /*!
