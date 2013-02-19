@@ -1,7 +1,4 @@
-libaccounts-qt (1.5-0ubuntu1) raring; urgency=low
-
-  [ Robert Bruce Park ]
-  * Inline packaging metadata.
+libaccounts-qt (1.5-0ubuntu1~ppa1) raring; urgency=low
 
   [ Alberto Mardegan ]
   * New upstream release.
@@ -11,7 +8,18 @@ libaccounts-qt (1.5-0ubuntu1) raring; urgency=low
     - Tests: use dbus-test-runner if available
     - Do not instantiate Error before Q_DECLARE_METATYPE 
 
- -- Alberto Mardegan <alberto.mardegan@canonical.com>  Tue, 19 Feb 2013 11:16:05 +0400
+  [ Robert Bruce Park ]
+  * Inline packaging metadata.
+
+  [ Ken VanDine ]
+  * debian/control
+    - build depend on qtchooser
+    - add new binaries for qt5 builds, libsignon-qt5-1 and libsignon-qt5-dev
+    - add build depends for qt5 builds
+  * debian/rules
+    - dual build for qt4 and qt5
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Tue, 19 Feb 2013 09:47:21 +0000
 
 libaccounts-qt (1.4-0ubuntu1) raring; urgency=low
 
