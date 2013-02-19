@@ -175,6 +175,20 @@ void AccountServicePrivate::onChanged(AccountService *accountService)
  * @param service A Service supported by the account.
  */
 AccountService::AccountService(Account *account, const Service &service):
+    QObject(0),
+    d_ptr(new AccountServicePrivate(account, service, this))
+{
+}
+
+/*!
+ * Constructor.
+ * @param account An Account.
+ * @param service A Service supported by the account.
+ * @param parent The parent object.
+ */
+AccountService::AccountService(Account *account, const Service &service,
+                               QObject *parent):
+    QObject(parent),
     d_ptr(new AccountServicePrivate(account, service, this))
 {
 }

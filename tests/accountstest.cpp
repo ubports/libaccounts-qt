@@ -228,6 +228,23 @@ void AccountsTest::accountConstTestCase()
     delete mgr;
 }
 
+void AccountsTest::accountProviderTestCase()
+{
+    Manager *manager = new Manager();
+    QVERIFY(manager != 0);
+
+    Account *account = manager->createAccount("MyProvider");
+    QVERIFY(account != 0);
+
+    QCOMPARE(account->providerName(), QString("MyProvider"));
+
+    Provider provider = account->provider();
+    QCOMPARE(provider.name(), QString("MyProvider"));
+
+    delete account;
+    delete manager;
+}
+
 void AccountsTest::accountServiceTestCase()
 {
     Manager * mgr=new Manager();
@@ -495,6 +512,13 @@ void AccountsTest::accountServiceTest()
 
     Account *account = mgr->createAccount(NULL);
     QVERIFY(account != NULL);
+
+    QObject *parent = new QObject();
+    QPointer<AccountService> shortLivedAccountService =
+        new AccountService(account, service, parent);
+    QVERIFY(shortLivedAccountService != 0);
+    delete parent;
+    QVERIFY(shortLivedAccountService == 0);
 
     AccountService *accountService = new AccountService(account, service);
     QVERIFY(accountService != NULL);
