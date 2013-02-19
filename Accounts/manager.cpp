@@ -147,29 +147,21 @@ void Manager::Private::init(Manager *q, AgManager *manager)
 
 void Manager::Private::on_account_created(Manager *self, AgAccountId id)
 {
-    TRACE() << "id =" << id;
-
     emit self->accountCreated(id);
 }
 
 void Manager::Private::on_account_deleted(Manager *self, AgAccountId id)
 {
-    TRACE() << "id =" << id;
-
     emit self->accountRemoved(id);
 }
 
 void Manager::Private::on_account_updated(Manager *self, AgAccountId id)
 {
-    TRACE() << "id =" << id;
-
     emit self->accountUpdated(id);
 }
 
 void Manager::Private::on_enabled_event(Manager *self, AgAccountId id)
 {
-    TRACE() << "id =" << id;
-
     emit self->enabledEvent(id);
 }
 
@@ -230,8 +222,6 @@ Manager::Manager(const QString &serviceType, QObject *parent):
  */
 Manager::~Manager()
 {
-    TRACE();
-
     g_signal_handlers_disconnect_by_func
         (d->m_manager, (void *)&Private::on_enabled_event, this);
     g_signal_handlers_disconnect_by_func
@@ -255,8 +245,6 @@ Manager::~Manager()
  */
 Account *Manager::account(const AccountId &id) const
 {
-    TRACE() << "get account id: " << id;
-
     GError *error = NULL;
     AgAccount *account = ag_manager_load_account(d->m_manager, id, &error);
 
@@ -349,8 +337,6 @@ AccountIdList Manager::accountListEnabled(const QString &serviceType) const
  */
 Account *Manager::createAccount(const QString &providerName)
 {
-    TRACE() << providerName;
-
     AgAccount *account =
         ag_manager_create_account(d->m_manager,
                                   providerName.toUtf8().constData());
@@ -373,7 +359,6 @@ Account *Manager::createAccount(const QString &providerName)
  */
 Service Manager::service(const QString &serviceName) const
 {
-    TRACE() << serviceName;
     AgService *service =
         ag_manager_get_service(d->m_manager,
                                serviceName.toUtf8().constData());
@@ -392,7 +377,6 @@ Service Manager::service(const QString &serviceName) const
  */
 ServiceList Manager::serviceList(const QString &serviceType) const
 {
-    TRACE() << serviceType;
     GList *list;
 
     if (serviceType.isEmpty()) {
@@ -401,7 +385,6 @@ ServiceList Manager::serviceList(const QString &serviceType) const
         list = ag_manager_list_services_by_type(d->m_manager,
             serviceType.toUtf8().constData());
     }
-    TRACE() << "found:" << g_list_length(list);
 
     /* convert glist -> ServiceList */
     ServiceList servList;
@@ -426,7 +409,6 @@ ServiceList Manager::serviceList(const QString &serviceType) const
  */
 Provider Manager::provider(const QString &providerName) const
 {
-    TRACE() << providerName;
     AgProvider *provider;
 
     provider = ag_manager_get_provider(d->m_manager,
