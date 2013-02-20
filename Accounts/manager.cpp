@@ -147,22 +147,22 @@ void Manager::Private::init(Manager *q, AgManager *manager)
 
 void Manager::Private::on_account_created(Manager *self, AgAccountId id)
 {
-    emit self->accountCreated(id);
+    Q_EMIT self->accountCreated(id);
 }
 
 void Manager::Private::on_account_deleted(Manager *self, AgAccountId id)
 {
-    emit self->accountRemoved(id);
+    Q_EMIT self->accountRemoved(id);
 }
 
 void Manager::Private::on_account_updated(Manager *self, AgAccountId id)
 {
-    emit self->accountUpdated(id);
+    Q_EMIT self->accountUpdated(id);
 }
 
 void Manager::Private::on_enabled_event(Manager *self, AgAccountId id)
 {
-    emit self->enabledEvent(id);
+    Q_EMIT self->enabledEvent(id);
 }
 
 /*!

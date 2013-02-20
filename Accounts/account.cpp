@@ -141,20 +141,20 @@ void Account::Private::on_display_name_changed(Account *self)
 {
     const gchar *name = ag_account_get_display_name(self->d->m_account);
 
-    emit self->displayNameChanged(UTF8(name));
+    Q_EMIT self->displayNameChanged(UTF8(name));
 }
 
 void Account::Private::on_enabled(Account *self, const gchar *service_name,
                                   gboolean enabled)
 {
-    emit self->enabledChanged(UTF8(service_name), enabled);
+    Q_EMIT self->enabledChanged(UTF8(service_name), enabled);
 }
 
 void Account::Private::on_deleted(Account *self)
 {
     TRACE();
 
-    emit self->removed();
+    Q_EMIT self->removed();
 }
 
 /*!
@@ -412,7 +412,7 @@ QStringList Account::childGroups() const
     QStringList groups, all_keys;
 
     all_keys = allKeys();
-    foreach (QString key, all_keys)
+    Q_FOREACH (QString key, all_keys)
     {
         if (key.contains(slash)) {
             QString group = key.section(slash, 0, 0);
@@ -433,7 +433,7 @@ QStringList Account::childKeys() const
     QStringList keys, all_keys;
 
     all_keys = allKeys();
-    foreach (QString key, all_keys)
+    Q_FOREACH (QString key, all_keys)
     {
         if (!key.contains(slash))
             keys.append(key);
@@ -511,7 +511,7 @@ void Account::remove(const QString &key)
     {
         /* delete all keys in the group */
         QStringList keys = allKeys();
-        foreach (QString key, keys)
+        Q_FOREACH (QString key, keys)
         {
             if (!key.isEmpty())
                 remove(key);
@@ -557,11 +557,11 @@ void Account::Private::account_store_cb(AgAccount *account,
             error->code == G_IO_ERROR_CANCELLED) {
             TRACE() << "Account destroyed, operation cancelled";
         } else {
-            emit self->error(Error(error));
+            Q_EMIT self->error(Error(error));
         }
         g_error_free(error);
     } else {
-        emit self->synced();
+        Q_EMIT self->synced();
     }
 }
 
@@ -710,7 +710,7 @@ bool Account::valueAsBool(const QString &key,
 void Watch::Private::account_notify_cb(AgAccount *account, const gchar *key,
                                        Watch *watch)
 {
-    emit watch->notify(key);
+    Q_EMIT watch->notify(key);
 
     Q_UNUSED(account);
 }
