@@ -62,8 +62,16 @@ void AccountsTest::cleanupTestCase()
 /* manager */
 void AccountsTest::managerTestCase()
 {
-    Manager * mgr=new Manager();
-    QVERIFY(mgr!=NULL);
+    Manager *mgr = new Manager();
+    QVERIFY(mgr != NULL);
+    QCOMPARE(mgr->serviceType(), QString());
+
+    mgr->setAbortOnTimeout(true);
+    QCOMPARE(mgr->abortOnTimeout(), true);
+
+    mgr->setTimeout(123);
+    QCOMPARE(mgr->timeout(), quint32(123));
+
     delete mgr;
 }
 
@@ -116,21 +124,19 @@ void AccountsTest::accountListTestCase()
 {
     clearDb();
 
-    Manager * mgr=new Manager();
-    QVERIFY(mgr!=NULL);
+    Manager *mgr = new Manager();
+    QVERIFY(mgr != NULL);
 
     // make sure there is account
-    Account* account = mgr->createAccount(NULL);
+    Account *account = mgr->createAccount(NULL);
     account->sync();
 
     AccountIdList list = mgr->accountList(NULL);
-
     QVERIFY(!list.isEmpty());
     QCOMPARE(list.size(), 1);
 
-    for (int i = 0; i < list.size(); i++) {
-         qDebug("%d : %d",i,list.at(i));
-     }
+    list = mgr->accountList("e-mail");
+    QVERIFY(list.isEmpty());
 
     delete account;
     delete mgr;
@@ -149,11 +155,33 @@ void AccountsTest::providerTestCase()
 
     delete account;
 
+    /* Test invalid provider */
+    Provider invalid;
+    QVERIFY(!invalid.isValid());
+
     /* Check listing and loading of XML files */
     Provider provider = mgr->provider("MyProvider");
     QVERIFY(provider.isValid());
 
     QCOMPARE(provider.displayName(), QString("My Provider"));
+    QCOMPARE(provider.iconName(), QString("general_myprovider"));
+    QCOMPARE(provider.trCatalog(), QString("accounts"));
+
+    QDomDocument dom = provider.domDocument();
+    QDomElement root = dom.documentElement();
+    QCOMPARE(root.tagName(), QString("provider"));
+
+    /* Test copy constructor */
+    Provider copy(provider);
+    QCOMPARE(copy.displayName(), QString("My Provider"));
+
+    /* Test assignment */
+    copy = provider;
+    QCOMPARE(copy.displayName(), QString("My Provider"));
+    copy = invalid;
+    QVERIFY(!copy.isValid());
+    copy = provider;
+    QCOMPARE(copy.displayName(), QString("My Provider"));
 
     ProviderList providers = mgr->providerList();
     QVERIFY(!providers.isEmpty());
@@ -171,6 +199,15 @@ void AccountsTest::serviceTestCase()
     Service service = mgr->service(MYSERVICE);
     QVERIFY(service.isValid());
     QCOMPARE(service.name(), MYSERVICE);
+    QCOMPARE(service.iconName(), QString("general_myservice"));
+    QCOMPARE(service.trCatalog(), QString("accounts"));
+    QStringList tags;
+    tags << "email" << "e-mail";
+    QCOMPARE(service.tags(), tags.toSet());
+    // Called twice, because the second time it returns a cached result
+    QCOMPARE(service.tags(), tags.toSet());
+    QVERIFY(service.hasTag("email"));
+    QVERIFY(!service.hasTag("chat"));
 
     service = mgr->service(SERVICE);
     QVERIFY(!service.isValid());
@@ -180,16 +217,18 @@ void AccountsTest::serviceTestCase()
 
 void AccountsTest::serviceListTestCase()
 {
-    Manager * mgr=new Manager();
-    QVERIFY(mgr!=NULL);
+    Manager *mgr = new Manager();
+    QVERIFY(mgr != NULL);
 
     ServiceList list = mgr->serviceList();
     QVERIFY(!list.isEmpty());
     QCOMPARE(list.count(), 2);
 
-    for (int i = 0; i < list.size(); i++) {
-         qDebug("%d : %s",i,list.at(i).name().toLocal8Bit().constData());
-    }
+    list = mgr->serviceList("e-mail");
+    QCOMPARE(list.count(), 1);
+
+    list = mgr->serviceList("sharing");
+    QCOMPARE(list.count(), 1);
 
     delete mgr;
 }
@@ -223,6 +262,7 @@ void AccountsTest::accountConstTestCase()
 
     Account *account = mgr->createAccount(PROVIDER);
     QVERIFY(account!=NULL);
+    QVERIFY(account->isWritable());
 
     delete account;
     delete mgr;
@@ -259,6 +299,24 @@ void AccountsTest::accountServiceTestCase()
     ServiceList list = account->services();
     QVERIFY(!list.isEmpty());
     QCOMPARE(list.count(), 1);
+
+    list = account->services("e-mail");
+    QCOMPARE(list.count(), 1);
+
+    list = account->services("unsupported");
+    QVERIFY(list.isEmpty());
+
+    Service service = mgr->service(MYSERVICE);
+    QVERIFY(service.isValid());
+
+    /* Test default settings */
+    account->selectService(service);
+    QCOMPARE(account->value("parameters/server").toString(),
+             QString("talk.google.com"));
+    QCOMPARE(account->valueAsInt("parameters/port"), 5223);
+    SettingSource source;
+    QCOMPARE(account->valueAsInt("parameters/port", 0, &source), 5223);
+    QCOMPARE(source, TEMPLATE);
 
     delete account;
     delete mgr;
@@ -339,6 +397,9 @@ void AccountsTest::accountValueTestCase()
     QStringList names;
     names << "Tom" << "Dick" << "Harry";
     account->setValue("names", names);
+    account->setValue("big distance", quint64(3));
+    account->setValue("big difference", qint64(-300));
+    account->setValue("boolean", false);
     account->sync();
 
     QTest::qWait(10);
@@ -361,10 +422,22 @@ void AccountsTest::accountValueTestCase()
     QVERIFY(source == ACCOUNT);
 
     QCOMPARE(account->value("names").toStringList(), names);
+    QCOMPARE(account->value("big distance").toULongLong(), quint64(3));
+    QCOMPARE(account->value("big difference").toLongLong(), qint64(-300));
 
     /* test the convenience methods */
     QString strval = account->valueAsString("test");
     QCOMPARE (strval, QString("value"));
+    QCOMPARE(account->valueAsString("test", "Hi", &source), QString("value"));
+    QCOMPARE(source, ACCOUNT);
+
+    QCOMPARE(account->valueAsBool("boolean"), false);
+    QCOMPARE(account->valueAsBool("boolean", true, &source), false);
+    QCOMPARE(source, ACCOUNT);
+
+    QCOMPARE(account->valueAsUInt64("big distance"), quint64(3));
+    QCOMPARE(account->valueAsUInt64("big distance", 10, &source), quint64(3));
+    QCOMPARE(source, ACCOUNT);
 
     strval = account->valueAsString("test_unexisting", "hello");
     QCOMPARE (strval, QString("hello"));
@@ -523,6 +596,12 @@ void AccountsTest::accountServiceTest()
     AccountService *accountService = new AccountService(account, service);
     QVERIFY(accountService != NULL);
 
+    QCOMPARE(accountService->account()->providerName(),
+             account->providerName());
+    Service copy = accountService->service();
+    QVERIFY(copy.isValid());
+    QCOMPARE(copy.name(), service.name());
+
     QObject::connect(accountService, SIGNAL(changed()),
                      this, SLOT(onAccountServiceChanged()));
     QObject::connect(accountService, SIGNAL(enabled(bool)),
@@ -550,8 +629,9 @@ void AccountsTest::accountServiceTest()
     account->sync();
 
     /* ensure that the callbacks have been called the correct number of times */
-    int changedEmissions = 0;
-    QCOMPARE(spyChanged.count(), ++changedEmissions);
+    QCOMPARE(spyChanged.count(), 1);
+    spyChanged.clear();
+    spyEnabled.clear();
 
     QStringList expectedChanges;
     expectedChanges << "parameters/server";
@@ -562,16 +642,15 @@ void AccountsTest::accountServiceTest()
              UTF8("www.example.com"));
     QCOMPARE(accountService->enabled(), true);
 
-    int enabledEmissions = spyChanged.count();
-
     /* check the enabled status */
     account->selectService();
     account->setEnabled(false);
     account->sync();
-    QCOMPARE(spyChanged.count(), changedEmissions);
-    QCOMPARE(spyEnabled.count(), ++enabledEmissions);
+    QCOMPARE(spyChanged.count(), 0);
+    QCOMPARE(spyEnabled.count(), 1);
     QCOMPARE(accountService->enabled(), false);
     QCOMPARE(m_accountServiceEnabledValue, accountService->enabled());
+    spyEnabled.clear();
 
     /* enable the account, but disable the service */
     account->selectService();
@@ -579,18 +658,19 @@ void AccountsTest::accountServiceTest()
     account->selectService(service);
     account->setEnabled(false);
     account->sync();
-    QCOMPARE(spyEnabled.count(), enabledEmissions);
+    QCOMPARE(spyEnabled.count(), 0);
     QCOMPARE(accountService->enabled(), false);
 
     /* re-enable the service */
     account->selectService(service);
     account->setEnabled(true);
     account->sync();
-    QCOMPARE(spyEnabled.count(), ++enabledEmissions);
+    QCOMPARE(spyEnabled.count(), 1);
     QCOMPARE(accountService->enabled(), true);
     QCOMPARE(m_accountServiceEnabledValue, accountService->enabled());
+    spyEnabled.clear();
+    spyChanged.clear();
 
-    changedEmissions = spyChanged.count();
 
     /* test some more APIs */
     QStringList expectedList;
@@ -604,6 +684,21 @@ void AccountsTest::accountServiceTest()
     expectedList.clear();
     expectedList << "parameters";
     QCOMPARE(accountService->childGroups().toSet(), expectedList.toSet());
+
+    /* Remove one key */
+    accountService->remove("parameters/port");
+    account->sync();
+    QCOMPARE(spyChanged.count(), 1);
+    QCOMPARE(m_accountServiceChangedFields, QStringList("parameters/port"));
+    spyChanged.clear();
+
+    /* remove all keys */
+    accountService->clear();
+    account->sync();
+    QCOMPARE(spyChanged.count(), 1);
+    QVERIFY(m_accountServiceChangedFields.contains("parameters/server"));
+    QVERIFY(m_accountServiceChangedFields.contains("parameters/old-ssl"));
+    spyChanged.clear();
 
     delete accountService;
     delete account;
@@ -1038,6 +1133,15 @@ void AccountsTest::authDataTest()
 
     QCOMPARE(authData.parameters(), expectedParameters);
 
+    /* Test copy constructor */
+    AuthData copy(authData);
+    QCOMPARE(copy.parameters(), expectedParameters);
+
+    /* And delete destructor */
+    AuthData *copy2 = new AuthData(authData);
+    QCOMPARE(copy2->parameters(), expectedParameters);
+    delete copy2;
+
     delete accountService;
     delete account;
     delete manager;
@@ -1111,8 +1215,9 @@ void AccountsTest::listEnabledByServiceType()
 
     Manager *mgr = new Manager("e-mail");
     QVERIFY(mgr != NULL);
+    QCOMPARE(mgr->serviceType(), QString("e-mail"));
 
-    Account* account = mgr->createAccount("MyProvider");
+    Account *account = mgr->createAccount("MyProvider");
     QVERIFY(account != NULL);
     account->setEnabled(true);
 
@@ -1123,9 +1228,11 @@ void AccountsTest::listEnabledByServiceType()
     account->sync();
 
     AccountIdList list = mgr->accountListEnabled("e-mail");
-
     QVERIFY(!list.isEmpty());
     QCOMPARE(list.size(), 1);
+
+    list = mgr->accountListEnabled();
+    QCOMPARE(list.count(), 1);
 
     account->setEnabled(false);
     account->sync();
@@ -1199,6 +1306,17 @@ void AccountsTest::serviceTypeTestCase()
     QCOMPARE(serviceType.trCatalog(), QLatin1String("translation_file"));
     QCOMPARE(serviceType.iconName(), QLatin1String("email_icon"));
     QVERIFY(serviceType.tags().contains(QString("email")));
+    // called twice, because the second time it returns a cached result
+    QVERIFY(serviceType.tags().contains(QString("email")));
+    QVERIFY(serviceType.hasTag(QString("email")));
+    QVERIFY(!serviceType.hasTag(QString("fake-email")));
+
+    QDomDocument dom = serviceType.domDocument();
+    QDomElement root = dom.documentElement();
+    QCOMPARE(root.tagName(), QString("service-type"));
+
+    ServiceType copy(serviceType);
+    QCOMPARE(copy.displayName(), QLatin1String("Electronic mail"));
 
     delete mgr;
 }

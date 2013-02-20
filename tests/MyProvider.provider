@@ -2,6 +2,7 @@
 <provider id="MyProvider">
   <name>My Provider</name>
   <icon>general_myprovider</icon>
+  <translations>accounts</translations>
 
   <template>
     <group name="auth">
