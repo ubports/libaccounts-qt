@@ -10,5 +10,7 @@ debian
 /doc/qch
 moc_*
 *~
+*.gcda
+*.gcno
 *.o
 *.tar.*
