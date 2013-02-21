@@ -81,7 +81,7 @@ public:
 
     AuthData authData() const;
 
-signals:
+Q_SIGNALS:
     void enabled(bool isEnabled);
     void changed();
 

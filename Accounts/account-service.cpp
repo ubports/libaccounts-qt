@@ -202,15 +202,13 @@ AccountService::~AccountService()
 }
 
 /*!
- * Return the Account. Do not delete this object explicitly.
+ * Return the Account.
  */
 Account *AccountService::account() const
 {
     Q_D(const AccountService);
     AgAccount *account = ag_account_service_get_account(d->m_accountService);
-    AgAccountId account_id = account->id;
-
-    return d->m_manager->account(account_id);
+    return new Account(account, d->m_manager);
 }
 
 /*!
@@ -272,7 +270,7 @@ QStringList AccountService::childGroups() const
     QStringList groups, all_keys;
 
     all_keys = allKeys();
-    foreach (QString key, all_keys)
+    Q_FOREACH (QString key, all_keys)
     {
         if (key.contains(slash)) {
             QString group = key.section(slash, 0, 0);
@@ -291,7 +289,7 @@ QStringList AccountService::childKeys() const
     QStringList keys, all_keys;
 
     all_keys = allKeys();
-    foreach (QString key, all_keys)
+    Q_FOREACH (QString key, all_keys)
     {
         if (!key.contains(slash))
             keys.append(key);
@@ -357,7 +355,7 @@ void AccountService::remove(const QString &key)
     {
         /* delete all keys in the group */
         QStringList keys = allKeys();
-        foreach (QString key, keys)
+        Q_FOREACH (QString key, keys)
         {
             if (!key.isEmpty())
                 remove(key);
@@ -381,7 +379,6 @@ void AccountService::remove(const QString &key)
 void AccountService::setValue(const QString &key, const QVariant &value)
 {
     Q_D(AccountService);
-    TRACE();
 
     GVariant *variant = qVariantToGVariant(value);
     if (variant == 0) {

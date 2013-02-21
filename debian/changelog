@@ -1,3 +1,16 @@
+libaccounts-qt (1.6-0ubuntu1) raring; urgency=low
+
+  * New upstream release.
+    - Make libaccounts-qt compile with QT_NO_KEYWORDS
+    - Tests: increase coverage (now 93%)
+    - Make AccountService::account() always return a valid account
+    - Remove excessive debug verbosity
+    - Fixed pkg-config requires for accounts-qt5
+    - Documentation fixes for out-of-tree builds
+
+
+ -- Alberto Mardegan <alberto.mardegan@canonical.com>  Thu, 21 Feb 2013 11:47:25 +0200
+
 libaccounts-qt (1.5-0ubuntu1) raring; urgency=low
 
   [ Robert Bruce Park ]

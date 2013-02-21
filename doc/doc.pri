@@ -10,7 +10,7 @@ DOC_FOLDERS = doc/html \
 # must exist _before_ qmake generates the Makefile...so, make sure our
 # documentation target folders exist in the current build folder
 for( folder, DOC_FOLDERS ) {
-    system( mkdir -p $$(PWD)/$${folder} )
+    system( mkdir -p $${TOP_BUILD_DIR}/$${folder} )
 }
 
 
@@ -61,7 +61,7 @@ include( ../common-installs-config.pri )
 #-----------------------------------------------------------------------------
 documentation.path = $${INSTALL_PREFIX}/share/doc/$${PROJECT_NAME}
 for( folder, DOC_FOLDERS ) {
-    documentation.files += $${folder}
+    documentation.files += $${TOP_BUILD_DIR}/$${folder}
 }
 # make sure docs are generated before trying to install anything
 documentation.depends  = docs

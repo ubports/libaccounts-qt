@@ -4,6 +4,11 @@
   <name>My Service</name>
   <icon>general_myservice</icon>
   <provider>MyProvider</provider>
+  <translations>accounts</translations>
+  <tags>
+    <tag>email</tag>
+    <tag>e-mail</tag>
+  </tags>
 
   <!-- default settings (account settings have precedence over these) -->
   <template>

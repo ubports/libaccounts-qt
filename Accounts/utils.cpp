@@ -48,7 +48,7 @@ static GVariant *qStringListToGVariant(const QStringList &stringList)
     GVariantBuilder builder;
 
     g_variant_builder_init(&builder, G_VARIANT_TYPE_STRING_ARRAY);
-    foreach (const QString &string, stringList) {
+    Q_FOREACH (const QString &string, stringList) {
         g_variant_builder_add(&builder, "s", string.toUtf8().constData());
     }
     return g_variant_builder_end(&builder);
