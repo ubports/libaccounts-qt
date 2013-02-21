@@ -42,6 +42,8 @@ class ACCOUNTS_EXPORT AccountService: public QObject
 
 public:
     explicit AccountService(Account *account, const Service &service);
+    explicit AccountService(Account *account, const Service &service,
+                            QObject *parent);
     virtual ~AccountService();
 
     Account *account() const;
@@ -70,7 +72,7 @@ public:
     void setValue(const QString &key, const QVariant &value);
 
     QVariant value(const QString &key,
-                   const QVariant &defaultValue = QVariant(),
+                   const QVariant &defaultValue,
                    SettingSource *source = 0) const;
     QVariant value(const QString &key, SettingSource *source = 0) const;
     QVariant value(const char *key, SettingSource *source = 0) const;

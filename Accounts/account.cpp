@@ -348,6 +348,14 @@ QString Account::providerName() const
 }
 
 /*!
+ * Returns the provider of the account.
+ */
+Provider Account::provider() const
+{
+    return manager()->provider(providerName());
+}
+
+/*!
  * Select the Service for the subsequent operations.
  * @param service The Service to select. If this is invalid, the global
  * account settings will be selected.
