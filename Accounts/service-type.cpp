@@ -49,7 +49,6 @@ ServiceType::ServiceType(AgServiceType *serviceType, ReferenceMode mode):
     m_serviceType(serviceType),
     m_tags(0)
 {
-    TRACE();
     if (m_serviceType != 0 && mode == AddReference)
         ag_service_type_ref(m_serviceType);
 }
@@ -88,7 +87,6 @@ ServiceType &ServiceType::operator=(const ServiceType &other)
 
 ServiceType::~ServiceType()
 {
-    TRACE();
     if (m_serviceType != 0) {
         ag_service_type_unref(m_serviceType);
         m_serviceType = 0;

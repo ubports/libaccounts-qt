@@ -87,8 +87,6 @@ Service &Service::operator=(const Service &other)
 
 Service::~Service()
 {
-    TRACE();
-
     if (m_service != 0) {
         ag_service_unref(m_service);
         m_service = 0;

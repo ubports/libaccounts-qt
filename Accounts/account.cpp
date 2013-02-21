@@ -130,7 +130,6 @@ Watch::Watch(QObject *parent):
 
 Watch::~Watch()
 {
-    TRACE();
     Account *account = qobject_cast<Account *>(QObject::parent());
     /* The destructor of Account deletes the child Watches before detaching
      * them, so here account should always be not NULL */
@@ -140,25 +139,22 @@ Watch::~Watch()
 
 void Account::Private::on_display_name_changed(Account *self)
 {
-    TRACE();
     const gchar *name = ag_account_get_display_name(self->d->m_account);
 
-    emit self->displayNameChanged(UTF8(name));
+    Q_EMIT self->displayNameChanged(UTF8(name));
 }
 
 void Account::Private::on_enabled(Account *self, const gchar *service_name,
                                   gboolean enabled)
 {
-    TRACE();
-
-    emit self->enabledChanged(UTF8(service_name), enabled);
+    Q_EMIT self->enabledChanged(UTF8(service_name), enabled);
 }
 
 void Account::Private::on_deleted(Account *self)
 {
     TRACE();
 
-    emit self->removed();
+    Q_EMIT self->removed();
 }
 
 /*!
@@ -171,7 +167,6 @@ Account::Account(AgAccount *account, QObject *parent):
     QObject(parent),
     d(new Private)
 {
-    TRACE();
     d->m_account = account;
     g_object_ref(account);
 
@@ -189,8 +184,6 @@ Account::Account(AgAccount *account, QObject *parent):
  */
 Account::~Account()
 {
-    TRACE();
-
     QObjectList list = children();
     for (int i = 0; i < list.count(); i++)
     {
@@ -232,8 +225,6 @@ Manager *Account::manager() const
  */
 bool Account::supportsService(const QString &serviceType) const
 {
-    TRACE() << serviceType;
-
     return ag_account_supports_service(d->m_account,
                                        serviceType.toUtf8().constData());
 }
@@ -248,8 +239,6 @@ bool Account::supportsService(const QString &serviceType) const
  */
 ServiceList Account::services(const QString &serviceType) const
 {
-    TRACE() << serviceType;
-
     GList *list;
     if (serviceType.isEmpty()) {
         list = ag_account_list_services(d->m_account);
@@ -423,7 +412,7 @@ QStringList Account::childGroups() const
     QStringList groups, all_keys;
 
     all_keys = allKeys();
-    foreach (QString key, all_keys)
+    Q_FOREACH (QString key, all_keys)
     {
         if (key.contains(slash)) {
             QString group = key.section(slash, 0, 0);
@@ -444,7 +433,7 @@ QStringList Account::childKeys() const
     QStringList keys, all_keys;
 
     all_keys = allKeys();
-    foreach (QString key, all_keys)
+    Q_FOREACH (QString key, all_keys)
     {
         if (!key.contains(slash))
             keys.append(key);
@@ -522,7 +511,7 @@ void Account::remove(const QString &key)
     {
         /* delete all keys in the group */
         QStringList keys = allKeys();
-        foreach (QString key, keys)
+        Q_FOREACH (QString key, keys)
         {
             if (!key.isEmpty())
                 remove(key);
@@ -545,8 +534,6 @@ void Account::remove(const QString &key)
  */
 void Account::setValue(const QString &key, const QVariant &value)
 {
-    TRACE();
-
     GVariant *variant = qVariantToGVariant(value);
     if (variant == 0) {
         return;
@@ -570,11 +557,11 @@ void Account::Private::account_store_cb(AgAccount *account,
             error->code == G_IO_ERROR_CANCELLED) {
             TRACE() << "Account destroyed, operation cancelled";
         } else {
-            emit self->error(Error(error));
+            Q_EMIT self->error(Error(error));
         }
         g_error_free(error);
     } else {
-        emit self->synced();
+        Q_EMIT self->synced();
     }
 }
 
@@ -723,7 +710,7 @@ bool Account::valueAsBool(const QString &key,
 void Watch::Private::account_notify_cb(AgAccount *account, const gchar *key,
                                        Watch *watch)
 {
-    emit watch->notify(key);
+    Q_EMIT watch->notify(key);
 
     Q_UNUSED(account);
 }
@@ -781,8 +768,6 @@ Watch *Account::watchKey(const QString &key)
  */
 void Account::sync()
 {
-    TRACE();
-
     ag_account_store_async(d->m_account,
                            d->m_cancellable,
                            (GAsyncReadyCallback)&Private::account_store_cb,
@@ -798,8 +783,6 @@ void Account::sync()
  */
 bool Account::syncAndBlock()
 {
-    TRACE();
-
     GError *error = NULL;
     bool ret;
 
@@ -819,7 +802,6 @@ bool Account::syncAndBlock()
  */
 void Account::remove()
 {
-    TRACE();
     ag_account_delete(d->m_account);
 }
 
