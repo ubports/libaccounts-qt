@@ -1,4 +1,4 @@
-libaccounts-qt (1.6-0ubuntu1) raring; urgency=low
+libaccounts-qt (1.6-0ubuntu1) UNRELEASED; urgency=low
 
   * New upstream release.
     - Make libaccounts-qt compile with QT_NO_KEYWORDS
