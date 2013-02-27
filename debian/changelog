@@ -1,4 +1,4 @@
-libaccounts-qt (1.6bzr13.02.08-0ubuntu1) UNRELEASED; urgency=low
+libaccounts-qt (1.6bzr13.02.27-0ubuntu1) raring; urgency=low
 
   * New upstream release.
     - Make libaccounts-qt compile with QT_NO_KEYWORDS
@@ -12,11 +12,6 @@ libaccounts-qt (1.6bzr13.02.08-0ubuntu1) UNRELEASED; urgency=low
     - AccountService: add a constructor with a parent QObject
     - Tests: use dbus-test-runner if available
     - Do not instantiate Error before Q_DECLARE_METATYPE 
-
-  [ Robert Bruce Park ]
-  * Inline packaging metadata.
-
-  [ Ken VanDine ]
   * debian/control
     - build depend on qtchooser
     - add new binaries for qt5 builds, libaccounts-qt5-1 and libaccounts-qt5-dev
@@ -24,7 +19,10 @@ libaccounts-qt (1.6bzr13.02.08-0ubuntu1) UNRELEASED; urgency=low
   * debian/rules
     - dual build for qt4 and qt5
 
- -- Alberto Mardegan <alberto.mardegan@canonical.com>  Thu, 21 Feb 2013 11:47:25 +0200
+  [ Robert Bruce Park ]
+  * Inline packaging metadata.
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Wed, 27 Feb 2013 13:35:12 -0500
 
 libaccounts-qt (1.4-0ubuntu1) raring; urgency=low
 
