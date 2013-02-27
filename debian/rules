@@ -6,7 +6,32 @@
 export DPKG_GENSYMBOLS_CHECK_LEVEL=4
 
 override_dh_auto_configure:
-	dh_auto_configure -- LIBDIR=/usr/lib/$(DEB_HOST_MULTIARCH) "QMAKE_CXXFLAGS=$(CFLAGS)" accounts-qt.pro
+	mkdir -p build/qt4 build/qt5
+	QT_SELECT=qt4 \
+	dh_auto_configure -Bbuild/qt4 \
+		-- LIBDIR=/usr/lib/$(DEB_HOST_MULTIARCH) \
+		BUILD_DIR=build/qt4 \
+		"QMAKE_CXXFLAGS=$(CFLAGS)" \
+		../../accounts-qt.pro
+	QT_SELECT=qt5 \
+	dh_auto_configure -Bbuild/qt5 \
+		-- LIBDIR=/usr/lib/$(DEB_HOST_MULTIARCH) \
+		BUILD_DIR=build/qt5 \
+		"QMAKE_CXXFLAGS=$(CFLAGS)" \
+		../../accounts-qt.pro
+
+override_dh_auto_build:
+	dh_auto_build -Bbuild/qt4
+	dh_auto_build -Bbuild/qt5
+
+override_dh_auto_clean:
+	dh_auto_clean -Bbuild/qt4
+	dh_auto_clean -Bbuild/qt5
+
+override_dh_auto_install:
+	dh_auto_install -Bbuild/qt5 -plibaccounts-qt5-1
+	dh_auto_install -Bbuild/qt5 -plibaccounts-qt5-dev
+	dh_auto_install -Bbuild/qt4
 
 override_dh_install:
 	rm -f debian/tmp/usr/share/libaccounts-qt-tests/*
@@ -14,7 +39,8 @@ override_dh_install:
 	dh_install --fail-missing
 
 override_dh_auto_test:
-	dbus-test-runner -t make -p check
+	cd build/qt4; dbus-test-runner -t make -p check; cd -
+	cd build/qt5; dbus-test-runner -t make -p check; cd -
 
 %:
-	dh $@
+	dh $@ 
