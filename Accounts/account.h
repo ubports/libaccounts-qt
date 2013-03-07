@@ -105,7 +105,7 @@ public:
 
     bool supportsService(const QString &serviceType) const;
 
-    ServiceList services(const QString &serviceType = NULL) const;
+    ServiceList services(const QString &serviceType = QString()) const;
     ServiceList enabledServices() const;
 
     bool enabled() const;
@@ -169,7 +169,7 @@ public:
                      bool default_value = false,
                      SettingSource *source = 0) const;
 
-    Watch *watchKey(const QString &key = NULL);
+    Watch *watchKey(const QString &key = QString());
 
     void sync();
     bool syncAndBlock();
