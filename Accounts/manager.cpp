@@ -3,7 +3,7 @@
  * This file is part of libaccounts-qt
  *
  * Copyright (C) 2009-2011 Nokia Corporation.
- * Copyright (C) 2012 Canonical Ltd.
+ * Copyright (C) 2012-2013 Canonical Ltd.
  *
  * Contact: Alberto Mardegan <alberto.mardegan@canonical.com>
  *
@@ -25,9 +25,8 @@
 #include "application.h"
 #include "service.h"
 #include "manager.h"
+#include "manager_p.h"
 
-#undef signals
-#include <libaccounts-glib/ag-manager.h>
 #include <libaccounts-glib/ag-account.h>
 
 
@@ -88,32 +87,6 @@ namespace Accounts {
  *
  * @param id identifier of the Account
  */
-
-class Manager::Private
-{
-    Q_DECLARE_PUBLIC(Manager)
-
-public:
-    Private():
-        q_ptr(0),
-        m_manager(0)
-    {
-    }
-
-    ~Private() {
-    }
-
-    void init(Manager *q, AgManager *manager);
-
-    mutable Manager *q_ptr;
-    AgManager *m_manager; //real manager
-    Error lastError;
-
-    static void on_account_created(Manager *self, AgAccountId id);
-    static void on_account_deleted(Manager *self, AgAccountId id);
-    static void on_account_updated(Manager *self, AgAccountId id);
-    static void on_enabled_event(Manager *self, AgAccountId id);
-};
 
 } //namespace Accounts
 
@@ -240,25 +213,24 @@ Manager::~Manager()
  * Loads an account from the database.
  * @param id Id of the account to be retrieved.
  *
- * @return Requested account or NULL if not found. If NULL is returned,
+ * @return Requested account or 0 if not found. If 0 is returned,
  * call lastError() to find out why.
+ * @attention The objects returned by this method are shared, meaning that
+ * calling this method twice with the same id will return the same object. It
+ * is recommended that clients do not destroy the objects returned by this
+ * method, if there's the possibility that they are still being used in other
+ * parts of the application.
  */
 Account *Manager::account(const AccountId &id) const
 {
-    GError *error = NULL;
-    AgAccount *account = ag_manager_load_account(d->m_manager, id, &error);
-
-    if (account != NULL) {
-        Q_ASSERT(error == NULL);
-        Account *tmp = new Account(account, const_cast<Manager*>(this));
-        g_object_unref(account);
-        return tmp;
-    } else {
-        Q_ASSERT(error != NULL);
-        d->lastError = Error(error);
-        g_error_free(error);
+    Account *account = d->m_accounts.value(id, 0);
+    if (account == 0) {
+        /* Create a new account object */
+        account = Account::fromId(const_cast<Manager*>(this), id,
+                                  const_cast<Manager*>(this));
+        d->m_accounts[id] = account;
     }
-    return NULL;
+    return account;
 }
 
 /*!
@@ -337,18 +309,7 @@ AccountIdList Manager::accountListEnabled(const QString &serviceType) const
  */
 Account *Manager::createAccount(const QString &providerName)
 {
-    AgAccount *account =
-        ag_manager_create_account(d->m_manager,
-                                  providerName.toUtf8().constData());
-
-    if (account != NULL) {
-        /* convert gaccount into qaccount */
-        Account *tmp = new Account(account, this);
-        g_object_unref(account);
-        return tmp;
-    }
-
-    return NULL;
+    return new Account(this, providerName, this);
 }
 
 /*!

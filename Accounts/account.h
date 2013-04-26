@@ -97,7 +97,11 @@ class ACCOUNTS_EXPORT Account: public QObject
     Q_OBJECT
 
 public:
+    Account(Manager *manager, const QString &provider, QObject *parent = 0);
     virtual ~Account();
+
+    static Account *fromId(Manager *manager, AccountId id,
+                           QObject *parent = 0);
 
     AccountId id() const;
 
@@ -105,7 +109,7 @@ public:
 
     bool supportsService(const QString &serviceType) const;
 
-    ServiceList services(const QString &serviceType = NULL) const;
+    ServiceList services(const QString &serviceType = QString()) const;
     ServiceList enabledServices() const;
 
     bool enabled() const;
@@ -169,7 +173,7 @@ public:
                      bool default_value = false,
                      SettingSource *source = 0) const;
 
-    Watch *watchKey(const QString &key = NULL);
+    Watch *watchKey(const QString &key = QString());
 
     void sync();
     bool syncAndBlock();
@@ -189,15 +193,11 @@ Q_SIGNALS:
 
     void removed();
 
-protected:
-    // Don't include constructor in docs: \cond
-    Account(AgAccount *account, QObject *parent = 0);
-    // \endcond
-
 private:
     AgAccount *account();
     // Don't include private data in docs: \cond
     class Private;
+    Account(Private *d, QObject *parent = 0);
     friend class Manager;
     friend class Account::Private;
     friend class Watch;

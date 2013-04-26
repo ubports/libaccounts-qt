@@ -18,6 +18,7 @@ public_headers = \
     ServiceType service-type.h
 
 private_headers = \
+    manager_p.h \
     utils.h
 
 HEADERS += \

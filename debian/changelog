@@ -1,3 +1,23 @@
+libaccounts-qt (1.7-0ubuntu1) UNRELEASED; urgency=low
+
+  * New upstream release.
+    - Add a new constructor to the Account class:
+        Account(Manager *mgr, const QString &provider, QObject *parent);
+    - Add a static method
+        Account *Account::fromId(Manager *, AccountId id, QObject *parent)
+      to replicate the existing Manager::account() method, but with a more
+      clear ownership of the created object, which will not be a child of the
+      Manager (and therefore won't be destroyed with it).
+    - Slightly change the semantics of Manager::account(): if an account for
+      that ID has already been instantiated (and is still alive), return the
+      same object.
+    - Make AccountService::account() return the same account which was used to
+      instantiate the AccountService object.
+    - Do not initialize QString to NULL
+      (patch by Jaroslav Reznik <jreznik@redhat.com>) 
+
+ -- Alberto Mardegan <alberto.mardegan@canonical.com>  Fri, 26 Apr 2013 17:08:43 +0300
+
 libaccounts-qt (1.6bzr13.02.27-0ubuntu1) raring; urgency=low
 
   * New upstream release.
