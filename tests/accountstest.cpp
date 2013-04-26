@@ -120,6 +120,48 @@ void AccountsTest::accountTestCase()
     delete mgr;
 }
 
+void AccountsTest::objectsLifetimeTestCase()
+{
+    clearDb();
+
+    Manager *manager = new Manager();
+
+    // this should not exist
+    Account *account = Account::fromId(manager, 1);
+    QVERIFY(account == 0);
+    Error error = manager->lastError();
+    QCOMPARE(error.type(), Error::AccountNotFound);
+
+    // create an account
+    account = new Account(manager, PROVIDER);
+    account->setDisplayName("hi!");
+    account->syncAndBlock();
+    AccountId accountId = account->id();
+    delete account;
+
+    // Now load it, in two different ways
+    QPointer<Account> sharedAccount = manager->account(accountId);
+    QVERIFY(sharedAccount != 0);
+    QCOMPARE(sharedAccount->displayName(), QString("hi!"));
+
+    QPointer<Account> ownedAccount = Account::fromId(manager, accountId);
+    QVERIFY(ownedAccount != 0);
+    QCOMPARE(ownedAccount->displayName(), QString("hi!"));
+
+    /* Load it once more from the shared interface, and see that we get the
+     * same object */
+    QCOMPARE(manager->account(accountId), sharedAccount.data());
+
+    /* Delete the manager; the owned account should survive, the shared
+     * shouldn't */
+    delete manager;
+    QVERIFY(sharedAccount == 0);
+    QVERIFY(ownedAccount != 0);
+    QVERIFY(ownedAccount->manager() == 0);
+
+    delete ownedAccount;
+}
+
 void AccountsTest::accountListTestCase()
 {
     clearDb();
@@ -596,6 +638,7 @@ void AccountsTest::accountServiceTest()
     AccountService *accountService = new AccountService(account, service);
     QVERIFY(accountService != NULL);
 
+    QCOMPARE(accountService->account(), account);
     QCOMPARE(accountService->account()->providerName(),
              account->providerName());
     Service copy = accountService->service();
