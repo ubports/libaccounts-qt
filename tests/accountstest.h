@@ -56,6 +56,7 @@ private slots:
     void managerTestCase();
     void createAccountTestCase();
     void accountTestCase();
+    void objectsLifetimeTestCase();
     void accountListTestCase();
 
     void providerTestCase();

@@ -3,6 +3,7 @@
  * This file is part of libaccounts-qt
  *
  * Copyright (C) 2009-2010 Nokia Corporation.
+ * Copyright (C) 2013 Canonical Ltd.
  *
  * Contact: Alberto Mardegan <alberto.mardegan@nokia.com>
  *
@@ -24,6 +25,7 @@
 #include "account-service.h"
 #include "manager.h"
 #include "utils.h"
+#include <QPointer>
 #include <libaccounts-glib/ag-account.h>
 #include <libaccounts-glib/ag-account-service.h>
 #include <libaccounts-glib/ag-auth-data.h>
@@ -118,7 +120,7 @@ private:
 
     ServiceList m_serviceList;
     AgAccountService *m_accountService;
-    Manager *m_manager;
+    QPointer<Account> m_account;
     QString prefix;
     mutable AccountService *q_ptr;
 };
@@ -132,7 +134,7 @@ static QChar slash = QChar::fromLatin1('/');
 AccountServicePrivate::AccountServicePrivate(Account *account,
                                              const Service &service,
                                              AccountService *accountService):
-    m_manager(account->manager()),
+    m_account(account),
     q_ptr(accountService)
 {
     m_accountService = ag_account_service_new(account->account(),
@@ -207,8 +209,7 @@ AccountService::~AccountService()
 Account *AccountService::account() const
 {
     Q_D(const AccountService);
-    AgAccount *account = ag_account_service_get_account(d->m_accountService);
-    return new Account(account, d->m_manager);
+    return d->m_account;
 }
 
 /*!
