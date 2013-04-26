@@ -1,2 +1,2 @@
-libaccounts-qt.so*
-/accounts-qt.pc
+libaccounts-qt*.so*
+/accounts-qt*.pc
