@@ -3,7 +3,7 @@
  * This file is part of libaccounts-qt
  *
  * Copyright (C) 2009-2011 Nokia Corporation.
- * Copyright (C) 2012 Canonical Ltd.
+ * Copyright (C) 2012-2013 Canonical Ltd.
  *
  * Contact: Alberto Mardegan <alberto.mardegan@canonical.com>
  *
@@ -24,10 +24,10 @@
 
 #include "account.h"
 #include "manager.h"
+#include "manager_p.h"
 #include "utils.h"
 
-#undef signals
-#include <libaccounts-glib/ag-manager.h>
+#include <QPointer>
 #include <libaccounts-glib/ag-account.h>
 
 namespace Accounts {
@@ -75,11 +75,8 @@ namespace Accounts {
 class Account::Private
 {
 public:
-    Private():
-        m_account(0),
-        m_cancellable(g_cancellable_new())
-    {
-    }
+    Private(Manager *manager, const QString &providerName, Account *account);
+    Private(Manager *manager, AgAccount *agAccount);
 
     ~Private()
     {
@@ -88,6 +85,9 @@ public:
         m_cancellable = NULL;
     }
 
+    void init(Account *account);
+
+    QPointer<Manager> m_manager;
     AgAccount *m_account;  //real account
     GCancellable *m_cancellable;
     QString prefix;
@@ -137,6 +137,35 @@ Watch::~Watch()
     ag_account_remove_watch(account->d->m_account, watch);
 }
 
+Account::Private::Private(Manager *manager, const QString &providerName,
+                          Account *account):
+    m_manager(manager),
+    m_cancellable(g_cancellable_new())
+{
+    m_account = ag_manager_create_account(manager->d->m_manager,
+                                          providerName.toUtf8().constData());
+    init(account);
+}
+
+Account::Private::Private(Manager *manager, AgAccount *agAccount):
+    m_manager(manager),
+    m_account(agAccount),
+    m_cancellable(g_cancellable_new())
+{
+}
+
+void Account::Private::init(Account *account)
+{
+    if (m_account == 0) return;
+    g_signal_connect_swapped(m_account, "display-name-changed",
+                             G_CALLBACK(&Private::on_display_name_changed),
+                             account);
+    g_signal_connect_swapped(m_account, "enabled",
+                             G_CALLBACK(&Private::on_enabled), account);
+    g_signal_connect_swapped(m_account, "deleted",
+                             G_CALLBACK(&Private::on_deleted), account);
+}
+
 void Account::Private::on_display_name_changed(Account *self)
 {
     const gchar *name = ag_account_get_display_name(self->d->m_account);
@@ -163,20 +192,51 @@ void Account::Private::on_deleted(Account *self)
  * Emitted when an error occurs.
  */
 
-Account::Account(AgAccount *account, QObject *parent):
+/*!
+ * Constructs a new Account. The account exists only in memory and is not
+ * visible to other applications (or Manager instances) until sync() has been
+ * called.
+ * @param manager The account manager. Do not destroy it while the account
+ * object is in use.
+ * @param providerName Name of the provider for the account.
+ * @param parent Parent object.
+ */
+Account::Account(Manager *manager, const QString &providerName,
+                 QObject *parent):
     QObject(parent),
-    d(new Private)
+    d(new Private(manager, providerName, this))
 {
-    d->m_account = account;
-    g_object_ref(account);
+}
 
-    g_signal_connect_swapped(account, "display-name-changed",
-                             G_CALLBACK(&Private::on_display_name_changed),
-                             this);
-    g_signal_connect_swapped(account, "enabled",
-                             G_CALLBACK(&Private::on_enabled), this);
-    g_signal_connect_swapped(account, "deleted",
-                             G_CALLBACK(&Private::on_deleted), this);
+Account::Account(Private *d, QObject *parent):
+    QObject(parent),
+    d(d)
+{
+    d->init(this);
+}
+
+/*!
+ * Constructs an Account object representing an account stored in the database.
+ * @param manager The account manager. Do not destroy it while the account
+ * object is in use.
+ * @param id The numeric identifier of the account.
+ * @param parent Parent object.
+ *
+ * @return A new account object, or 0 if an error occurred.
+ */
+Account *Account::fromId(Manager *manager, AccountId id, QObject *parent)
+{
+    GError *error = 0;
+    AgAccount *account = ag_manager_load_account(manager->d->m_manager, id,
+                                                 &error);
+    if (account == 0) {
+        Q_ASSERT(error != 0);
+        manager->d->lastError = Error(error);
+        g_error_free(error);
+        return 0;
+    }
+    Q_ASSERT(error == 0);
+    return new Account(new Private(manager, account), parent);
 }
 
 /*!
@@ -217,7 +277,7 @@ AccountId Account::id() const
  */
 Manager *Account::manager() const
 {
-    return qobject_cast<Manager *>(QObject::parent());
+    return d->m_manager;
 }
 
 /*!
