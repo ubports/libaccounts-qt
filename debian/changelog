@@ -1,5 +1,6 @@
-libaccounts-qt (1.7-0ubuntu1) UNRELEASED; urgency=low
+libaccounts-qt (1.7daily13.05.01.1ubuntu.unity.next-0ubuntu1) raring; urgency=low
 
+  [ Alberto Mardegan ]
   * New upstream release.
     - Add a new constructor to the Account class:
         Account(Manager *mgr, const QString &provider, QObject *parent);
@@ -16,7 +17,10 @@ libaccounts-qt (1.7-0ubuntu1) UNRELEASED; urgency=low
     - Do not initialize QString to NULL
       (patch by Jaroslav Reznik <jreznik@redhat.com>) 
 
- -- Alberto Mardegan <alberto.mardegan@canonical.com>  Fri, 26 Apr 2013 17:08:43 +0300
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 126 (ubuntu-unity/next)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 01 May 2013 07:51:06 +0000
 
 libaccounts-qt (1.6bzr13.02.27-0ubuntu2) UNRELEASED; urgency=low
 
