@@ -115,6 +115,26 @@ QString Provider::displayName() const
 }
 
 /*!
+ * Get the description of the provider, untranslated.
+ * @return The description of the provider.
+ */
+QString Provider::description() const
+{
+    return UTF8(ag_provider_get_description(m_provider));
+}
+
+/*!
+ * Get the name of the account plugin associated with the provider.
+ * Some platforms might find it useful to store plugin names in the provider
+ * XML files, especially when the same plugin can work for different providers.
+ * @return The plugin name.
+ */
+QString Provider::pluginName() const
+{
+    return UTF8(ag_provider_get_plugin_name(m_provider));
+}
+
+/*!
  * @return The name of the translation catalog, which can be used to
  * translate the displayName().
  */

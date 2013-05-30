@@ -57,6 +57,8 @@ public:
 
     QString name() const;
     QString displayName() const;
+    QString description() const;
+    QString pluginName() const;
     QString trCatalog() const;
     QString iconName() const;
     const QDomDocument domDocument() const;

@@ -207,7 +207,9 @@ void AccountsTest::providerTestCase()
 
     QCOMPARE(provider.displayName(), QString("My Provider"));
     QCOMPARE(provider.iconName(), QString("general_myprovider"));
+    QCOMPARE(provider.description(), QString("fast & furious"));
     QCOMPARE(provider.trCatalog(), QString("accounts"));
+    QCOMPARE(provider.pluginName(), QString("generic-oauth"));
 
     QDomDocument dom = provider.domDocument();
     QDomElement root = dom.documentElement();
