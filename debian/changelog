@@ -1,3 +1,9 @@
+libaccounts-qt (1.7daily13.06.05.1-0ubuntu1) saucy; urgency=low
+
+  * Automatic snapshot from revision 127
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 05 Jun 2013 18:49:09 +0000
+
 libaccounts-qt (1.7daily13.05.01.1ubuntu.unity.next-0ubuntu1) raring; urgency=low
 
   [ Alberto Mardegan ]
