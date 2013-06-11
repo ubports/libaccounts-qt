@@ -48,6 +48,7 @@ public:
 
     QString name() const;
     QString description() const;
+    QString iconName() const;
     QString trCatalog() const;
 
     QString serviceUsage(const Service &service) const;
