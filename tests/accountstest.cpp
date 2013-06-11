@@ -290,7 +290,7 @@ void AccountsTest::serviceConstTestCase()
     QCOMPARE(service.displayName(), QString("My Service"));
     QCOMPARE(service.serviceType(), QString("e-mail"));
     QCOMPARE(service.provider(), QString("MyProvider"));
-    QVERIFY(service.hasTag(QString("messaging")));
+    QVERIFY(service.hasTag(QString("email")));
 
     delete mgr;
 }
