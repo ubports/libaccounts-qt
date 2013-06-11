@@ -108,6 +108,26 @@ QString Application::description() const
 }
 
 /*!
+ * Get the icon name of the application.
+ * @return The application icon name.
+ */
+QString Application::iconName() const
+{
+    QString iconName;
+    GDesktopAppInfo *info =
+        ag_application_get_desktop_app_info(m_application);
+    if (Q_LIKELY(info)) {
+        gchar *gIconName = g_desktop_app_info_get_string(info, "Icon");
+        if (Q_LIKELY(gIconName)) {
+            iconName = UTF8(gIconName);
+            g_free(gIconName);
+        }
+        g_object_unref(info);
+    }
+    return iconName;
+}
+
+/*!
  * Get the translation catalog for the texts returned by the methods of this
  * class.
  * @return The translation catalog name.

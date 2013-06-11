@@ -1436,6 +1436,7 @@ void AccountsTest::applicationTest()
     QCOMPARE(application.name(), UTF8("Mailer"));
     QCOMPARE(application.description(), UTF8("Mailer application"));
     QCOMPARE(application.trCatalog(), UTF8("mailer-catalog"));
+    QCOMPARE(application.iconName(), UTF8("mailer-icon"));
     QCOMPARE(application.serviceUsage(email),
              UTF8("Mailer can retrieve your e-mails"));
 
