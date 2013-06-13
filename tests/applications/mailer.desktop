@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=Mailer
+Name=Easy Mailer
 Comment=Send and receive mail
 Exec=/bin/sh
 Icon=mailer-icon
