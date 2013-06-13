@@ -111,6 +111,7 @@ bool ServiceType::isValid() const
  */
 QString ServiceType::name() const
 {
+    if (Q_UNLIKELY(!isValid())) return QString();
     return UTF8(ag_service_type_get_name(m_serviceType));
 }
 

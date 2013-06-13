@@ -95,6 +95,7 @@ bool Application::isValid() const
  */
 QString Application::name() const
 {
+    if (Q_UNLIKELY(!isValid())) return QString();
     return UTF8(ag_application_get_name(m_application));
 }
 

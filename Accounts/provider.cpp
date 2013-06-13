@@ -102,6 +102,7 @@ bool Provider::isValid() const
  */
 QString Provider::name() const
 {
+    if (Q_UNLIKELY(!isValid())) return QString();
     return UTF8(ag_provider_get_name(m_provider));
 }
 
