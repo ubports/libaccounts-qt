@@ -1434,6 +1434,7 @@ void AccountsTest::applicationTest()
     QVERIFY(sharing.isValid());
 
     QCOMPARE(application.name(), UTF8("Mailer"));
+    QCOMPARE(application.displayName(), UTF8("Easy Mailer"));
     QCOMPARE(application.description(), UTF8("Mailer application"));
     QCOMPARE(application.trCatalog(), UTF8("mailer-catalog"));
     QCOMPARE(application.iconName(), UTF8("mailer-icon"));
