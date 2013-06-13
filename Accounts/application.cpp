@@ -90,7 +90,8 @@ bool Application::isValid() const
 }
 
 /*!
- * Get the unique ID of the application.
+ * Get the unique ID of the application. This is the name of the .application
+ * file minus the .application suffix.
  * @return The application unique ID.
  */
 QString Application::name() const
