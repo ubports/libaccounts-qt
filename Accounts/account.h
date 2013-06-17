@@ -113,6 +113,7 @@ public:
     ServiceList enabledServices() const;
 
     bool enabled() const;
+    bool isEnabled() const;
     void setEnabled(bool);
 
     /*!
