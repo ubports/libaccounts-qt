@@ -350,8 +350,23 @@ ServiceList Account::enabledServices() const
  *
  * This method operates on the currently selected service or
  * globally, if none selected.
+ *
+ * @note this is just a wrapper of isEnabled
+ * @see isEnabled()
+ * @deprecated use isEnabled instead
  */
 bool Account::enabled() const
+{
+    return isEnabled();
+}
+
+/*!
+ * Checks whether the account or selected service is enabled.
+ *
+ * This method operates on the currently selected service or
+ * globally, if none selected.
+ */
+bool Account::isEnabled() const
 {
     return ag_account_get_enabled(d->m_account);
 }

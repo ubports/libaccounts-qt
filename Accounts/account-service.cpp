@@ -84,7 +84,7 @@ namespace Accounts
  * application) should never use account services which are not enabled, and
  * should stop using an account when the account service becomes disabled. The
  * latter can be done by connecting to the changed() signal and checking if
- * enabled() still returns true.
+ * isEnabled() still returns true.
  * @note Note that if the account gets deleted, it will always get disabled
  * first; so, there is no need to connect to the Account::removed() signal; one
  * can just monitor the changed() signal from the AccountService objects.
@@ -224,8 +224,19 @@ Service AccountService::service() const
 
 /*!
  * Check whether the account service is enabled.
+ * @note this is just a wrapper of isEnabled
+ * @see isEnabled()
+ * @deprecated use isEnabled instead
  */
 bool AccountService::enabled() const
+{
+    return isEnabled();
+}
+
+/*!
+ * Check whether the account service is enabled.
+ */
+bool AccountService::isEnabled() const
 {
     Q_D(const AccountService);
     return ag_account_service_get_enabled(d->m_accountService);
