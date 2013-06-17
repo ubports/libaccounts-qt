@@ -207,7 +207,9 @@ void AccountsTest::providerTestCase()
 
     QCOMPARE(provider.displayName(), QString("My Provider"));
     QCOMPARE(provider.iconName(), QString("general_myprovider"));
+    QCOMPARE(provider.description(), QString("fast & furious"));
     QCOMPARE(provider.trCatalog(), QString("accounts"));
+    QCOMPARE(provider.pluginName(), QString("generic-oauth"));
 
     QDomDocument dom = provider.domDocument();
     QDomElement root = dom.documentElement();
@@ -288,7 +290,7 @@ void AccountsTest::serviceConstTestCase()
     QCOMPARE(service.displayName(), QString("My Service"));
     QCOMPARE(service.serviceType(), QString("e-mail"));
     QCOMPARE(service.provider(), QString("MyProvider"));
-    QVERIFY(service.hasTag(QString("messaging")));
+    QVERIFY(service.hasTag(QString("email")));
 
     delete mgr;
 }
@@ -1432,8 +1434,10 @@ void AccountsTest::applicationTest()
     QVERIFY(sharing.isValid());
 
     QCOMPARE(application.name(), UTF8("Mailer"));
+    QCOMPARE(application.displayName(), UTF8("Easy Mailer"));
     QCOMPARE(application.description(), UTF8("Mailer application"));
     QCOMPARE(application.trCatalog(), UTF8("mailer-catalog"));
+    QCOMPARE(application.iconName(), UTF8("mailer-icon"));
     QCOMPARE(application.serviceUsage(email),
              UTF8("Mailer can retrieve your e-mails"));
 

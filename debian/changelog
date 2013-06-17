@@ -1,3 +1,12 @@
+libaccounts-qt (1.8-0ubuntu1) UNRELEASED; urgency=low
+
+  * New upstream release.
+    - Add Application::displayName() and Application::iconName()
+    - Add Provider::description() and Provider::pluginName()
+    - Tests: fix service tags tests 
+
+ -- Alberto Mardegan <alberto.mardegan@canonical.com>  Sun, 16 Jun 2013 22:51:02 -0700
+
 libaccounts-qt (1.7daily13.06.05.1-0ubuntu1) saucy; urgency=low
 
   * Automatic snapshot from revision 127

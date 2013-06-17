@@ -102,6 +102,7 @@ bool Provider::isValid() const
  */
 QString Provider::name() const
 {
+    if (Q_UNLIKELY(!isValid())) return QString();
     return UTF8(ag_provider_get_name(m_provider));
 }
 
@@ -112,6 +113,26 @@ QString Provider::name() const
 QString Provider::displayName() const
 {
     return UTF8(ag_provider_get_display_name(m_provider));
+}
+
+/*!
+ * Get the description of the provider, untranslated.
+ * @return The description of the provider.
+ */
+QString Provider::description() const
+{
+    return UTF8(ag_provider_get_description(m_provider));
+}
+
+/*!
+ * Get the name of the account plugin associated with the provider.
+ * Some platforms might find it useful to store plugin names in the provider
+ * XML files, especially when the same plugin can work for different providers.
+ * @return The plugin name.
+ */
+QString Provider::pluginName() const
+{
+    return UTF8(ag_provider_get_plugin_name(m_provider));
 }
 
 /*!

@@ -2,7 +2,9 @@
 <provider id="MyProvider">
   <name>My Provider</name>
   <icon>general_myprovider</icon>
+  <description>fast &amp; furious</description>
   <translations>accounts</translations>
+  <plugin>generic-oauth</plugin>
 
   <template>
     <group name="auth">
