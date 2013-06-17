@@ -6,16 +6,14 @@ DEFINES += BUILDING_ACCOUNTS_QT
 
 #-----------------------------------------------------------------------------
 # Project name (used e.g. in include file and doc install path).
-# remember to update debian/* files if you changes this
 #-----------------------------------------------------------------------------
 PROJECT_NAME = accounts-qt
 
 
 #-----------------------------------------------------------------------------
 # Project version
-# remember to update debian/* files if you changes this
 #-----------------------------------------------------------------------------
-PROJECT_VERSION = 1.7
+PROJECT_VERSION = 1.8
 
 #-----------------------------------------------------------------------------
 # Library version
