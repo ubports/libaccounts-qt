@@ -2,6 +2,7 @@
 <application id="Mailer">
   <description>Mailer application</description>
   <translations>mailer-catalog</translations>
+  <desktop-entry>mailer.desktop</desktop-entry>
 
   <service-types>
 		<service-type id="e-mail">

@@ -147,8 +147,6 @@ Manager::Manager(QObject *parent):
     QObject(parent),
     d(new Private)
 {
-    g_type_init();
-
     AgManager *manager = ag_manager_new();
 
     if (manager != 0) {
@@ -176,8 +174,6 @@ Manager::Manager(const QString &serviceType, QObject *parent):
     QObject(parent),
     d(new Private)
 {
-    g_type_init();
-
     AgManager *manager =
         ag_manager_new_for_service_type(serviceType.toUtf8().constData());
 

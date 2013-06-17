@@ -113,6 +113,7 @@ bool Service::isValid() const
  */
 QString Service::name() const
 {
+    if (Q_UNLIKELY(!isValid())) return QString();
     return UTF8(ag_service_get_name(m_service));
 }
 

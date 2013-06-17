@@ -47,7 +47,9 @@ public:
     bool isValid() const;
 
     QString name() const;
+    QString displayName() const;
     QString description() const;
+    QString iconName() const;
     QString trCatalog() const;
 
     QString serviceUsage(const Service &service) const;

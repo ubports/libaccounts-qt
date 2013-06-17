@@ -90,12 +90,30 @@ bool Application::isValid() const
 }
 
 /*!
- * Get the name of the application.
- * @return The application name.
+ * Get the unique ID of the application. This is the name of the .application
+ * file minus the .application suffix.
+ * @return The application unique ID.
  */
 QString Application::name() const
 {
+    if (Q_UNLIKELY(!isValid())) return QString();
     return UTF8(ag_application_get_name(m_application));
+}
+
+/*!
+ * Get the display name of the application.
+ * @return The application display name.
+ */
+QString Application::displayName() const
+{
+    QString iconName;
+    GDesktopAppInfo *info =
+        ag_application_get_desktop_app_info(m_application);
+    if (Q_LIKELY(info)) {
+        iconName = UTF8(g_app_info_get_display_name(G_APP_INFO(info)));
+        g_object_unref(info);
+    }
+    return iconName;
 }
 
 /*!
@@ -105,6 +123,26 @@ QString Application::name() const
 QString Application::description() const
 {
     return UTF8(ag_application_get_description(m_application));
+}
+
+/*!
+ * Get the icon name of the application.
+ * @return The application icon name.
+ */
+QString Application::iconName() const
+{
+    QString iconName;
+    GDesktopAppInfo *info =
+        ag_application_get_desktop_app_info(m_application);
+    if (Q_LIKELY(info)) {
+        gchar *gIconName = g_desktop_app_info_get_string(info, "Icon");
+        if (Q_LIKELY(gIconName)) {
+            iconName = UTF8(gIconName);
+            g_free(gIconName);
+        }
+        g_object_unref(info);
+    }
+    return iconName;
 }
 
 /*!

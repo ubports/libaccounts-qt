@@ -5,6 +5,7 @@ export AG_SERVICES=$TESTDIR
 export AG_SERVICE_TYPES=$TESTDIR
 export AG_PROVIDERS=$TESTDIR
 export ACCOUNTS=/tmp/ 
+export XDG_DATA_HOME=$TESTDIR
 
 # If dbus-test-runner exists, use it to run the tests in a separate D-Bus
 # session
