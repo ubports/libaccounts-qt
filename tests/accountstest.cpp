@@ -1438,6 +1438,8 @@ void AccountsTest::applicationTest()
     QCOMPARE(application.description(), UTF8("Mailer application"));
     QCOMPARE(application.trCatalog(), UTF8("mailer-catalog"));
     QCOMPARE(application.iconName(), UTF8("mailer-icon"));
+    QCOMPARE(application.desktopFilePath(),
+             UTF8(qgetenv("AG_APPLICATIONS") + "/applications/mailer.desktop"));
     QCOMPARE(application.serviceUsage(email),
              UTF8("Mailer can retrieve your e-mails"));
 
