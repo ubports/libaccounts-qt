@@ -50,6 +50,7 @@ public:
     Service service() const;
 
     bool enabled() const;
+    bool isEnabled() const;
 
     QStringList allKeys() const;
 

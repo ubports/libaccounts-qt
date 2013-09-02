@@ -106,14 +106,14 @@ QString Application::name() const
  */
 QString Application::displayName() const
 {
-    QString iconName;
+    QString name;
     GDesktopAppInfo *info =
         ag_application_get_desktop_app_info(m_application);
     if (Q_LIKELY(info)) {
-        iconName = UTF8(g_app_info_get_display_name(G_APP_INFO(info)));
+        name = UTF8(g_app_info_get_display_name(G_APP_INFO(info)));
         g_object_unref(info);
     }
-    return iconName;
+    return name;
 }
 
 /*!
@@ -143,6 +143,22 @@ QString Application::iconName() const
         g_object_unref(info);
     }
     return iconName;
+}
+
+/*!
+ * Get the .desktop file associated with this application.
+ * @return The full path to the .desktop file.
+ */
+QString Application::desktopFilePath() const
+{
+    QString filePath;
+    GDesktopAppInfo *info =
+        ag_application_get_desktop_app_info(m_application);
+    if (Q_LIKELY(info)) {
+        filePath = UTF8(g_desktop_app_info_get_filename(info));
+        g_object_unref(info);
+    }
+    return filePath;
 }
 
 /*!
