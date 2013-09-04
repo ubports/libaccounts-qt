@@ -50,6 +50,7 @@ public:
     QString displayName() const;
     QString description() const;
     QString iconName() const;
+    QString desktopFilePath() const;
     QString trCatalog() const;
 
     QString serviceUsage(const Service &service) const;
