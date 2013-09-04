@@ -1,10 +1,14 @@
-libaccounts-qt (1.9-0ubuntu1) UNRELEASED; urgency=low
+libaccounts-qt (1.9+13.10.20130904-0ubuntu1) saucy; urgency=low
 
+  [ Alberto Mardegan ]
   * New upstream release.
     - Application: add a method to return the .desktop file
     - Add Account::isEnabled(), along with the existing Account::enabled() 
 
- -- Alberto Mardegan <alberto.mardegan@canonical.com>  Mon, 02 Sep 2013 10:27:23 +0300
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 131
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 04 Sep 2013 16:05:18 +0000
 
 libaccounts-qt (1.8daily13.06.18-0ubuntu1) saucy; urgency=low
 
