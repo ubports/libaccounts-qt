@@ -61,6 +61,7 @@ public:
     QString pluginName() const;
     QString trCatalog() const;
     QString iconName() const;
+    bool isSingleAccount() const;
     const QDomDocument domDocument() const;
 
     friend inline bool operator==(const Accounts::Provider &p1,
