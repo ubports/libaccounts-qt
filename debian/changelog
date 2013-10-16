@@ -1,10 +1,14 @@
-libaccounts-qt (1.10-0ubuntu1) UNRELEASED; urgency=low
+libaccounts-qt (1.10+13.10.20131016.1-0ubuntu1) saucy; urgency=low
 
+  [ Alberto Mardegan ]
   * New upstream release.
     - Add Provider::isSingleAccount()
       Fixes: http://code.google.com/p/accounts-sso/issues/detail?id=202
 
- -- Alberto Mardegan <alberto.mardegan@canonical.com>  Tue, 15 Oct 2013 17:08:34 +0300
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 133
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 16 Oct 2013 14:15:20 +0000
 
 libaccounts-qt (1.9+13.10.20130904-0ubuntu1) saucy; urgency=low
 
