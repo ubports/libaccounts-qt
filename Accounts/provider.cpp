@@ -153,6 +153,14 @@ QString Provider::iconName() const
 }
 
 /*!
+ * @return Whether the provider supports creating one account at most.
+ */
+bool Provider::isSingleAccount() const
+{
+    return ag_provider_get_single_account(m_provider);
+}
+
+/*!
  * @return The DOM of the whole XML provider file.
  */
 const QDomDocument Provider::domDocument() const

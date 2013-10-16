@@ -5,6 +5,7 @@
   <description>fast &amp; furious</description>
   <translations>accounts</translations>
   <plugin>generic-oauth</plugin>
+  <single-account>true</single-account>
 
   <template>
     <group name="auth">
