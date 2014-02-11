@@ -40,6 +40,7 @@ class Service;
 class ACCOUNTS_EXPORT Application
 {
 public:
+    Application();
     Application(const Application &other);
     Application &operator=(const Application &other);
     ~Application();

@@ -48,6 +48,14 @@ Application::Application(AgApplication *application):
 }
 
 /*!
+ * Construct an invalid application.
+ */
+Application::Application():
+    m_application(0)
+{
+}
+
+/*!
  * Copy constructor. Copying an Application object is very cheap, because the
  * data is shared among copies.
  */
