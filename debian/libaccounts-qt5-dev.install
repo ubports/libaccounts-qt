@@ -1,3 +1,4 @@
 usr/include/accounts-qt5
+usr/lib/*/cmake
 usr/lib/*/libaccounts-qt5.so
 usr/lib/*/pkgconfig/accounts-qt5.pc
