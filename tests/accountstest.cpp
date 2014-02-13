@@ -1456,6 +1456,12 @@ void AccountsTest::applicationTest()
     QCOMPARE(application.serviceUsage(sharing),
              UTF8("Publish images on OtherService"));
 
+    /* Test an invalid application */
+    Application app2;
+    QVERIFY(!app2.isValid());
+    Application app3(app2);
+    QVERIFY(!app3.isValid());
+
     delete manager;
 }
 

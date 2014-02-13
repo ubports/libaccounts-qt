@@ -1,3 +1,4 @@
 usr/include/accounts-qt
+usr/lib/*/cmake
 usr/lib/*/libaccounts-qt.so
 usr/lib/*/pkgconfig/accounts-qt.pc
