@@ -64,3 +64,11 @@ include( ../common-installs-config.pri )
 pkgconfig.files = $${TARGET}.pc
 include($${TOP_SRC_DIR}/common-pkgconfig.pri)
 INSTALLS += pkgconfig
+
+QMAKE_SUBSTITUTES += AccountsQtConfig.cmake.in \
+    AccountsQtConfigVersion.cmake.in
+cmake_modules.files = AccountsQtConfig.cmake \
+    AccountsQtConfigVersion.cmake
+cmake_modules.path = $${CMAKE_CONFIG_PATH}
+
+INSTALLS += cmake_modules
