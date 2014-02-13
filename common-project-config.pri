@@ -61,6 +61,15 @@ isEmpty( LIBDIR ) {
     message("==== library install path set to `$${INSTALL_LIBDIR}'")
 }
 
+isEmpty ( CMAKE_CONFIG_PATH ) {
+    CMAKE_CONFIG_PATH = $${INSTALL_LIBDIR}/cmake/AccountsQt/
+    message("====")
+    message("==== NOTE: To override the cmake module installation path run: `qmake CMAKE_CONFIG_PATH=/custom/path'")
+    message("==== (current installation path is `$${CMAKE_CONFIG_PATH}')")
+} else {
+    message("====")
+    message("==== cmake module install path set to `$${CMAKE_CONFIG_PATH}'")
+}
 include( coverage.pri )
 
 # End of File
