@@ -5,6 +5,7 @@
   <description>fast &amp; furious</description>
   <translations>accounts</translations>
   <plugin>generic-oauth</plugin>
+  <domains>.*example.net</domains>
   <single-account>true</single-account>
 
   <template>
