@@ -44,8 +44,10 @@ QT -= gui
 
 greaterThan(QT_MAJOR_VERSION, 4) {
     TARGET = accounts-qt5
+    CMAKE_BASENAME = AccountsQt5
 } else {
     TARGET = accounts-qt
+    CMAKE_BASENAME = AccountsQt
 }
 
 PKGCONFIG += \
@@ -65,10 +67,12 @@ pkgconfig.files = $${TARGET}.pc
 include($${TOP_SRC_DIR}/common-pkgconfig.pri)
 INSTALLS += pkgconfig
 
-QMAKE_SUBSTITUTES += AccountsQtConfig.cmake.in \
-    AccountsQtConfigVersion.cmake.in
-cmake_modules.files = AccountsQtConfig.cmake \
-    AccountsQtConfigVersion.cmake
+QMAKE_SUBSTITUTES += \
+    $${CMAKE_BASENAME}Config.cmake.in \
+    $${CMAKE_BASENAME}ConfigVersion.cmake.in
+cmake_modules.files = \
+    $${CMAKE_BASENAME}Config.cmake \
+    $${CMAKE_BASENAME}ConfigVersion.cmake
 cmake_modules.path = $${CMAKE_CONFIG_PATH}
 
 INSTALLS += cmake_modules
