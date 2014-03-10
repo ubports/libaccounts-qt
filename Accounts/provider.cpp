@@ -82,8 +82,10 @@ Provider &Provider::operator=(const Provider &other)
 
 Provider::~Provider()
 {
-    ag_provider_unref(m_provider);
-    m_provider = 0;
+    if (m_provider != 0) {
+        ag_provider_unref(m_provider);
+        m_provider = 0;
+    }
 }
 
 /*!
