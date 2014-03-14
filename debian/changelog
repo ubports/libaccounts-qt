@@ -1,4 +1,4 @@
-libaccounts-qt (1.11-0ubuntu1) UNRELEASED; urgency=medium
+libaccounts-qt (1.12-0ubuntu1) UNRELEASED; urgency=medium
 
   * New upstream release.
     - Make the lib easier to use with CMake by adding a Config.cmake file
@@ -6,8 +6,12 @@ libaccounts-qt (1.11-0ubuntu1) UNRELEASED; urgency=medium
       find_package(AccountsQt REQUIRED CONFIG)
     - Application: add default constructor
       Fixes: http://code.google.com/p/accounts-sso/issues/detail?id=211 
+  * New upstream release.
+    - Add CMake config files for the Qt5 build
+    - Add Provider::domainsRegExp()
+    - Provider: do not unreference a NULL AgProvider
 
- -- Alberto Mardegan <alberto.mardegan@canonical.com>  Thu, 13 Feb 2014 17:04:27 +0200
+ -- Alberto Mardegan <alberto.mardegan@canonical.com>  Fri, 14 Mar 2014 11:36:14 +0200
 
 libaccounts-qt (1.10+13.10.20131016.1-0ubuntu1) saucy; urgency=low
 
