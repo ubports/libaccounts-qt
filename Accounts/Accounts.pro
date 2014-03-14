@@ -73,6 +73,6 @@ QMAKE_SUBSTITUTES += \
 cmake_modules.files = \
     $${CMAKE_BASENAME}Config.cmake \
     $${CMAKE_BASENAME}ConfigVersion.cmake
-cmake_modules.path = $${CMAKE_CONFIG_PATH}
+cmake_modules.path = $${CMAKE_CONFIG_PATH}/$${CMAKE_BASENAME}
 
 INSTALLS += cmake_modules
