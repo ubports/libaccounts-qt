@@ -13,6 +13,24 @@ libaccounts-qt (1.12-0ubuntu1) UNRELEASED; urgency=medium
 
  -- Alberto Mardegan <alberto.mardegan@canonical.com>  Fri, 14 Mar 2014 11:36:14 +0200
 
+libaccounts-qt (1.11+14.04.20140307-0ubuntu1) trusty; urgency=medium
+
+  [ Alberto Mardegan ]
+  * New upstream release.
+    - Make the lib easier to use with CMake by adding a Config.cmake file
+      This will allow CMake applications to use something like:
+      find_package(AccountsQt REQUIRED CONFIG)
+    - Application: add default constructor
+      Fixes: http://code.google.com/p/accounts-sso/issues/detail?id=211 
+
+  [ CI bot ]
+  * No change rebuild against Qt 5.2.1.
+
+  [ Ubuntu daily release ]
+  * New rebuild forced
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 07 Mar 2014 10:38:59 +0000
+
 libaccounts-qt (1.10+13.10.20131016.1-0ubuntu1) saucy; urgency=low
 
   [ Alberto Mardegan ]
