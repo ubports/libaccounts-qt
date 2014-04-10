@@ -1,3 +1,12 @@
+libaccounts-qt (1.11+14.04.20140410.1-0ubuntu1) trusty; urgency=low
+
+  [ Łukasz 'sil2100' Zemczak ]
+  * Fix file conflicts in the -dev packages. As recommended by upstream,
+    we only ship the cmake files for the -qt-dev package, as soon they
+    will add specific variants for every Qt version
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Thu, 10 Apr 2014 16:34:07 +0000
+
 libaccounts-qt (1.11+14.04.20140307-0ubuntu1) trusty; urgency=medium
 
   [ Alberto Mardegan ]
