@@ -32,6 +32,8 @@ Architecture: any
 Depends: libaccounts-qt1 (= ${binary:Version}),
          ${shlibs:Depends},
          ${misc:Depends}
+Breaks: libaccounts-qt5-dev (<< 1.11+14.04.20140410)
+Replaces: libaccounts-qt5-dev (<< 1.11+14.04.20140410)
 Description: QT library for single sign on - development files
  .
  This package contains files that are needed to build applications.
