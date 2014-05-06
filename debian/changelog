@@ -1,5 +1,6 @@
-libaccounts-qt (1.12-0ubuntu1) UNRELEASED; urgency=medium
+libaccounts-qt (1.12+14.10.20140506.1-0ubuntu1) utopic; urgency=medium
 
+  [ Alberto Mardegan ]
   * New upstream release.
     - Make the lib easier to use with CMake by adding a Config.cmake file
       This will allow CMake applications to use something like:
@@ -11,7 +12,10 @@ libaccounts-qt (1.12-0ubuntu1) UNRELEASED; urgency=medium
     - Add Provider::domainsRegExp()
     - Provider: do not unreference a NULL AgProvider
 
- -- Alberto Mardegan <alberto.mardegan@canonical.com>  Fri, 14 Mar 2014 11:36:14 +0200
+  [ Ubuntu daily release ]
+  * New rebuild forced
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Tue, 06 May 2014 12:55:05 +0000
 
 libaccounts-qt (1.11+14.04.20140410.1-0ubuntu1) trusty; urgency=low
 
