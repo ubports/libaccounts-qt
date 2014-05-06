@@ -3,6 +3,8 @@
 .project
 Makefile*
 debian
+/Accounts/AccountsQt*Config.cmake
+/Accounts/AccountsQt*ConfigVersion.cmake
 /coverage-html/
 /coverage.info
 /doc/accounts-qt.tags

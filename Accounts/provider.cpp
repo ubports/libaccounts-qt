@@ -3,7 +3,7 @@
  * This file is part of libaccounts-qt
  *
  * Copyright (C) 2009-2011 Nokia Corporation.
- * Copyright (C) 2012 Canonical Ltd.
+ * Copyright (C) 2012-2014 Canonical Ltd.
  *
  * Contact: Alberto Mardegan <alberto.mardegan@canonical.com>
  *
@@ -82,8 +82,10 @@ Provider &Provider::operator=(const Provider &other)
 
 Provider::~Provider()
 {
-    ag_provider_unref(m_provider);
-    m_provider = 0;
+    if (m_provider != 0) {
+        ag_provider_unref(m_provider);
+        m_provider = 0;
+    }
 }
 
 /*!
@@ -150,6 +152,15 @@ QString Provider::trCatalog() const
 QString Provider::iconName() const
 {
     return ASCII(ag_provider_get_icon_name(m_provider));
+}
+
+/*!
+ * @return A regular expression pattern which matches all the internet domains
+ * in which this type of account can be used.
+ */
+QString Provider::domainsRegExp() const
+{
+    return UTF8(ag_provider_get_domains_regex(m_provider));
 }
 
 /*!

@@ -210,6 +210,7 @@ void AccountsTest::providerTestCase()
     QCOMPARE(provider.description(), QString("fast & furious"));
     QCOMPARE(provider.trCatalog(), QString("accounts"));
     QCOMPARE(provider.pluginName(), QString("generic-oauth"));
+    QCOMPARE(provider.domainsRegExp(), QString(".*example.net"));
     QCOMPARE(provider.isSingleAccount(), true);
 
     QDomDocument dom = provider.domDocument();
