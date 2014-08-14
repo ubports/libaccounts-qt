@@ -53,8 +53,18 @@ class ACCOUNTS_EXPORT Manager: public QObject
     Q_OBJECT
 
 public:
+    /*!
+     * @enum Option
+     * @brief Specifies options for the object.
+     */
+    enum Option {
+        DisableNotifications = 0x1, /**< Disable all inter-process notifications */
+    };
+    Q_DECLARE_FLAGS(Options, Option)
+
     Manager(QObject *parent = 0);
     Manager(const QString &serviceType, QObject *parent = 0);
+    Manager(Options options, QObject *parent = 0);
     ~Manager();
 
     Account *account(const AccountId &id) const;
@@ -83,6 +93,8 @@ public:
     void setAbortOnTimeout(bool abort);
     bool abortOnTimeout() const;
 
+    Options options() const;
+
     Error lastError() const;
 
 Q_SIGNALS:
@@ -104,5 +116,7 @@ private:
 }; // Manager
 
 } //namespace Accounts
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Accounts::Manager::Options)
 
 #endif // ACCOUNTS_MANAGER_H

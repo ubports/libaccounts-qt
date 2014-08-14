@@ -187,6 +187,31 @@ Manager::Manager(const QString &serviceType, QObject *parent):
 }
 
 /*!
+ * Constructor, allowing option flags to be specified.
+ * Users should check for lastError() to check if manager construction
+ * was fully succesful.
+ */
+Manager::Manager(Options options, QObject *parent):
+    QObject(parent),
+    d(new Private)
+{
+    bool disableNotifications = options.testFlag(DisableNotifications);
+
+    GError *error = NULL;
+    AgManager *manager =
+        (AgManager *)g_initable_new(AG_TYPE_MANAGER, NULL, &error,
+                                    "use-dbus", !disableNotifications,
+                                    NULL);
+    if (Q_LIKELY(manager)) {
+        d->init(this, manager);
+    } else {
+        qWarning() << "Manager could not be created." << error->message;
+        d->lastError = Error(error);
+        g_error_free(error);
+    }
+}
+
+/*!
  * Destructor.
  */
 Manager::~Manager()
@@ -498,6 +523,23 @@ void Manager::setAbortOnTimeout(bool abort)
 bool Manager::abortOnTimeout() const
 {
     return ag_manager_get_abort_on_db_timeout(d->m_manager);
+}
+
+/*!
+ * @return Configuration options for this object.
+ */
+Manager::Options Manager::options() const
+{
+    bool useDBus = true;
+    g_object_get(d->m_manager,
+                 "use-dbus", &useDBus,
+                 NULL);
+
+    Options opts;
+    if (!useDBus) {
+        opts |= DisableNotifications;
+    }
+    return opts;
 }
 
 /*!

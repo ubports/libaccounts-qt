@@ -72,6 +72,12 @@ void AccountsTest::managerTestCase()
     mgr->setTimeout(123);
     QCOMPARE(mgr->timeout(), quint32(123));
 
+    QCOMPARE(mgr->options().testFlag(Manager::DisableNotifications), false);
+
+    delete mgr;
+
+    mgr = new Manager(Manager::DisableNotifications);
+    QCOMPARE(mgr->options().testFlag(Manager::DisableNotifications), true);
     delete mgr;
 }
 
