@@ -1,9 +1,13 @@
-libaccounts-qt (1.13-0ubuntu1) UNRELEASED; urgency=medium
+libaccounts-qt (1.13+14.10.20140819.1-0ubuntu1) utopic; urgency=medium
 
+  [ Alberto Mardegan ]
   * New upstream release.
     - Add flag to suppress usage of D-Bus
 
- -- Alberto Mardegan <alberto.mardegan@canonical.com>  Fri, 15 Aug 2014 13:41:35 +0300
+  [ Ubuntu daily release ]
+  * New rebuild forced
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Tue, 19 Aug 2014 14:46:28 +0000
 
 libaccounts-qt (1.12+14.10.20140506.1-0ubuntu1) utopic; urgency=medium
 
