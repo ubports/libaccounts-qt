@@ -504,5 +504,7 @@ AuthData AccountService::authData() const
 
     AgAuthData *agAuthData =
         ag_account_service_get_auth_data(d->m_accountService);
-    return AuthData(agAuthData);
+    AuthData authData(agAuthData);
+    ag_auth_data_unref(agAuthData);
+    return authData;
 }
