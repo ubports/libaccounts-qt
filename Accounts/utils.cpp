@@ -32,12 +32,14 @@ static QVariantMap gVariantToQVariantMap(GVariant *variant)
 {
     QVariantMap ret;
     GVariantIter iter;
-    const gchar *key;
+    gchar *key;
     GVariant *value;
 
     g_variant_iter_init (&iter, variant);
     while (g_variant_iter_next (&iter, "{sv}", &key, &value)) {
         ret.insert(UTF8(key), gVariantToQVariant(value));
+        g_variant_unref(value);
+        g_free(key);
     }
 
     return ret;

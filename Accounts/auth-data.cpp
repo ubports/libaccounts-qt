@@ -109,6 +109,7 @@ QVariantMap AuthData::parameters() const
     if (glibParameters == 0) return QVariantMap();
 
     QVariant variant = gVariantToQVariant(glibParameters);
+    g_variant_unref(glibParameters);
     if (!variant.isValid()) return QVariantMap();
 
     return variant.toMap();
