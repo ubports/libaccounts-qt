@@ -11,8 +11,8 @@ export XDG_DATA_HOME=$TESTDIR
 # session
 if command -v dbus-test-runner > /dev/null ; then
 	echo "Using dbus-test-runner"
-	dbus-test-runner -m 180 -t ./accountstest
+	dbus-test-runner -m 180 -t "${TESTDIR}/accountstest-wrapper.sh"
 else
 	echo "Using existing D-Bus session"
-	$WRAPPER ./accountstest "$@"
+	"${TESTDIR}/accountstest-wrapper.sh"
 fi
