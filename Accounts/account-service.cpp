@@ -204,7 +204,7 @@ AccountService::~AccountService()
 }
 
 /*!
- * Return the Account.
+ * Return the Account. Do not delete this object explicitly.
  */
 Account *AccountService::account() const
 {
@@ -213,7 +213,7 @@ Account *AccountService::account() const
 }
 
 /*!
- * Return the Service. Do not delete this object explicitly.
+ * Return the Service.
  */
 Service AccountService::service() const
 {
