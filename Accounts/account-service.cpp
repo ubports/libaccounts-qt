@@ -204,7 +204,7 @@ AccountService::~AccountService()
 }
 
 /*!
- * Return the Account.
+ * Return the Account. Do not delete this object explicitly.
  */
 Account *AccountService::account() const
 {
@@ -213,7 +213,7 @@ Account *AccountService::account() const
 }
 
 /*!
- * Return the Service. Do not delete this object explicitly.
+ * Return the Service.
  */
 Service AccountService::service() const
 {
@@ -504,5 +504,7 @@ AuthData AccountService::authData() const
 
     AgAuthData *agAuthData =
         ag_account_service_get_auth_data(d->m_accountService);
-    return AuthData(agAuthData);
+    AuthData authData(agAuthData);
+    ag_auth_data_unref(agAuthData);
+    return authData;
 }

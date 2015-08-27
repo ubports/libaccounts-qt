@@ -69,6 +69,6 @@ enum ReferenceMode {
     StealReference,
 };
 
-}; // namespace
+} // namespace
 
 #endif /* ACCOUNTSCOMMON_H_ */
