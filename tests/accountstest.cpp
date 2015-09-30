@@ -30,11 +30,11 @@
 using namespace Accounts;
 #include "accountstest.h"
 
-#define PROVIDER QString("dummyprovider")
-#define SERVICE QString("dummyservice")
-#define MYSERVICE QLatin1String("MyService")
-#define OTHERSERVICE QLatin1String("OtherService")
-#define EMAIL_SERVICE_TYPE QLatin1String("e-mail")
+#define PROVIDER QStringLiteral("dummyprovider")
+#define SERVICE QStringLiteral("dummyservice")
+#define MYSERVICE QStringLiteral("MyService")
+#define OTHERSERVICE QStringLiteral("OtherService")
+#define EMAIL_SERVICE_TYPE QStringLiteral("e-mail")
 
 
 void clearDb()
@@ -1004,7 +1004,7 @@ void AccountsTest::settingsTest()
 void AccountsTest::keySignVerifyTest()
 {
 #ifndef HAVE_AEGISCRYPTO
-    QSKIP("aegis-crypto not detected.", SkipSingle);
+    QSKIP("aegis-crypto not detected.");
 #endif
 
     const QString key = "key";
@@ -1355,9 +1355,9 @@ void AccountsTest::serviceTypeTestCase()
     QVERIFY(serviceType.isValid());
 
     QCOMPARE(serviceType.name(), EMAIL_SERVICE_TYPE);
-    QCOMPARE(serviceType.displayName(), QLatin1String("Electronic mail"));
-    QCOMPARE(serviceType.trCatalog(), QLatin1String("translation_file"));
-    QCOMPARE(serviceType.iconName(), QLatin1String("email_icon"));
+    QCOMPARE(serviceType.displayName(), QStringLiteral("Electronic mail"));
+    QCOMPARE(serviceType.trCatalog(), QStringLiteral("translation_file"));
+    QCOMPARE(serviceType.iconName(), QStringLiteral("email_icon"));
     QVERIFY(serviceType.tags().contains(QString("email")));
     // called twice, because the second time it returns a cached result
     QVERIFY(serviceType.tags().contains(QString("email")));
@@ -1369,7 +1369,7 @@ void AccountsTest::serviceTypeTestCase()
     QCOMPARE(root.tagName(), QString("service-type"));
 
     ServiceType copy(serviceType);
-    QCOMPARE(copy.displayName(), QLatin1String("Electronic mail"));
+    QCOMPARE(copy.displayName(), QStringLiteral("Electronic mail"));
 
     delete mgr;
 }

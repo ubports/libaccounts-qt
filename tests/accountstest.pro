@@ -11,11 +11,7 @@ QT = \
     testlib \
     xml
 
-greaterThan(QT_MAJOR_VERSION, 4) {
-    LIBS += -laccounts-qt5
-} else {
-    LIBS += -laccounts-qt
-}
+LIBS += -laccounts-qt5
 
 QMAKE_RPATHDIR = $${QMAKE_LIBDIR}
 

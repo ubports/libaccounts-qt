@@ -3,6 +3,7 @@ include( ../common-project-config.pri )
 include( ../common-vars.pri )
 
 TEMPLATE = lib
+TARGET = accounts-qt5
 
 # Input
 public_headers = \
@@ -42,13 +43,7 @@ DEFINES += QT_NO_CAST_TO_ASCII QT_NO_CAST_FROM_ASCII QT_NO_KEYWORDS
 QT += core xml
 QT -= gui
 
-greaterThan(QT_MAJOR_VERSION, 4) {
-    TARGET = accounts-qt5
-    CMAKE_BASENAME = AccountsQt5
-} else {
-    TARGET = accounts-qt
-    CMAKE_BASENAME = AccountsQt
-}
+CMAKE_BASENAME = AccountsQt5
 
 PKGCONFIG += \
 	glib-2.0 \
