@@ -282,7 +282,7 @@ QStringList AccountService::childGroups() const
     QStringList groups, all_keys;
 
     all_keys = allKeys();
-    Q_FOREACH (QString key, all_keys)
+    Q_FOREACH (const QString &key, all_keys)
     {
         if (key.contains(slash)) {
             QString group = key.section(slash, 0, 0);
@@ -301,7 +301,7 @@ QStringList AccountService::childKeys() const
     QStringList keys, all_keys;
 
     all_keys = allKeys();
-    Q_FOREACH (QString key, all_keys)
+    Q_FOREACH (const QString &key, all_keys)
     {
         if (!key.contains(slash))
             keys.append(key);
@@ -367,7 +367,7 @@ void AccountService::remove(const QString &key)
     {
         /* delete all keys in the group */
         QStringList keys = allKeys();
-        Q_FOREACH (QString key, keys)
+        Q_FOREACH (const QString &key, keys)
         {
             if (!key.isEmpty())
                 remove(key);

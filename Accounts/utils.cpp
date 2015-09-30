@@ -62,6 +62,7 @@ static QStringList gVariantToQStringList(GVariant *variant)
 
     gsize length;
     const gchar **strings = g_variant_get_strv(variant, &length);
+    ret.reserve(length);
     for (gsize i = 0; i < length; i++) {
         ret.append(UTF8(strings[i]));
     }
