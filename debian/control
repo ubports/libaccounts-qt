@@ -17,27 +17,6 @@ Standards-Version: 3.9.3
 Section: libs
 Homepage: http://code.google.com/p/accounts-sso/
 
-Package: libaccounts-qt1
-Section: libs
-Architecture: any
-Pre-Depends: ${misc:Pre-Depends}
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: QT library for single sign on
- .
- This package contains shared libraries to be used by applications.
-
-Package: libaccounts-qt-dev
-Section: libdevel
-Architecture: any
-Depends: libaccounts-qt1 (= ${binary:Version}),
-         ${shlibs:Depends},
-         ${misc:Depends}
-Breaks: libaccounts-qt5-dev (<< 1.11+14.04.20140410)
-Replaces: libaccounts-qt5-dev (<< 1.11+14.04.20140410)
-Description: QT library for single sign on - development files
- .
- This package contains files that are needed to build applications.
-
 Package: libaccounts-qt5-1
 Section: libs
 Architecture: any
