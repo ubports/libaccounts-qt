@@ -211,9 +211,9 @@ const QDomDocument Service::domDocument() const
     if (!doc.setContent(QByteArray(data), true,
                         &errorStr, &errorLine, &errorColumn))
     {
-        QString message(ASCII("Parse error reading account service file "
+        QString message(QStringLiteral("Parse error reading account service file "
                               "at line %1, column %2:\n%3"));
-        message.arg(errorLine).arg(errorColumn).arg(errorStr);
+        message = message.arg(errorLine).arg(errorColumn).arg(errorStr);
         qWarning() << __PRETTY_FUNCTION__ << message;
     }
     return doc;

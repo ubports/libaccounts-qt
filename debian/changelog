@@ -1,6 +1,7 @@
 libaccounts-qt (1.14-0ubuntu1) UNRELEASED; urgency=medium
 
   * New upstream release.
+    - Fix clazy warnings
     - Use gboolean instead of bool to g_object_get (fixes a stack corruption)
     - Headers: remove unnecessary semicolon after namespace
     - Docs: fix hint on destruction of Account and Service
@@ -10,7 +11,7 @@ libaccounts-qt (1.14-0ubuntu1) UNRELEASED; urgency=medium
       Tests can now be run with a command like:
        make check WRAPPER="valgrind --leak-check=full" 
 
- -- Alberto Mardegan <alberto.mardegan@canonical.com>  Thu, 27 Aug 2015 17:52:50 +0300
+ -- Alberto Mardegan <alberto.mardegan@canonical.com>  Wed, 30 Sep 2015 11:57:20 +0300
 
 libaccounts-qt (1.13+14.10.20140819.1-0ubuntu1) utopic; urgency=medium
 
