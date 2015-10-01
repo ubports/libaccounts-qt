@@ -3,9 +3,7 @@ include( ../common-vars.pri )
 
 TARGET = accountstest
 SOURCES += \
-    accountstest.cpp
-HEADERS += \
-    accountstest.h
+    tst_libaccounts.cpp
 QT = \
     core \
     testlib \
@@ -13,6 +11,9 @@ QT = \
 
 LIBS += -laccounts-qt5
 
+INCLUDEPATH += $${TOP_SRC_DIR}
+QMAKE_LIBDIR += \
+    $${TOP_BUILD_DIR}/Accounts
 QMAKE_RPATHDIR = $${QMAKE_LIBDIR}
 
 #Check for the existence of aegis-crypto
@@ -24,25 +25,11 @@ contains(HAVE_AEGISCRYPTO, YES) {
 
 include( ../common-installs-config.pri )
 
-DATA_PATH = $${INSTALL_PREFIX}/share/libaccounts-qt-tests/
+DATA_PATH = $${TOP_SRC_DIR}/tests
 
 DEFINES += \
-    SERVICES_DIR=\\\"$$DATA_PATH\\\" \
-    SERVICE_TYPES_DIR=\\\"$$DATA_PATH\\\" \
-    PROVIDERS_DIR=\\\"$$DATA_PATH\\\"
-
-service.path = $$DATA_PATH
-service.files += $${TOP_SRC_DIR}/tests/*.service
-INSTALLS     += service
-
-service-type.path = $$DATA_PATH
-service-type.files += $${TOP_SRC_DIR}/tests/*.service-type
-INSTALLS += service-type
-
-provider.path = $$DATA_PATH
-provider.files += $${TOP_SRC_DIR}/tests/*.provider
-INSTALLS     += provider
+    DATA_PATH=\\\"$$DATA_PATH\\\"
 
 QMAKE_EXTRA_TARGETS += check
-check.depends = accountstest
+check.depends = $${TARGET}
 check.commands = "TESTDIR=$${TOP_SRC_DIR}/tests $${TOP_SRC_DIR}/tests/accountstest.sh"

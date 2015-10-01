@@ -13,9 +13,6 @@ UI_SOURCES_DIR  = ui/src
 
 TOP_SRC_DIR     = $$PWD
 TOP_BUILD_DIR   = $${TOP_SRC_DIR}/$${BUILD_DIR}
-QMAKE_LIBDIR   += $${TOP_BUILD_DIR}/Accounts
-INCLUDEPATH    += $${TOP_SRC_DIR}
-
 # we don't like warnings...
 #QMAKE_CXXFLAGS *= -Werror
 
