@@ -11,8 +11,6 @@ UI_DIR          = ui
 UI_HEADERS_DIR  = ui/include
 UI_SOURCES_DIR  = ui/src
 
-TOP_SRC_DIR     = $$PWD
-TOP_BUILD_DIR   = $${TOP_SRC_DIR}/$${BUILD_DIR}
 # we don't like warnings...
 #QMAKE_CXXFLAGS *= -Werror
 
