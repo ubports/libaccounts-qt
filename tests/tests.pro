@@ -2,4 +2,4 @@ include( ../common-project-config.pri )
 include( ../common-vars.pri )
 
 TEMPLATE = subdirs
-SUBDIRS = accountstest.pro
+SUBDIRS = tst_libaccounts.pro

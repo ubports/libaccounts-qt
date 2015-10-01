@@ -3,8 +3,9 @@
  * This file is part of libaccounts-qt
  *
  * Copyright (C) 2009-2011 Nokia Corporation.
+ * Copyright (C) 2015 Canonical Ltd.
  *
- * Contact: Alberto Mardegan <alberto.mardegan@nokia.com>
+ * Contact: Alberto Mardegan <alberto.mardegan@canonical.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
@@ -23,12 +24,12 @@
 #include <QtTest/QtTest>
 #include <QSignalSpy>
 
+#include "Accounts/Account"
 #include "Accounts/Application"
 #include "Accounts/Manager"
 #include "Accounts/AccountService"
 
 using namespace Accounts;
-#include "accountstest.h"
 
 #define PROVIDER QStringLiteral("dummyprovider")
 #define SERVICE QStringLiteral("dummyservice")
@@ -36,6 +37,75 @@ using namespace Accounts;
 #define OTHERSERVICE QStringLiteral("OtherService")
 #define EMAIL_SERVICE_TYPE QStringLiteral("e-mail")
 
+Q_DECLARE_METATYPE(Accounts::AccountId)
+Q_DECLARE_METATYPE(const char *)
+
+class AccountsTest: public QObject
+{
+    Q_OBJECT
+
+public:
+    AccountsTest() {
+        qRegisterMetaType<AccountId>("Accounts::AccountId");
+        qRegisterMetaType<const char *>("const char *");
+    }
+
+private Q_SLOTS:
+    void initTestCase();
+    void cleanupTestCase();
+
+    void testManager();
+    void testCreateAccount();
+    void testAccount();
+    void testObjectsLifetime();
+    void testAccountList();
+
+    void testProvider();
+    void testService();
+    void testServiceList();
+    void testServiceConst();
+    void testAccountConst();
+
+    void testAccountProvider();
+    void testAccountServices();
+    void testAccountEnabled();
+    void testAccountDisplayName();
+    void testAccountValue();
+    void testAccountSync();
+
+    void testCreated();
+    void testRemove();
+
+    void testAccountService();
+
+    void testWatches();
+
+    void testServiceData();
+    void testSettings();
+
+    void testKeySignVerify();
+
+    void testIncrementalAccountIds();
+
+    void testSelectGlobalAccountSettings();
+
+    void testCredentialsId();
+    void testAuthData();
+    void testGlobalAuthData();
+
+    void testListEnabledServices();
+    void testListEnabledByServiceType();
+    void testEnabledEvent();
+    void testServiceType();
+    void testUpdateAccount();
+    void testApplication();
+
+public Q_SLOTS:
+    void onAccountServiceChanged();
+
+private:
+    QStringList m_accountServiceChangedFields;
+};
 
 void clearDb()
 {
@@ -46,10 +116,12 @@ void clearDb()
 void AccountsTest::initTestCase()
 {
     //init
-    setenv ("ACCOUNTS", "/tmp/", false);
-    setenv ("AG_SERVICES", SERVICES_DIR, false);
-    setenv ("AG_SERVICE_TYPES", SERVICE_TYPES_DIR, false);
-    setenv ("AG_PROVIDERS", PROVIDERS_DIR, false);
+    setenv("ACCOUNTS", "/tmp/", false);
+    setenv("AG_APPLICATIONS", DATA_PATH, false);
+    setenv("AG_SERVICES", DATA_PATH, false);
+    setenv("AG_SERVICE_TYPES", DATA_PATH, false);
+    setenv("AG_PROVIDERS", DATA_PATH, false);
+    setenv("XDG_DATA_HOME", DATA_PATH, false);
     //clear database
     clearDb();
 }
@@ -58,12 +130,10 @@ void AccountsTest::cleanupTestCase()
 {
 }
 
-
-/* manager */
-void AccountsTest::managerTestCase()
+void AccountsTest::testManager()
 {
     Manager *mgr = new Manager();
-    QVERIFY(mgr != NULL);
+    QVERIFY(mgr != 0);
     QCOMPARE(mgr->serviceType(), QString());
 
     mgr->setAbortOnTimeout(true);
@@ -81,52 +151,52 @@ void AccountsTest::managerTestCase()
     delete mgr;
 }
 
-void AccountsTest::createAccountTestCase()
+void AccountsTest::testCreateAccount()
 {
     clearDb();
 
-    Manager * mgr=new Manager();
-    QVERIFY(mgr!=NULL);
+    Manager *mgr = new Manager();
+    QVERIFY(mgr != 0);
 
     Account *account = mgr->createAccount(NULL);
-    QVERIFY(account!=NULL);
+    QVERIFY(account != 0);
     QVERIFY(account->manager() == mgr);
     delete account;
 
     account = mgr->createAccount(PROVIDER);
-    QVERIFY(account!=NULL);
+    QVERIFY(account != 0);
     delete account;
 
     delete mgr;
 }
 
-void AccountsTest::accountTestCase()
+void AccountsTest::testAccount()
 {
     clearDb();
 
-    Manager * mgr=new Manager();
-    QVERIFY(mgr!=NULL);
+    Manager *mgr = new Manager();
+    QVERIFY(mgr != 0);
 
     //this should not exist
-    Account* account2 = mgr->account(1);
-    QVERIFY(account2==NULL);
+    Account *account2 = mgr->account(1);
+    QVERIFY(!account2);
     Error error = mgr->lastError();
     QCOMPARE(error.type(), Error::AccountNotFound);
 
     // make sure there is account
-    Account* account = mgr->createAccount(NULL);
+    Account *account = mgr->createAccount(NULL);
     account->sync();
 
     //now we get account
     account2 = mgr->account(1);
-    QVERIFY(account2!=NULL);
+    QVERIFY(account2 != 0);
 
     delete account2;
     delete account;
     delete mgr;
 }
 
-void AccountsTest::objectsLifetimeTestCase()
+void AccountsTest::testObjectsLifetime()
 {
     clearDb();
 
@@ -168,12 +238,12 @@ void AccountsTest::objectsLifetimeTestCase()
     delete ownedAccount;
 }
 
-void AccountsTest::accountListTestCase()
+void AccountsTest::testAccountList()
 {
     clearDb();
 
     Manager *mgr = new Manager();
-    QVERIFY(mgr != NULL);
+    QVERIFY(mgr != 0);
 
     // make sure there is account
     Account *account = mgr->createAccount(NULL);
@@ -190,13 +260,13 @@ void AccountsTest::accountListTestCase()
     delete mgr;
 }
 
-void AccountsTest::providerTestCase()
+void AccountsTest::testProvider()
 {
-    Manager * mgr=new Manager();
-    QVERIFY(mgr!=NULL);
+    Manager *mgr = new Manager();
+    QVERIFY(mgr != 0);
 
     Account *account = mgr->createAccount(PROVIDER);
-    QVERIFY(account!=NULL);
+    QVERIFY(account != 0);
 
     QString provider_name = account->providerName();
     QCOMPARE(provider_name, PROVIDER);
@@ -243,10 +313,10 @@ void AccountsTest::providerTestCase()
     delete mgr;
 }
 
-void AccountsTest::serviceTestCase()
+void AccountsTest::testService()
 {
-    Manager * mgr=new Manager();
-    QVERIFY(mgr!=NULL);
+    Manager *mgr = new Manager();
+    QVERIFY(mgr != 0);
 
     Service service = mgr->service(MYSERVICE);
     QVERIFY(service.isValid());
@@ -267,10 +337,10 @@ void AccountsTest::serviceTestCase()
     delete mgr;
 }
 
-void AccountsTest::serviceListTestCase()
+void AccountsTest::testServiceList()
 {
     Manager *mgr = new Manager();
-    QVERIFY(mgr != NULL);
+    QVERIFY(mgr != 0);
 
     ServiceList list = mgr->serviceList();
     QVERIFY(!list.isEmpty());
@@ -285,12 +355,10 @@ void AccountsTest::serviceListTestCase()
     delete mgr;
 }
 
-/* service */
-
-void AccountsTest::serviceConstTestCase()
+void AccountsTest::testServiceConst()
 {
-    Manager * mgr=new Manager();
-    QVERIFY(mgr!=NULL);
+    Manager *mgr = new Manager();
+    QVERIFY(mgr != 0);
 
     Service service = mgr->service(MYSERVICE);
     QVERIFY(service.isValid());
@@ -307,20 +375,20 @@ void AccountsTest::serviceConstTestCase()
 /* account */
 
 
-void AccountsTest::accountConstTestCase()
+void AccountsTest::testAccountConst()
 {
-    Manager * mgr=new Manager();
-    QVERIFY(mgr!=NULL);
+    Manager *mgr = new Manager();
+    QVERIFY(mgr != 0);
 
     Account *account = mgr->createAccount(PROVIDER);
-    QVERIFY(account!=NULL);
+    QVERIFY(account != 0);
     QVERIFY(account->isWritable());
 
     delete account;
     delete mgr;
 }
 
-void AccountsTest::accountProviderTestCase()
+void AccountsTest::testAccountProvider()
 {
     Manager *manager = new Manager();
     QVERIFY(manager != 0);
@@ -337,13 +405,13 @@ void AccountsTest::accountProviderTestCase()
     delete manager;
 }
 
-void AccountsTest::accountServiceTestCase()
+void AccountsTest::testAccountServices()
 {
-    Manager * mgr=new Manager();
-    QVERIFY(mgr!=NULL);
+    Manager *mgr = new Manager();
+    QVERIFY(mgr != 0);
 
     Account *account = mgr->createAccount("MyProvider");
-    QVERIFY(account!=NULL);
+    QVERIFY(account != 0);
 
     QVERIFY(!account->supportsService(QString("unsupported")));
     QVERIFY(account->supportsService(QString("e-mail")));
@@ -375,56 +443,46 @@ void AccountsTest::accountServiceTestCase()
 }
 
 
-void AccountsTest::enabled(const QString & /*serviceName*/, bool enabled)
+void AccountsTest::testAccountEnabled()
 {
-    m_enabled = enabled;
-}
-
-
-void AccountsTest::accountEnabledTestCase()
-{
-    Manager * mgr=new Manager();
-    QVERIFY(mgr!=NULL);
+    Manager *mgr = new Manager();
+    QVERIFY(mgr != 0);
 
     Account *account = mgr->createAccount(PROVIDER);
-    QVERIFY(account!=NULL);
-    m_enabled=false;
-    QObject::connect(account, SIGNAL(enabledChanged(const QString&,bool)),
-                      this,  SLOT(enabled(const QString&,bool)));
+    QVERIFY(account != 0);
+    QSignalSpy enabled(account, SIGNAL(enabledChanged(const QString&,bool)));
 
     account->setEnabled(true);
     account->sync();
     QVERIFY(account->enabled());
-    QVERIFY(m_enabled);
+    QTRY_COMPARE(enabled.count(), 1);
+    QCOMPARE(enabled.at(0).at(1).toBool(), true);
+    enabled.clear();
     account->setEnabled(false);
     account->sync();
     QVERIFY(!account->enabled());
-    QVERIFY(!m_enabled);
+    QTRY_COMPARE(enabled.count(), 1);
+    QCOMPARE(enabled.at(0).at(1).toBool(), false);
 
     delete account;
     delete mgr;
 }
 
-void AccountsTest::display(const QString &displayName)
+void AccountsTest::testAccountDisplayName()
 {
-    m_enabled = !displayName.isNull();
-}
-
-void AccountsTest::accountDisplayNameTestCase()
-{
-    Manager * mgr=new Manager();
-    QVERIFY(mgr!=NULL);
+    Manager *mgr = new Manager();
+    QVERIFY(mgr != 0);
 
     Account *account = mgr->createAccount(PROVIDER);
-    QVERIFY(account!=NULL);
-    m_enabled=false;
-    QObject::connect(account, SIGNAL(displayNameChanged(const QString&)),
-                      this,  SLOT(display(const QString&)));
+    QVERIFY(account != 0);
+    QSignalSpy displayNameChanged(account,
+                                  SIGNAL(displayNameChanged(const QString&)));
 
     account->setDisplayName(PROVIDER);
     account->sync();
     QCOMPARE(account->displayName(),PROVIDER);
-    QVERIFY(m_enabled);
+    QTRY_COMPARE(displayNameChanged.count(), 1);
+    QCOMPARE(displayNameChanged.at(0).at(0).toString(), PROVIDER);
 
     delete account;
     delete mgr;
@@ -432,17 +490,15 @@ void AccountsTest::accountDisplayNameTestCase()
 
 
 
-void AccountsTest::accountValueTestCase()
+void AccountsTest::testAccountValue()
 {
-    Manager * mgr=new Manager();
-    QVERIFY(mgr!=NULL);
+    Manager *mgr = new Manager();
+    QVERIFY(mgr != 0);
 
     Account *account = mgr->createAccount(PROVIDER);
-    QVERIFY(account!=NULL);
+    QVERIFY(account != 0);
 
-    QObject::connect(account, SIGNAL(synced()),
-                      this,  SLOT(stored()));
-    m_stored = false;
+    QSignalSpy synced(account, SIGNAL(synced()));
     account->setValue(QString("test"),QString("value"));
     int int_value = 666;
     account->setValue("testint", int_value);
@@ -454,8 +510,7 @@ void AccountsTest::accountValueTestCase()
     account->setValue("boolean", false);
     account->sync();
 
-    QTest::qWait(10);
-    QVERIFY(m_stored);
+    QTRY_COMPARE(synced.count(), 1);
 
     /* check that the values we wrote are retrieved successfully */
     QVariant val = QVariant::String;
@@ -498,145 +553,90 @@ void AccountsTest::accountValueTestCase()
     delete mgr;
 }
 
-
-void AccountsTest::stored()
+void AccountsTest::testAccountSync()
 {
-    qDebug("%s %d %s:\t", __FILE__, __LINE__, __func__);
-    TRACE();
-    m_stored = true;
-}
-
-void AccountsTest::error(Accounts::Error error)
-{
-    qDebug("%s %d %s:\t", __FILE__, __LINE__, __func__);
-    TRACE() << "error:" << error.type();
-    m_stored = false;
-}
-
-
-void AccountsTest::accountSyncTestCase()
-{
-    Manager * mgr=new Manager();
-    QVERIFY(mgr!=NULL);
+    Manager *mgr = new Manager();
+    QVERIFY(mgr != 0);
 
     Account *account = mgr->createAccount(PROVIDER);
-    QVERIFY(account!=NULL);
+    QVERIFY(account != 0);
 
     QString provider = account->providerName();
     QCOMPARE(provider, PROVIDER);
 
-    m_stored = false;
-    QObject::connect(account, SIGNAL(synced()),
-                      this,  SLOT(stored()));
+    QSignalSpy synced(account, SIGNAL(synced()));
 
     account->sync();
-    QTest::qWait(10);
-    QVERIFY(m_stored);
+    QTRY_COMPARE(synced.count(), 1);
 
     delete account;
     delete mgr;
 }
 
-void AccountsTest::created(Accounts::AccountId id)
-{
-    m_created = id;
-}
-
-void AccountsTest::createdTestCase()
+void AccountsTest::testCreated()
 {
     Manager *mgr = new Manager();
-    QVERIFY(mgr != NULL);
+    QVERIFY(mgr != 0);
 
-    m_created = 0;
-    QObject::connect(mgr, SIGNAL(accountCreated(Accounts::AccountId)),
-                     this, SLOT(created(Accounts::AccountId)));
+    QSignalSpy created(mgr, SIGNAL(accountCreated(Accounts::AccountId)));
 
     Account *account = mgr->createAccount(NULL);
-    QVERIFY(account != NULL);
+    QVERIFY(account != 0);
 
     /* store the account: this will emit accountCreated */
     account->sync();
-    QVERIFY(m_created != 0);
-    QVERIFY(m_created == account->id());
+    QTRY_COMPARE(created.count(), 1);
+    uint accountId = created.at(0).at(0).toUInt();
+    QVERIFY(accountId != 0);
+    QCOMPARE(accountId, account->id());
 
     delete account;
     delete mgr;
 }
 
-void AccountsTest::removed()
-{
-    m_removed = true;
-}
-
-void AccountsTest::removeTestCase()
+void AccountsTest::testRemove()
 {
     Manager *mgr = new Manager();
-    QVERIFY(mgr != NULL);
+    QVERIFY(mgr != 0);
 
     Account *account = mgr->createAccount(NULL);
-    QVERIFY(account != NULL);
+    QVERIFY(account != 0);
 
     /* store the account */
     account->sync();
     QVERIFY(account->id() != 0);
 
-    m_removed = false;
-    QObject::connect(account, SIGNAL(removed()), this, SLOT(removed()));
+    QSignalSpy removed(account, SIGNAL(removed()));
 
     /* mark the account for deletion -- and make sure it's not deleted
      * immediately */
     account->remove ();
-    QVERIFY(m_removed == false);
+    QCOMPARE(removed.count(), 0);
 
     /* store the changes */
     account->sync();
-    QVERIFY(m_removed == true);
+    QCOMPARE(removed.count(), 1);
 
     delete account;
     delete mgr;
 }
 
-void AccountsTest::w_server_notify(const char *key)
-{
-    qDebug() << __func__ << ", key = " << key;
-    m_server_notify++;
-}
-
-void AccountsTest::w_port_notify(const char *key)
-{
-    qDebug() << __func__ << ", key = " << key;
-    m_port_notify++;
-}
-
-void AccountsTest::w_parameters_notify(const char *key)
-{
-    qDebug() << __func__ << ", key = " << key;
-    m_parameters_notify++;
-}
-
-void AccountsTest::onAccountServiceEnabled(bool enabled)
-{
-    qDebug() << Q_FUNC_INFO;
-    m_accountServiceEnabledValue = enabled;
-}
-
 void AccountsTest::onAccountServiceChanged()
 {
-    qDebug() << Q_FUNC_INFO;
     AccountService *accountService = qobject_cast<AccountService*>(sender());
     m_accountServiceChangedFields = accountService->changedFields();
 }
 
-void AccountsTest::accountServiceTest()
+void AccountsTest::testAccountService()
 {
     Manager *mgr = new Manager();
-    QVERIFY (mgr != NULL);
+    QVERIFY(mgr != 0);
 
     Service service = mgr->service(MYSERVICE);
     QVERIFY(service.isValid());
 
     Account *account = mgr->createAccount(NULL);
-    QVERIFY(account != NULL);
+    QVERIFY(account != 0);
 
     QObject *parent = new QObject();
     QPointer<AccountService> shortLivedAccountService =
@@ -646,7 +646,7 @@ void AccountsTest::accountServiceTest()
     QVERIFY(shortLivedAccountService == 0);
 
     AccountService *accountService = new AccountService(account, service);
-    QVERIFY(accountService != NULL);
+    QVERIFY(accountService != 0);
 
     QCOMPARE(accountService->account(), account);
     QCOMPARE(accountService->account()->providerName(),
@@ -657,8 +657,6 @@ void AccountsTest::accountServiceTest()
 
     QObject::connect(accountService, SIGNAL(changed()),
                      this, SLOT(onAccountServiceChanged()));
-    QObject::connect(accountService, SIGNAL(enabled(bool)),
-                     this, SLOT(onAccountServiceEnabled(bool)));
     QSignalSpy spyChanged(accountService, SIGNAL(changed()));
     QSignalSpy spyEnabled(accountService, SIGNAL(enabled(bool)));
 
@@ -702,7 +700,7 @@ void AccountsTest::accountServiceTest()
     QCOMPARE(spyChanged.count(), 0);
     QCOMPARE(spyEnabled.count(), 1);
     QCOMPARE(accountService->enabled(), false);
-    QCOMPARE(m_accountServiceEnabledValue, accountService->enabled());
+    QCOMPARE(spyEnabled.at(0).at(0).toBool(), accountService->enabled());
     spyEnabled.clear();
 
     /* enable the account, but disable the service */
@@ -720,7 +718,7 @@ void AccountsTest::accountServiceTest()
     account->sync();
     QCOMPARE(spyEnabled.count(), 1);
     QCOMPARE(accountService->enabled(), true);
-    QCOMPARE(m_accountServiceEnabledValue, accountService->enabled());
+    QCOMPARE(spyEnabled.at(0).at(0).toBool(), accountService->enabled());
     spyEnabled.clear();
     spyChanged.clear();
 
@@ -758,51 +756,43 @@ void AccountsTest::accountServiceTest()
     delete mgr;
 }
 
-void AccountsTest::watchesTest()
+void AccountsTest::testWatches()
 {
     Manager *mgr = new Manager();
-    QVERIFY (mgr != NULL);
+    QVERIFY(mgr != 0);
 
     Service service = mgr->service(MYSERVICE);
     QVERIFY(service.isValid());
 
     /* create an account and some watches */
     Account *account = mgr->createAccount(NULL);
-    QVERIFY(account != NULL);
+    QVERIFY(account != 0);
 
     account->selectService(service);
 
     Watch *w_server = account->watchKey("parameters/server");
-    QObject::connect(w_server, SIGNAL(notify(const char *)),
-                     this, SLOT(w_server_notify(const char *)));
+    QSignalSpy serverNotify(w_server, SIGNAL(notify(const char *)));
 
     /* test also beginGroup() */
     account->beginGroup("parameters");
     QVERIFY(account->group() == "parameters");
 
     Watch *w_parameters = account->watchKey(); /* watch the whole group */
-    QObject::connect(w_parameters, SIGNAL(notify(const char *)),
-                     this, SLOT(w_parameters_notify(const char *)));
+    QSignalSpy parametersNotify(w_parameters, SIGNAL(notify(const char *)));
 
     Watch *w_port = account->watchKey("port");
-    QObject::connect(w_port, SIGNAL(notify(const char *)),
-                     this, SLOT(w_port_notify(const char *)));
+    QSignalSpy portNotify(w_port, SIGNAL(notify(const char *)));
 
     /* now, change some values */
     account->setValue("server", QString("xxx.nokia.com"));
-
-    /* reset the counters */
-    m_server_notify = 0;
-    m_port_notify = 0;
-    m_parameters_notify = 0;
 
     /* write the data */
     account->sync();
 
     /* ensure that the callbacks have been called the correct number of times */
-    QVERIFY(m_server_notify == 1);
-    QVERIFY(m_parameters_notify == 1);
-    QVERIFY(m_port_notify == 0);
+    QCOMPARE(serverNotify.count(), 1);
+    QCOMPARE(parametersNotify.count(), 1);
+    QCOMPARE(portNotify.count(), 0);
 
     /* now change the port and another parameter not being watched */
     account->setValue("port", 45);
@@ -810,17 +800,17 @@ void AccountsTest::watchesTest()
     account->setValue("username", QString("h4ck3r@nokia.com"));
 
     /* reset the counters */
-    m_server_notify = 0;
-    m_port_notify = 0;
-    m_parameters_notify = 0;
+    serverNotify.clear();
+    parametersNotify.clear();
+    portNotify.clear();
 
     /* write the data */
     account->sync();
 
     /* ensure that the callbacks have been called the correct number of times */
-    QVERIFY(m_server_notify == 0);
-    QVERIFY(m_parameters_notify == 1);
-    QVERIFY(m_port_notify == 1);
+    QCOMPARE(serverNotify.count(), 0);
+    QCOMPARE(parametersNotify.count(), 1);
+    QCOMPARE(portNotify.count(), 1);
 
     /* change port and server, but delete the w_port watch */
     delete w_port;
@@ -830,27 +820,26 @@ void AccountsTest::watchesTest()
     account->setValue("server", QString("warez.nokia.com"));
 
     /* reset the counters */
-    m_server_notify = 0;
-    m_port_notify = 0;
-    m_parameters_notify = 0;
+    serverNotify.clear();
+    parametersNotify.clear();
+    portNotify.clear();
 
     /* write the data */
     account->sync();
 
     /* ensure that the callbacks have been called the correct number of times */
-    QVERIFY(m_server_notify == 1);
-    QVERIFY(m_parameters_notify == 1);
-    QVERIFY(m_port_notify == 0);
-
+    QCOMPARE(serverNotify.count(), 1);
+    QCOMPARE(parametersNotify.count(), 1);
+    QCOMPARE(portNotify.count(), 0);
 
     delete account;
     delete mgr;
 }
 
-void AccountsTest::serviceDataTest()
+void AccountsTest::testServiceData()
 {
     Manager *mgr = new Manager();
-    QVERIFY (mgr != NULL);
+    QVERIFY(mgr != 0);
 
     Service service = mgr->service(MYSERVICE);
     QVERIFY(service.isValid());
@@ -861,14 +850,14 @@ void AccountsTest::serviceDataTest()
     delete mgr;
 }
 
-void AccountsTest::settingsTest()
+void AccountsTest::testSettings()
 {
     Manager *mgr = new Manager();
-    QVERIFY (mgr != NULL);
+    QVERIFY(mgr != 0);
 
     /* create an account and some watches */
     Account *account = mgr->createAccount(NULL);
-    QVERIFY(account != NULL);
+    QVERIFY(account != 0);
 
     /* create a few keys/groups */
     account->setValue("username", QString("fool"));
@@ -932,7 +921,6 @@ void AccountsTest::settingsTest()
     expected.sort();
     result.sort();
     QCOMPARE(result, expected);
-
 
     /* now enter a group and test the same methods as above */
     account->beginGroup("parameters");
@@ -1001,7 +989,7 @@ void AccountsTest::settingsTest()
     delete mgr;
 }
 
-void AccountsTest::keySignVerifyTest()
+void AccountsTest::testKeySignVerify()
 {
 #ifndef HAVE_AEGISCRYPTO
     QSKIP("aegis-crypto not detected.");
@@ -1016,10 +1004,10 @@ void AccountsTest::keySignVerifyTest()
     bool ok;
 
     Manager *mgr = new Manager();
-    QVERIFY (mgr != NULL);
+    QVERIFY (mgr != 0);
 
     Account *account = mgr->createAccount(NULL);
-    QVERIFY(account != NULL);
+    QVERIFY(account != 0);
 
     account->setValue(key, QString("the key value"));
     account->syncAndBlock();
@@ -1036,15 +1024,15 @@ void AccountsTest::keySignVerifyTest()
     delete mgr;
 }
 
-void AccountsTest::incrementalAccountIdsTest()
+void AccountsTest::testIncrementalAccountIds()
 {
     clearDb();
 
-    Manager * mgr = new Manager;
-    QVERIFY(mgr != NULL);
+    Manager *mgr = new Manager;
+    QVERIFY(mgr != 0);
 
     Account *account = mgr->createAccount(NULL);
-    QVERIFY(account != NULL);
+    QVERIFY(account != 0);
     QVERIFY(account->manager() == mgr);
     account->syncAndBlock();
     AccountId lastId = account->id();
@@ -1054,7 +1042,7 @@ void AccountsTest::incrementalAccountIdsTest()
     delete account;
 
     account = mgr->createAccount(NULL);
-    QVERIFY(account != NULL);
+    QVERIFY(account != 0);
     QVERIFY(account->manager() == mgr);
     account->syncAndBlock();
 
@@ -1064,13 +1052,13 @@ void AccountsTest::incrementalAccountIdsTest()
     delete mgr;
 }
 
-void AccountsTest::selectGlobalAccountSettingsTest()
+void AccountsTest::testSelectGlobalAccountSettings()
 {
     Manager *mgr = new Manager;
-    QVERIFY(mgr != NULL);
+    QVERIFY(mgr != 0);
 
     Account *account = mgr->createAccount("MyProvider");
-    QVERIFY(account != NULL);
+    QVERIFY(account != 0);
     QVERIFY(account->manager() == mgr);
 
     account->syncAndBlock();
@@ -1083,13 +1071,13 @@ void AccountsTest::selectGlobalAccountSettingsTest()
     delete mgr;
 }
 
-void AccountsTest::credentialsIdTest()
+void AccountsTest::testCredentialsId()
 {
     Manager *mgr = new Manager;
-    QVERIFY(mgr != NULL);
+    QVERIFY(mgr != 0);
 
     Account *account = mgr->createAccount("MyProvider");
-    QVERIFY(account != NULL);
+    QVERIFY(account != 0);
 
     Service service = mgr->service(MYSERVICE);
     QVERIFY(service.isValid());
@@ -1122,13 +1110,13 @@ void AccountsTest::credentialsIdTest()
     delete mgr;
 }
 
-void AccountsTest::authDataTest()
+void AccountsTest::testAuthData()
 {
     Manager *manager = new Manager;
-    QVERIFY(manager != NULL);
+    QVERIFY(manager != 0);
 
     Account *account = manager->createAccount("MyProvider");
-    QVERIFY(account != NULL);
+    QVERIFY(account != 0);
 
     Service service = manager->service(MYSERVICE);
     QVERIFY(service.isValid());
@@ -1201,13 +1189,13 @@ void AccountsTest::authDataTest()
     QVERIFY(service.isValid());
 }
 
-void AccountsTest::globalAuthDataTest()
+void AccountsTest::testGlobalAuthData()
 {
     Manager *manager = new Manager;
-    QVERIFY(manager != NULL);
+    QVERIFY(manager != 0);
 
     Account *account = manager->createAccount("MyProvider");
-    QVERIFY(account != NULL);
+    QVERIFY(account != 0);
 
     Service service; // global account
     QVERIFY(!service.isValid());
@@ -1230,18 +1218,18 @@ void AccountsTest::globalAuthDataTest()
     delete manager;
 }
 
-void AccountsTest::listEnabledServices()
+void AccountsTest::testListEnabledServices()
 {
     clearDb();
 
     Manager *mgr = new Manager();
-    QVERIFY(mgr != NULL);
+    QVERIFY(mgr != 0);
 
     Service service = mgr->service(MYSERVICE);
     QVERIFY(service.isValid());
 
     Account* account = mgr->createAccount("MyProvider");
-    QVERIFY(account != NULL);
+    QVERIFY(account != 0);
     account->selectService(service);
     account->setEnabled(true);
     account->sync();
@@ -1262,16 +1250,16 @@ void AccountsTest::listEnabledServices()
 }
 
 
-void AccountsTest::listEnabledByServiceType()
+void AccountsTest::testListEnabledByServiceType()
 {
     clearDb();
 
     Manager *mgr = new Manager("e-mail");
-    QVERIFY(mgr != NULL);
+    QVERIFY(mgr != 0);
     QCOMPARE(mgr->serviceType(), QString("e-mail"));
 
     Account *account = mgr->createAccount("MyProvider");
-    QVERIFY(account != NULL);
+    QVERIFY(account != 0);
     account->setEnabled(true);
 
     Service service = mgr->service(MYSERVICE);
@@ -1297,43 +1285,33 @@ void AccountsTest::listEnabledByServiceType()
     delete mgr;
 }
 
-void AccountsTest::enabledEvent(Accounts::AccountId id)
-{
-    m_enabledEvent = id;
-}
-
-void AccountsTest::enabledEvent()
+void AccountsTest::testEnabledEvent()
 {
     Manager *mgr = new Manager("e-mail");
-    QVERIFY(mgr != NULL);
+    QVERIFY(mgr != 0);
 
-    m_enabledEvent = 0;
-    QObject::connect(mgr, SIGNAL(enabledEvent(Accounts::AccountId)),
-                     this, SLOT(enabledEvent(Accounts::AccountId)));
+    QSignalSpy enabledEvent1(mgr, SIGNAL(enabledEvent(Accounts::AccountId)));
 
     Account *account = mgr->createAccount(NULL);
-    QVERIFY(account != NULL);
+    QVERIFY(account != 0);
     account->setEnabled(true);
     account->sync();
 
-    QVERIFY(m_enabledEvent != 0);
-    QVERIFY(m_enabledEvent == account->id());
+    QTRY_COMPARE(enabledEvent1.count(), 1);
+    QCOMPARE(enabledEvent1.at(0).at(0).toUInt(), account->id());
 
-    //if we create manager without service type the signal shoudl not be emitted
+    //if we create manager without service type the signal should not be emitted
     Manager *mgr2 = new Manager();
-    QVERIFY(mgr2 != NULL);
+    QVERIFY(mgr2 != 0);
 
-    m_enabledEvent = 0;
-    QObject::connect(mgr2, SIGNAL(enabledEvent(Accounts::AccountId)),
-                     this, SLOT(enabledEvent(Accounts::AccountId)));
+    QSignalSpy enabledEvent2(mgr2, SIGNAL(enabledEvent(Accounts::AccountId)));
 
     Account *account2 = mgr2->createAccount(NULL);
-    QVERIFY(account2 != NULL);
+    QVERIFY(account2 != 0);
     account2->setEnabled(true);
     account2->sync();
 
-    QVERIFY(m_enabledEvent == 0);
-    QVERIFY(m_enabledEvent != account2->id());
+    QCOMPARE(enabledEvent2.count(), 0);
 
     delete account;
     delete account2;
@@ -1341,10 +1319,10 @@ void AccountsTest::enabledEvent()
     delete mgr2;
 }
 
-void AccountsTest::serviceTypeTestCase()
+void AccountsTest::testServiceType()
 {
     Manager *mgr = new Manager();
-    QVERIFY(mgr != NULL);
+    QVERIFY(mgr != 0);
 
     ServiceType serviceType;
 
@@ -1374,19 +1352,18 @@ void AccountsTest::serviceTypeTestCase()
     delete mgr;
 }
 
-void AccountsTest::updateAccountTestCase()
+void AccountsTest::testUpdateAccount()
 {
     clearDb();
 
     Manager *mgr = new Manager("e-mail");
-    QVERIFY(mgr != NULL);
+    QVERIFY(mgr != 0);
 
-    m_updateEvent = 0;
-    QObject::connect(mgr, SIGNAL(accountUpdated(Accounts::AccountId)),
-                     this, SLOT(updateAccount(Accounts::AccountId)));
+    QSignalSpy accountUpdated(mgr,
+                              SIGNAL(accountUpdated(Accounts::AccountId)));
 
     Account *account = mgr->createAccount("MyProvider");
-    QVERIFY(account != NULL);
+    QVERIFY(account != 0);
     account->syncAndBlock();
 
     Service service = mgr->service(MYSERVICE);
@@ -1396,25 +1373,23 @@ void AccountsTest::updateAccountTestCase()
     account->setValue("key", QVariant("value"));
     account->syncAndBlock();
 
-    QVERIFY(m_updateEvent != 0);
-    QVERIFY(m_updateEvent == account->id());
+    QTRY_COMPARE(accountUpdated.count(), 1);
+    QCOMPARE(accountUpdated.at(0).at(0).toUInt(), account->id());
 
     //if we create manager without service type the signal shoudl not be emitted
     Manager *mgr2 = new Manager();
-    QVERIFY(mgr2 != NULL);
+    QVERIFY(mgr2 != 0);
 
-    m_updateEvent = 0;
-    QObject::connect(mgr2, SIGNAL(accountUpdated(Accounts::AccountId)),
-                     this, SLOT(updateAccount(Accounts::AccountId)));
+    QSignalSpy accountUpdated2(mgr2,
+                               SIGNAL(accountUpdated(Accounts::AccountId)));
 
     Account *account2 = mgr2->createAccount(NULL);
-    QVERIFY(account2 != NULL);
+    QVERIFY(account2 != 0);
 
     account2->setValue("key", QVariant("value"));
     account2->syncAndBlock();
 
-    QVERIFY(m_updateEvent == 0);
-    QVERIFY(m_updateEvent != account2->id());
+    QCOMPARE(accountUpdated2.count(), 0);
 
     delete account;
     delete account2;
@@ -1422,12 +1397,7 @@ void AccountsTest::updateAccountTestCase()
     delete mgr2;
 }
 
-void AccountsTest::updateAccount(Accounts::AccountId id)
-{
-    m_updateEvent = id;
-}
-
-void AccountsTest::applicationTest()
+void AccountsTest::testApplication()
 {
     Manager *manager = new Manager();
     QVERIFY(manager != 0);
@@ -1472,5 +1442,5 @@ void AccountsTest::applicationTest()
     delete manager;
 }
 
-QTEST_MAIN(AccountsTest)
-// #include "testqstring.moc"
+QTEST_GUILESS_MAIN(AccountsTest)
+#include "tst_libaccounts.moc"
