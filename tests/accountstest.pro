@@ -47,10 +47,6 @@ provider.path = $$DATA_PATH
 provider.files += $${TOP_SRC_DIR}/tests/*.provider
 INSTALLS     += provider
 
-testsuite.files = $${TOP_SRC_DIR}/tests/tests.xml
-testsuite.path = $$DATA_PATH
-INSTALLS += testsuite
-
 QMAKE_EXTRA_TARGETS += check
 check.depends = accountstest
 check.commands = "TESTDIR=$${TOP_SRC_DIR}/tests $${TOP_SRC_DIR}/tests/accountstest.sh"
