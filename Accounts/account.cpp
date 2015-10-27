@@ -181,8 +181,6 @@ void Account::Private::on_enabled(Account *self, const gchar *service_name,
 
 void Account::Private::on_deleted(Account *self)
 {
-    TRACE();
-
     Q_EMIT self->removed();
 }
 
@@ -623,14 +621,11 @@ void Account::Private::account_store_cb(AgAccount *account,
                                         GAsyncResult *res,
                                         Account *self)
 {
-    TRACE() << "Saved accunt ID:" << account->id;
-
     GError *error = NULL;
     ag_account_store_finish(account, res, &error);
     if (error) {
         if (error->domain == G_IO_ERROR &&
             error->code == G_IO_ERROR_CANCELLED) {
-            TRACE() << "Account destroyed, operation cancelled";
         } else {
             Q_EMIT self->error(Error(error));
         }

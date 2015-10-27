@@ -29,15 +29,7 @@
 
 #ifdef BUILDING_ACCOUNTS_QT
 
-// Debug macros
-
-#ifdef TRACE
-    #undef TRACE
-#endif
-
 #include <QDebug>
-
-#define TRACE() qDebug() << __FILE__ ":" << __LINE__ << __func__
 
 // String conversion
 
