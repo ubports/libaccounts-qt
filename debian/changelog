@@ -1,5 +1,7 @@
 libaccounts-qt (1.14-0ubuntu1) UNRELEASED; urgency=medium
 
+  * debian/control, debian/rules:
+    - Remove Qt4-based packages
   * New upstream release.
     - Fix clazy warnings
     - Use gboolean instead of bool to g_object_get (fixes a stack corruption)
@@ -12,6 +14,27 @@ libaccounts-qt (1.14-0ubuntu1) UNRELEASED; urgency=medium
        make check WRAPPER="valgrind --leak-check=full" 
 
  -- Alberto Mardegan <alberto.mardegan@canonical.com>  Wed, 30 Sep 2015 11:57:20 +0300
+
+libaccounts-qt (1.13+14.10.20140819.1-0ubuntu4~gcc5.1) wily; urgency=medium
+
+  * No-change test rebuild for g++5 ABI transition
+
+ -- Steve Langasek <steve.langasek@ubuntu.com>  Wed, 15 Jul 2015 17:05:23 +0000
+
+libaccounts-qt (1.13+14.10.20140819.1-0ubuntu3) vivid; urgency=low
+
+  * fix typo in previous upload
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 26 Nov 2014 10:48:19 +0100
+
+libaccounts-qt (1.13+14.10.20140819.1-0ubuntu2) vivid; urgency=low
+
+  * debian/control:
+    - add "Multi-Arch: same" to libaccounts-qt1 and libaccounts-qt5-1
+      (no further changes needed thanks to dh9)
+    - add Vcs-Bzr field
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 02 Sep 2014 11:43:26 +0200
 
 libaccounts-qt (1.13+14.10.20140819.1-0ubuntu1) utopic; urgency=medium
 

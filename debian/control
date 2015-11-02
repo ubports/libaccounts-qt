@@ -16,10 +16,12 @@ Build-Depends: debhelper (>= 9),
 Standards-Version: 3.9.3
 Section: libs
 Homepage: http://code.google.com/p/accounts-sso/
+Vcs-Bzr: https://code.launchpad.net/~online-accounts/libaccounts-qt/trunk
 
 Package: libaccounts-qt5-1
 Section: libs
 Architecture: any
+Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends}
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: QT library for single sign on
