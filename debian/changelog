@@ -1,3 +1,20 @@
+libaccounts-qt (1.14-0ubuntu1) UNRELEASED; urgency=medium
+
+  * debian/control, debian/rules:
+    - Remove Qt4-based packages
+  * New upstream release.
+    - Fix clazy warnings
+    - Use gboolean instead of bool to g_object_get (fixes a stack corruption)
+    - Headers: remove unnecessary semicolon after namespace
+    - Docs: fix hint on destruction of Account and Service
+    - Fix memory leaks found by valgrind
+      Fixes: https://code.google.com/p/accounts-sso/issues/detail?id=239
+    - Tests: make using a wrapper easier
+      Tests can now be run with a command like:
+       make check WRAPPER="valgrind --leak-check=full" 
+
+ -- Alberto Mardegan <alberto.mardegan@canonical.com>  Wed, 30 Sep 2015 11:57:20 +0300
+
 libaccounts-qt (1.13+14.10.20140819.1-0ubuntu4~gcc5.1) wily; urgency=medium
 
   * No-change test rebuild for g++5 ABI transition

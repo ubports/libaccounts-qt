@@ -202,9 +202,9 @@ const QDomDocument ServiceType::domDocument() const
     int errorColumn;
     if (!doc.setContent(QByteArray(data, len), true,
                         &errorStr, &errorLine, &errorColumn)) {
-        QString message(ASCII("Parse error reading serviceType file "
+        QString message(QStringLiteral("Parse error reading serviceType file "
                               "at line %1, column %2:\n%3"));
-        message.arg(errorLine).arg(errorColumn).arg(errorStr);
+        message = message.arg(errorLine).arg(errorColumn).arg(errorStr);
         qWarning() << __PRETTY_FUNCTION__ << message;
     }
 

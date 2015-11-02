@@ -33,7 +33,7 @@
 #include "Accounts/error.h"
 #include "Accounts/service.h"
 
-#define ACCOUNTS_KEY_CREDENTIALS_ID QLatin1String("CredentialsId")
+#define ACCOUNTS_KEY_CREDENTIALS_ID QStringLiteral("CredentialsId")
 #include <QObject>
 #include <QStringList>
 #include <QVariant>

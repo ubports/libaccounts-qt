@@ -530,7 +530,7 @@ bool Manager::abortOnTimeout() const
  */
 Manager::Options Manager::options() const
 {
-    bool useDBus = true;
+    gboolean useDBus = true;
     g_object_get(d->m_manager,
                  "use-dbus", &useDBus,
                  NULL);
