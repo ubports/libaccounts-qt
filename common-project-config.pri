@@ -11,20 +11,15 @@ UI_DIR          = ui
 UI_HEADERS_DIR  = ui/include
 UI_SOURCES_DIR  = ui/src
 
-TOP_SRC_DIR     = $$PWD
-TOP_BUILD_DIR   = $${TOP_SRC_DIR}/$${BUILD_DIR}
-QMAKE_LIBDIR   += $${TOP_BUILD_DIR}/Accounts
-INCLUDEPATH    += $${TOP_SRC_DIR}
+!defined(TOP_SRC_DIR, var) {
+    TOP_SRC_DIR = $$PWD
+    TOP_BUILD_DIR = $${TOP_SRC_DIR}/$(BUILD_DIR)
+}
 
 # we don't like warnings...
 #QMAKE_CXXFLAGS *= -Werror
 
-greaterThan(QT_MAJOR_VERSION, 4) {
-    # Qt5: use C++11. This is used to avoid the source incompatibility
-    # with the QSKIP macro, as described in:
-    # http://www.kdab.com/porting-from-qt-4-to-qt-5/
-    QMAKE_CXXFLAGS += -std=c++11
-}
+CONFIG += c++11
 
 #-----------------------------------------------------------------------------
 # setup the installation prefix
@@ -42,12 +37,7 @@ isEmpty( PREFIX ) {
     message("==== install prefix set to `$${INSTALL_PREFIX}'")
 }
 
-ARCH = $$system(uname -m)
-contains( ARCH, x86_64 ) {
-    INSTALL_LIBDIR = $${INSTALL_PREFIX}/lib64
-} else {
-    INSTALL_LIBDIR = $${INSTALL_PREFIX}/lib
-}
+INSTALL_LIBDIR = $${INSTALL_PREFIX}/lib
 
 # default library directory can be overriden by defining LIBDIR when
 # running qmake

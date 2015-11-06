@@ -159,15 +159,11 @@ AccountServicePrivate::~AccountServicePrivate()
 void AccountServicePrivate::onEnabled(AccountService *accountService,
                                       gboolean isEnabled)
 {
-    TRACE();
-
     Q_EMIT accountService->enabled(isEnabled);
 }
 
 void AccountServicePrivate::onChanged(AccountService *accountService)
 {
-    TRACE();
-
     Q_EMIT accountService->changed();
 }
 
