@@ -1,10 +1,14 @@
-libaccounts-qt (1.14+16.04.20151102-0ubuntu2) UNRELEASED; urgency=medium
+libaccounts-qt (1.14+16.04.20151106.1-0ubuntu1) xenial; urgency=medium
 
+  [ Alberto Mardegan ]
   * Merge from upstream:
     - Modernize the project structure
     - Remove debug messages (LP: #1404267)
 
- -- Alberto Mardegan <alberto.mardegan@canonical.com>  Wed, 04 Nov 2015 10:17:23 +0300
+  [ CI Train Bot ]
+  * No-change rebuild.
+
+ -- David Barth <david.barth@canonical.com>  Fri, 06 Nov 2015 13:54:55 +0000
 
 libaccounts-qt (1.14+16.04.20151102-0ubuntu1) xenial; urgency=medium
 
