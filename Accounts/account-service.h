@@ -2,7 +2,7 @@
 /*
 * This file is part of libaccounts-qt
 *
-* Copyright (C) 2012 Canonical Ltd.
+* Copyright (C) 2012-2016 Canonical Ltd.
 *
 * Contact: Alberto Mardegan <alberto.mardegan@canonical.com>
 *
