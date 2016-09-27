@@ -384,6 +384,35 @@ ServiceList Manager::serviceList(const QString &serviceType) const
 }
 
 /*!
+ * Get the list of services supported by the given application.
+ *
+ * @param application Application whose services are to be retrieved.
+ *
+ * @return List of Service objects.
+ */
+ServiceList Manager::serviceList(const Application &application) const
+{
+    GList *list;
+
+    list = ag_manager_list_services_by_application(d->m_manager,
+                                                   application.application());
+
+    /* convert glist -> ServiceList */
+    ServiceList servList;
+    GList *iter;
+
+    for (iter = list; iter; iter = g_list_next(iter))
+    {
+        AgService *service = (AgService*)iter->data;
+        servList.append(Service(service, StealReference));
+    }
+
+    g_list_free(list);
+
+    return servList;
+}
+
+/*!
  * Gets an object representing a provider.
  * @param providerName Name of provider to get.
  *

@@ -180,6 +180,17 @@ QString Application::trCatalog() const
 }
 
 /*!
+ * Check whether the application supports the given service.
+ * @param service Instance of a Service.
+ * @return whether the service is supported by this application.
+ */
+bool Application::supportsService(const Service &service) const
+{
+    return ag_application_supports_service(m_application,
+                                           service.service());
+}
+
+/*!
  * Get the description from the application XML file, for the specified
  * service; if not found, get the service-type description instead.
  * @return Usage description of the service.
@@ -188,4 +199,9 @@ QString Application::serviceUsage(const Service &service) const
 {
     return UTF8(ag_application_get_service_usage(m_application,
                                                  service.service()));
+}
+
+AgApplication *Application::application() const
+{
+    return m_application;
 }

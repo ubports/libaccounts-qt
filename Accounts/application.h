@@ -55,12 +55,14 @@ public:
     QString desktopFilePath() const;
     QString trCatalog() const;
 
+    bool supportsService(const Service &service) const;
     QString serviceUsage(const Service &service) const;
 
 private:
     // Don't include private data in docs: \cond
     friend class Manager;
     Application(AgApplication *application);
+    AgApplication *application() const;
 
     AgApplication *m_application;
     // \endcond
