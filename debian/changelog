@@ -5,6 +5,8 @@ libaccounts-qt (1.15-0ubuntu1) UNRELEASED; urgency=medium
       and Application::supportsService()
     - Enable CI in gitlab
     - Build: fix out of tree builds
+  * debian/control:
+    - Remove dependency on Qt4 packages
 
  -- Alberto Mardegan <alberto.mardegan@canonical.com>  Thu, 29 Sep 2016 11:53:39 +0300
 
