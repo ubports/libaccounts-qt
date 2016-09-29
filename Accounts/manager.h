@@ -3,7 +3,7 @@
  * This file is part of libaccounts-qt
  *
  * Copyright (C) 2009-2011 Nokia Corporation.
- * Copyright (C) 2012 Canonical Ltd.
+ * Copyright (C) 2012-2016 Canonical Ltd.
  *
  * Contact: Alberto Mardegan <alberto.mardegan@canonical.com>
  *
@@ -76,6 +76,7 @@ public:
 
     Service service(const QString &serviceName) const;
     ServiceList serviceList(const QString &serviceType = QString::null) const;
+    ServiceList serviceList(const Application &application) const;
 
     Provider provider(const QString &providerName) const;
     ProviderList providerList() const;

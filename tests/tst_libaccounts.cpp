@@ -3,7 +3,7 @@
  * This file is part of libaccounts-qt
  *
  * Copyright (C) 2009-2011 Nokia Corporation.
- * Copyright (C) 2015 Canonical Ltd.
+ * Copyright (C) 2015-2016 Canonical Ltd.
  *
  * Contact: Alberto Mardegan <alberto.mardegan@canonical.com>
  *
@@ -99,6 +99,7 @@ private Q_SLOTS:
     void testServiceType();
     void testUpdateAccount();
     void testApplication();
+    void testApplicationListServices();
 
 public Q_SLOTS:
     void onAccountServiceChanged();
@@ -1418,6 +1419,7 @@ void AccountsTest::testApplication()
     QCOMPARE(application.iconName(), UTF8("mailer-icon"));
     QCOMPARE(application.desktopFilePath(),
              UTF8(qgetenv("AG_APPLICATIONS") + "/applications/mailer.desktop"));
+    QVERIFY(application.supportsService(email));
     QCOMPARE(application.serviceUsage(email),
              UTF8("Mailer can retrieve your e-mails"));
 
@@ -1430,6 +1432,7 @@ void AccountsTest::testApplication()
     application = apps[0];
     QCOMPARE(application.name(), UTF8("Gallery"));
     QCOMPARE(application.description(), UTF8("Image gallery"));
+    QVERIFY(application.supportsService(sharing));
     QCOMPARE(application.serviceUsage(sharing),
              UTF8("Publish images on OtherService"));
 
@@ -1438,6 +1441,24 @@ void AccountsTest::testApplication()
     QVERIFY(!app2.isValid());
     Application app3(app2);
     QVERIFY(!app3.isValid());
+
+    delete manager;
+}
+
+void AccountsTest::testApplicationListServices()
+{
+    Manager *manager = new Manager();
+    QVERIFY(manager != 0);
+
+    Application application = manager->application("Mailer");
+    QVERIFY(application.isValid());
+
+    ServiceList services = manager->serviceList(application);
+
+    QCOMPARE(services.count(), 1);
+    Service service = services.first();
+
+    QCOMPARE(service.name(), QString("MyService"));
 
     delete manager;
 }

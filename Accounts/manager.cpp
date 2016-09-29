@@ -3,7 +3,7 @@
  * This file is part of libaccounts-qt
  *
  * Copyright (C) 2009-2011 Nokia Corporation.
- * Copyright (C) 2012-2013 Canonical Ltd.
+ * Copyright (C) 2012-2016 Canonical Ltd.
  *
  * Contact: Alberto Mardegan <alberto.mardegan@canonical.com>
  *
@@ -367,6 +367,35 @@ ServiceList Manager::serviceList(const QString &serviceType) const
         list = ag_manager_list_services_by_type(d->m_manager,
             serviceType.toUtf8().constData());
     }
+
+    /* convert glist -> ServiceList */
+    ServiceList servList;
+    GList *iter;
+
+    for (iter = list; iter; iter = g_list_next(iter))
+    {
+        AgService *service = (AgService*)iter->data;
+        servList.append(Service(service, StealReference));
+    }
+
+    g_list_free(list);
+
+    return servList;
+}
+
+/*!
+ * Get the list of services supported by the given application.
+ *
+ * @param application Application whose services are to be retrieved.
+ *
+ * @return List of Service objects.
+ */
+ServiceList Manager::serviceList(const Application &application) const
+{
+    GList *list;
+
+    list = ag_manager_list_services_by_application(d->m_manager,
+                                                   application.application());
 
     /* convert glist -> ServiceList */
     ServiceList servList;
