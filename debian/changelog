@@ -1,4 +1,4 @@
-libaccounts-qt (1.15-0ubuntu1) UNRELEASED; urgency=medium
+libaccounts-qt (1.15+17.04.20161104.1-0ubuntu1) zesty; urgency=medium
 
   * New upstream release
     - Lib: add Manager::listServices() by application
@@ -8,7 +8,7 @@ libaccounts-qt (1.15-0ubuntu1) UNRELEASED; urgency=medium
   * debian/control:
     - Remove dependency on Qt4 packages
 
- -- Alberto Mardegan <alberto.mardegan@canonical.com>  Thu, 29 Sep 2016 11:53:39 +0300
+ -- Alberto Mardegan <mardy@users.sourceforge.net>  Fri, 04 Nov 2016 14:11:28 +0000
 
 libaccounts-qt (1.14+16.04.20151106.1-0ubuntu1) xenial; urgency=medium
 
