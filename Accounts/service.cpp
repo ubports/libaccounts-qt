@@ -118,6 +118,15 @@ QString Service::name() const
 }
 
 /*!
+ * Get the description of the service.
+ * @return The description of the service.
+ */
+QString Service::description() const
+{
+    return UTF8(ag_service_get_description(m_service));
+}
+
+/*!
  * Get the display name of the service, untranslated.
  * @return The display name of the service.
  */

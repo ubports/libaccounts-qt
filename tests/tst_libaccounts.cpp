@@ -322,6 +322,7 @@ void AccountsTest::testService()
     Service service = mgr->service(MYSERVICE);
     QVERIFY(service.isValid());
     QCOMPARE(service.name(), MYSERVICE);
+    QCOMPARE(service.description(), QStringLiteral("Test description"));
     QCOMPARE(service.iconName(), QString("general_myservice"));
     QCOMPARE(service.trCatalog(), QString("accounts"));
     QStringList tags;
