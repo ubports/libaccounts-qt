@@ -116,6 +116,14 @@ QString ServiceType::name() const
 }
 
 /*!
+ * @return The description of the service type.
+ */
+QString ServiceType::description() const
+{
+    return UTF8(ag_service_type_get_description(m_serviceType));
+}
+
+/*!
  * @return The display name of the service type; this is a string that
  * could be shown in the UI to describe the service type to the user.
  *

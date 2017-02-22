@@ -1335,6 +1335,7 @@ void AccountsTest::testServiceType()
     QVERIFY(serviceType.isValid());
 
     QCOMPARE(serviceType.name(), EMAIL_SERVICE_TYPE);
+    QCOMPARE(serviceType.description(), QStringLiteral("Email test description"));
     QCOMPARE(serviceType.displayName(), QStringLiteral("Electronic mail"));
     QCOMPARE(serviceType.trCatalog(), QStringLiteral("translation_file"));
     QCOMPARE(serviceType.iconName(), QStringLiteral("email_icon"));

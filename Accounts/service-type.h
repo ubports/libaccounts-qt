@@ -57,6 +57,7 @@ public:
     bool isValid() const;
 
     QString name() const;
+    QString description() const;
     QString displayName() const;
     QString trCatalog() const;
     QString iconName() const;
