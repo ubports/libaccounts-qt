@@ -1,3 +1,9 @@
+libaccounts-qt (1.15+ubports) xenial; urgency=medium
+
+  * No change rebuild for ubports xenial repo
+
+ -- Dan Chapman <dan@ubports.com>  Sat, 06 Jan 2018 09:25:28 +0000
+
 libaccounts-qt (1.15+17.04.20161104.1-0ubuntu1) zesty; urgency=medium
 
   * New upstream release
